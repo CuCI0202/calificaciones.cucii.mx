@@ -1,0 +1,193 @@
+<div class="min-h-screen bg-gray-50 py-10 px-4">
+  <div class="max-w-6xl mx-auto">
+
+    <!-- ── Vista detalle ───────────────────────────────────────────────────── -->
+    @if (alumnoSeleccionado()) {
+      <div>
+        <!-- Header detalle -->
+        <div class="flex items-center gap-3 mb-8">
+          <button (click)="volverALista()"
+            class="text-primary hover:text-primary-dark text-sm">
+            ← Volver
+          </button>
+          <span class="text-gray-300">|</span>
+          <div>
+            <h1 class="text-2xl font-bold text-brand-dark">{{ alumnoSeleccionado()!.nombre }}</h1>
+            <p class="text-xs text-gray-400 font-mono mt-0.5">{{ alumnoSeleccionado()!.curp }}</p>
+          </div>
+        </div>
+
+        <!-- Info del alumno -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 mb-6 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+          <div>
+            <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Carrera</p>
+            <p class="font-medium text-gray-800">{{ getNombreCarrera(alumnoSeleccionado()!.carreraId) }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Grupo</p>
+            <p class="font-medium text-gray-800">{{ getNombreGrupo(alumnoSeleccionado()!.grupoId) }}</p>
+          </div>
+        </div>
+
+        <!-- Calificaciones por cuatrimestre -->
+        @for (bloque of detalleFilas(); track bloque.cuatrimestre) {
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-4">
+            <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
+              <h2 class="text-sm font-semibold text-gray-700">{{ bloque.cuatrimestre }}° Cuatrimestre</h2>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="text-gray-500 uppercase text-xs tracking-wide">
+                  <tr>
+                    <th class="px-4 py-2 text-left">Clave</th>
+                    <th class="px-4 py-2 text-left">Materia</th>
+                    <th class="px-4 py-2 text-center w-32">Calificación</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                  @for (fila of bloque.filas; track fila.materia.id) {
+                    <tr class="hover:bg-gray-50 transition-colors">
+                      <td class="px-4 py-2.5 font-mono text-xs text-gray-500">{{ fila.materia.clave }}</td>
+                      <td class="px-4 py-2.5 text-gray-700">{{ fila.materia.nombre }}</td>
+                      <td class="px-4 py-2.5 text-center">
+                        @if (fila.calificacion !== null) {
+                          <span [class]="getCalificacionClass(fila.calificacion)">
+                            {{ fila.calificacion }}
+                          </span>
+                        } @else {
+                          <span class="text-gray-300">—</span>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ── Vista lista ─────────────────────────────────────────────────────── -->
+    @if (!alumnoSeleccionado()) {
+      <div>
+        <!-- Header -->
+        <div class="mb-8">
+          <h1 class="text-2xl font-bold text-brand-dark">Consultar Calificaciones</h1>
+          <p class="text-gray-500 text-sm">Busca un alumno para ver su historial completo</p>
+        </div>
+
+        <!-- Filtros -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <!-- CURP -->
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">CURP</label>
+              <input
+                type="text"
+                placeholder="GAMA990101..."
+                maxlength="18"
+                [value]="filterCurp()"
+                (input)="filterCurp.set($any($event.target).value.toUpperCase())"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <!-- Nombre -->
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">Nombre</label>
+              <input
+                type="text"
+                placeholder="Nombre del alumno..."
+                [value]="filterNombre()"
+                (input)="filterNombre.set($any($event.target).value)"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <!-- Carrera -->
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">Carrera</label>
+              <select
+                [value]="filterCarrera()"
+                (change)="filterCarrera.set($any($event.target).value); filterGrupo.set('')"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                <option value="">Todas</option>
+                @for (c of carreras(); track c.id) {
+                  <option [value]="c.id">{{ c.nombre }}</option>
+                }
+              </select>
+            </div>
+            <!-- Grupo -->
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">Grupo</label>
+              <select
+                [value]="filterGrupo()"
+                (change)="filterGrupo.set($any($event.target).value)"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                <option value="">Todos</option>
+                @for (g of gruposFiltrados(); track g.id) {
+                  <option [value]="g.id">{{ g.clave }} — {{ g.nombre }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <p class="text-sm text-gray-400">
+              @if (hayFiltros()) {
+                {{ alumnosFiltrados().length }} alumno(s) encontrado(s)
+              } @else {
+                Mostrando todos los alumnos — {{ alumnosFiltrados().length }} en total
+              }
+            </p>
+            <button
+              (click)="limpiarFiltros()"
+              [disabled]="!hayFiltros()"
+              class="border border-gray-300 text-gray-600 px-4 py-1.5 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-40 transition-colors">
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabla de alumnos -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 text-gray-500 uppercase text-xs tracking-wide">
+                <tr>
+                  <th class="px-4 py-3 text-left">Nombre</th>
+                  <th class="px-4 py-3 text-left">CURP</th>
+                  <th class="px-4 py-3 text-left">Carrera</th>
+                  <th class="px-4 py-3 text-left">Grupo</th>
+                  <th class="px-4 py-3 text-center">Ver</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                @for (alumno of alumnosFiltrados(); track alumno.id) {
+                  <tr class="hover:bg-gray-50 transition-colors cursor-pointer"
+                    (click)="seleccionarAlumno(alumno)">
+                    <td class="px-4 py-3 font-medium text-gray-800">{{ alumno.nombre }}</td>
+                    <td class="px-4 py-3 font-mono text-xs text-gray-500">{{ alumno.curp }}</td>
+                    <td class="px-4 py-3 text-gray-600">{{ getNombreCarrera(alumno.carreraId) }}</td>
+                    <td class="px-4 py-3 text-gray-600">{{ getNombreGrupo(alumno.grupoId) }}</td>
+                    <td class="px-4 py-3 text-center">
+                      <span class="text-primary hover:text-primary-dark text-xs font-medium">
+                        Ver calificaciones →
+                      </span>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="5" class="px-4 py-10 text-center text-gray-400">
+                      No se encontraron alumnos.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    }
+
+  </div>
+</div>

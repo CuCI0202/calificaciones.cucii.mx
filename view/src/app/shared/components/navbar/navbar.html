@@ -1,0 +1,46 @@
+<nav class="bg-primary text-white shadow-md">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <span class="text-xl font-bold tracking-tight">
+      Calificaciones CUCII
+    </span>
+
+    @if (auth.isAuthenticated()) {
+      <div class="flex items-center gap-6 text-sm font-medium">
+        <a routerLink="/consultar" routerLinkActive="underline"
+          class="hover:text-white/70 transition-colors">
+          Consultar
+        </a>
+        <a routerLink="/subir" routerLinkActive="underline"
+          class="hover:text-white/70 transition-colors">
+          Subir
+        </a>
+        @if (auth.isAdmin()) {
+          <a routerLink="/alumnos" routerLinkActive="underline"
+            class="hover:text-white/70 transition-colors">
+            Alumnos
+          </a>
+          <a routerLink="/grupos" routerLinkActive="underline"
+            class="hover:text-white/70 transition-colors">
+            Grupos
+          </a>
+          <a routerLink="/planteles" routerLinkActive="underline"
+            class="hover:text-white/70 transition-colors">
+            Planteles
+          </a>
+          <a routerLink="/materias" routerLinkActive="underline"
+            class="hover:text-white/70 transition-colors">
+            Materias
+          </a>
+          <a routerLink="/carreras" routerLinkActive="underline"
+            class="hover:text-white/70 transition-colors">
+            Carreras
+          </a>
+        }
+        <button (click)="logout()"
+          class="bg-white text-primary px-3 py-1 rounded-md hover:bg-primary-light transition-colors">
+          Cerrar sesión
+        </button>
+      </div>
+    }
+  </div>
+</nav>

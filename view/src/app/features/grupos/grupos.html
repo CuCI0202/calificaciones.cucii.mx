@@ -1,0 +1,182 @@
+<div class="min-h-screen bg-gray-50 py-10 px-4">
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-brand-dark">Gestión de Grupos</h1>
+        <p class="text-gray-500 text-sm">{{ grupos().length }} grupo(s) registrado(s)</p>
+      </div>
+      <button (click)="toggleAddForm()"
+        class="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm">
+        @if (showAddForm()) {
+          Cancelar
+        } @else {
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Agregar grupo
+        }
+      </button>
+    </div>
+
+    <!-- Formulario agregar -->
+    @if (showAddForm()) {
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+        <h2 class="text-base font-semibold text-gray-800 mb-4">Nuevo grupo</h2>
+        <form [formGroup]="addForm" (ngSubmit)="submitAdd()" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Clave</label>
+            <input formControlName="clave" type="text" placeholder="ISC-A"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              [class.border-red-400]="addForm.controls.clave.invalid && addForm.controls.clave.touched" />
+            @if (addForm.controls.clave.touched && addForm.controls.clave.errors?.['required']) {
+              <p class="text-red-500 text-xs mt-1">La clave es obligatoria.</p>
+            }
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+            <input formControlName="nombre" type="text" placeholder="Grupo A"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              [class.border-red-400]="addForm.controls.nombre.invalid && addForm.controls.nombre.touched" />
+            @if (addForm.controls.nombre.touched && addForm.controls.nombre.errors?.['required']) {
+              <p class="text-red-500 text-xs mt-1">El nombre es obligatorio.</p>
+            }
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Carrera</label>
+            <select formControlName="carreraId"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              [class.border-red-400]="addForm.controls.carreraId.invalid && addForm.controls.carreraId.touched">
+              <option value="" disabled>Selecciona...</option>
+              @for (c of carreras(); track c.id) {
+                <option [value]="c.id">{{ c.nombre }}</option>
+              }
+            </select>
+            @if (addForm.controls.carreraId.touched && addForm.controls.carreraId.errors?.['required']) {
+              <p class="text-red-500 text-xs mt-1">La carrera es obligatoria.</p>
+            }
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Plantel</label>
+            <select formControlName="plantelId"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              [class.border-red-400]="addForm.controls.plantelId.invalid && addForm.controls.plantelId.touched">
+              <option value="" disabled>Selecciona...</option>
+              @for (p of planteles(); track p.id) {
+                <option [value]="p.id">{{ p.nombre }}</option>
+              }
+            </select>
+            @if (addForm.controls.plantelId.touched && addForm.controls.plantelId.errors?.['required']) {
+              <p class="text-red-500 text-xs mt-1">El plantel es obligatorio.</p>
+            }
+          </div>
+          <div class="sm:col-span-2 lg:col-span-4 flex justify-end">
+            <button type="submit"
+              class="bg-primary text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm">
+              Guardar grupo
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <!-- Filtro y tabla -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="px-5 py-4 border-b border-gray-100 flex flex-col sm:flex-row gap-3 items-center">
+        <input
+          type="text"
+          placeholder="Filtrar por clave o nombre..."
+          [value]="filterQ()"
+          (input)="filterQ.set($any($event.target).value)"
+          class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <span class="text-sm text-gray-500">{{ filtrados().length }} resultado(s)</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-gray-500 uppercase text-xs tracking-wide">
+            <tr>
+              <th class="px-4 py-3 text-left">Clave</th>
+              <th class="px-4 py-3 text-left">Nombre</th>
+              <th class="px-4 py-3 text-left">Carrera</th>
+              <th class="px-4 py-3 text-left">Plantel</th>
+              <th class="px-4 py-3 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            @for (grupo of filtrados(); track grupo.id) {
+              @if (editingId() === grupo.id) {
+                <tr class="bg-blue-50">
+                  <td class="px-4 py-2">
+                    <input [formControl]="editForm.controls.clave" placeholder="Clave"
+                      class="w-full border rounded px-2 py-1 text-xs" />
+                  </td>
+                  <td class="px-4 py-2">
+                    <input [formControl]="editForm.controls.nombre" placeholder="Nombre"
+                      class="w-full border rounded px-2 py-1 text-xs" />
+                  </td>
+                  <td class="px-4 py-2">
+                    <select [formControl]="editForm.controls.carreraId"
+                      class="w-full border rounded px-2 py-1 text-xs">
+                      <option value="" disabled>Selecciona...</option>
+                      @for (c of carreras(); track c.id) {
+                        <option [value]="c.id">{{ c.nombre }}</option>
+                      }
+                    </select>
+                  </td>
+                  <td class="px-4 py-2">
+                    <select [formControl]="editForm.controls.plantelId"
+                      class="w-full border rounded px-2 py-1 text-xs">
+                      <option value="" disabled>Selecciona...</option>
+                      @for (p of planteles(); track p.id) {
+                        <option [value]="p.id">{{ p.nombre }}</option>
+                      }
+                    </select>
+                  </td>
+                  <td class="px-4 py-2 text-center">
+                    <div class="flex justify-center gap-2">
+                      <button (click)="saveEdit(grupo.id)"
+                        class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700">
+                        Guardar
+                      </button>
+                      <button (click)="cancelEdit()"
+                        class="bg-gray-300 text-gray-700 px-3 py-1 rounded text-xs hover:bg-gray-400">
+                        Cancelar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              } @else {
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <td class="px-4 py-3 font-mono font-medium text-gray-800">{{ grupo.clave }}</td>
+                  <td class="px-4 py-3 text-gray-600">{{ grupo.nombre }}</td>
+                  <td class="px-4 py-3 text-gray-600">{{ getNombreCarrera(grupo.carreraId) }}</td>
+                  <td class="px-4 py-3 text-gray-600">{{ getNombrePlantel(grupo.plantelId) }}</td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="flex justify-center gap-2">
+                      <button (click)="startEdit(grupo)"
+                        class="text-primary hover:text-primary-dark text-xs font-medium">
+                        Editar
+                      </button>
+                      <button (click)="delete(grupo.id)"
+                        class="text-red-500 hover:text-red-700 text-xs font-medium">
+                        Eliminar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            } @empty {
+              <tr>
+                <td colspan="5" class="px-4 py-10 text-center text-gray-400">
+                  No hay grupos que mostrar.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

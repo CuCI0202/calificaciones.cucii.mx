@@ -1,0 +1,227 @@
+<div class="min-h-screen bg-gray-50 py-10 px-4">
+  <div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <div class="flex items-center gap-3 mb-8">
+      <a routerLink="/consultar" class="text-primary hover:text-primary-dark text-sm">← Volver</a>
+      <span class="text-gray-300">|</span>
+      <h1 class="text-2xl font-bold text-brand-dark">Subir Calificaciones</h1>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex border-b border-gray-200 mb-6">
+      <button
+        (click)="activeTab.set('manual')"
+        class="px-5 py-3 text-sm font-medium border-b-2 transition-colors"
+        [class.border-primary]="activeTab() === 'manual'"
+        [class.text-primary]="activeTab() === 'manual'"
+        [class.border-transparent]="activeTab() !== 'manual'"
+        [class.text-gray-500]="activeTab() !== 'manual'">
+        Formulario manual
+      </button>
+      <button
+        (click)="activeTab.set('csv')"
+        class="px-5 py-3 text-sm font-medium border-b-2 transition-colors"
+        [class.border-primary]="activeTab() === 'csv'"
+        [class.text-primary]="activeTab() === 'csv'"
+        [class.border-transparent]="activeTab() !== 'csv'"
+        [class.text-gray-500]="activeTab() !== 'csv'">
+        Importar CSV
+      </button>
+    </div>
+
+    <!-- ── Manual tab ─────────────────────────────────────────────────────── -->
+    @if (activeTab() === 'manual') {
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-6">
+        @if (successMsg()) {
+          <div class="bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 text-sm">
+            {{ successMsg() }}
+          </div>
+        }
+
+        <!-- Búsqueda de alumno -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Buscar alumno por CURP</label>
+          <div class="flex gap-2">
+            <input
+              type="text"
+              placeholder="GAMA990101HDFRCR01"
+              maxlength="18"
+              [value]="searchCurp()"
+              (input)="searchCurp.set($any($event.target).value.toUpperCase())"
+              (keydown.enter)="buscarAlumno()"
+              class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-primary" />
+            <button
+              type="button"
+              (click)="buscarAlumno()"
+              class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
+              Buscar
+            </button>
+          </div>
+          @if (searchError()) {
+            <p class="text-red-500 text-xs mt-1">{{ searchError() }}</p>
+          }
+        </div>
+
+        <!-- Alumno encontrado -->
+        @if (foundAlumno()) {
+          <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 text-sm text-blue-800">
+            <p class="font-semibold">{{ foundAlumno()!.nombre }}</p>
+            <p class="text-xs font-mono text-blue-600 mt-0.5">{{ foundAlumno()!.curp }}</p>
+          </div>
+        }
+
+        <!-- Formulario de calificación -->
+        <form [formGroup]="form" (ngSubmit)="submitManual()" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Cuatrimestre -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Cuatrimestre</label>
+              <select formControlName="cuatrimestre"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                [class.border-red-400]="form.controls.cuatrimestre.invalid && form.controls.cuatrimestre.touched">
+                <option [value]="0" disabled>Selecciona...</option>
+                @for (n of cuatrimestres; track n) {
+                  <option [value]="n">{{ n }}° Cuatrimestre</option>
+                }
+              </select>
+              @if (form.controls.cuatrimestre.touched && form.controls.cuatrimestre.errors) {
+                <p class="text-red-500 text-xs mt-1">Selecciona un cuatrimestre.</p>
+              }
+            </div>
+
+            <!-- Materia -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Materia</label>
+              <select formControlName="materiaId"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                [class.border-red-400]="form.controls.materiaId.invalid && form.controls.materiaId.touched"
+                [attr.disabled]="!foundAlumno() ? true : null">
+                <option value="" disabled>
+                  @if (!foundAlumno()) { Busca un alumno primero } @else { Selecciona... }
+                </option>
+                @for (m of materiasDeAlumno(); track m.id) {
+                  <option [value]="m.id">{{ m.nombre }}</option>
+                }
+              </select>
+              @if (form.controls.materiaId.touched && form.controls.materiaId.errors?.['required']) {
+                <p class="text-red-500 text-xs mt-1">Selecciona una materia.</p>
+              }
+            </div>
+
+            <!-- Calificación -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Calificación (0–100)</label>
+              <input formControlName="calificacion" type="number" min="0" max="100"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                [class.border-red-400]="form.controls.calificacion.invalid && form.controls.calificacion.touched" />
+              @if (form.controls.calificacion.touched && form.controls.calificacion.errors) {
+                <p class="text-red-500 text-xs mt-1">Ingresa un valor entre 0 y 100.</p>
+              }
+            </div>
+          </div>
+
+          @if (errorMsg()) {
+            <p class="text-red-500 text-sm">{{ errorMsg() }}</p>
+          }
+
+          <div class="flex justify-end pt-2">
+            <button type="submit"
+              class="bg-primary text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm">
+              Registrar calificación
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <!-- ── CSV tab ─────────────────────────────────────────────────────────── -->
+    @if (activeTab() === 'csv') {
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        @if (!csvLoaded()) {
+          <div class="text-center py-8">
+            <div class="mb-4 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M9 13h6m-3-3v6m5 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414A1 1 0 0 1 19 9.414V19a2 2 0 0 1-2 2z" />
+              </svg>
+            </div>
+            <h2 class="text-base font-semibold text-gray-700 mb-2">Selecciona un archivo CSV</h2>
+            <p class="text-sm text-gray-400 mb-4">
+              Formato esperado: <code class="bg-gray-100 px-1 rounded text-xs">alumno_curp,materia_id,cuatrimestre,calificacion</code>
+            </p>
+            <label class="cursor-pointer inline-block bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
+              Elegir archivo
+              <input type="file" accept=".csv,text/csv" class="hidden" (change)="onFileChange($event)" />
+            </label>
+
+            @if (csvError()) {
+              <p class="text-red-500 text-sm mt-3">{{ csvError() }}</p>
+            }
+          </div>
+        } @else {
+          <!-- Preview table -->
+          <div class="mb-4 flex items-center justify-between">
+            <div>
+              <p class="font-medium text-gray-800">Vista previa del CSV</p>
+              <p class="text-xs text-gray-500">
+                <span class="text-green-600 font-semibold">{{ csvRowsValid.length }}</span> válidas,
+                <span class="text-red-500 font-semibold">{{ csvRowsInvalid.length }}</span> con errores
+              </p>
+            </div>
+            <button (click)="cancelarCsv()" class="text-xs text-gray-400 hover:text-gray-600">Cancelar</button>
+          </div>
+
+          @if (csvSuccess()) {
+            <div class="bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 text-sm mb-4">
+              {{ csvSuccess() }}
+            </div>
+          }
+
+          <div class="overflow-x-auto rounded-lg border border-gray-200 mb-5">
+            <table class="w-full text-xs">
+              <thead class="bg-gray-50 text-gray-500 uppercase tracking-wide">
+                <tr>
+                  <th class="px-3 py-2 text-left">#</th>
+                  <th class="px-3 py-2 text-left">CURP</th>
+                  <th class="px-3 py-2 text-left">Materia ID</th>
+                  <th class="px-3 py-2 text-center">Cuatri</th>
+                  <th class="px-3 py-2 text-center">Cal.</th>
+                  <th class="px-3 py-2 text-center">Estado</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                @for (row of csvRows(); track $index) {
+                  <tr [class.bg-red-50]="row.error" [class.bg-green-50]="!row.error">
+                    <td class="px-3 py-2 text-gray-400">{{ $index + 1 }}</td>
+                    <td class="px-3 py-2 font-mono">{{ row.alumnoCurp }}</td>
+                    <td class="px-3 py-2 font-mono">{{ row.materiaId }}</td>
+                    <td class="px-3 py-2 text-center">{{ row.cuatrimestre }}</td>
+                    <td class="px-3 py-2 text-center">{{ row.calificacion }}</td>
+                    <td class="px-3 py-2 text-center">
+                      @if (row.error) {
+                        <span class="text-red-500 font-medium">{{ row.error }}</span>
+                      } @else {
+                        <span class="text-green-600">✓</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="flex justify-end gap-3">
+            <button (click)="cancelarCsv()"
+              class="px-5 py-2 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+              Cancelar
+            </button>
+            <button (click)="confirmarCsv()" [disabled]="csvRowsValid.length === 0"
+              class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark disabled:opacity-50 transition-colors">
+              Confirmar e importar ({{ csvRowsValid.length }})
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
