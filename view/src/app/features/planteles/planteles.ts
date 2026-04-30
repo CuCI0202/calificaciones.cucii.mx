@@ -13,6 +13,7 @@ export class Planteles {
   private readonly fb = inject(FormBuilder);
 
   readonly planteles = this.plantelesService.planteles;
+  readonly filterDraft = signal('');
   readonly filterQ = signal('');
   readonly editingId = signal<number | null>(null);
   readonly showAddForm = signal(false);
@@ -34,6 +35,15 @@ export class Planteles {
     nombre: ['', Validators.required],
     direccion: ['', Validators.required],
   });
+
+  buscar(): void {
+    this.filterQ.set(this.filterDraft());
+  }
+
+  limpiarFiltro(): void {
+    this.filterDraft.set('');
+    this.filterQ.set('');
+  }
 
   startEdit(plantel: Plantel): void {
     this.editingId.set(plantel.id);

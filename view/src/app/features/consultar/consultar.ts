@@ -29,6 +29,9 @@ export class Consultar {
   readonly cuatrimestres = CUATRIMESTRES;
 
   // ── Vista lista ────────────────────────────────────────────────────────────
+  readonly filterCurpDraft   = signal('');
+  readonly filterNombreDraft = signal('');
+  // Committed — only updated when user presses Buscar
   readonly filterCurp    = signal('');
   readonly filterNombre  = signal('');
   // Stored as string from select; empty string means "no filter"
@@ -60,10 +63,17 @@ export class Consultar {
   });
 
   readonly hayFiltros = computed(() =>
-    !!(this.filterCurp() || this.filterNombre() || this.filterCarrera() || this.filterGrupo())
+    !!(this.filterCurpDraft() || this.filterNombreDraft() || this.filterCurp() || this.filterNombre() || this.filterCarrera() || this.filterGrupo())
   );
 
+  buscar(): void {
+    this.filterCurp.set(this.filterCurpDraft());
+    this.filterNombre.set(this.filterNombreDraft());
+  }
+
   limpiarFiltros(): void {
+    this.filterCurpDraft.set('');
+    this.filterNombreDraft.set('');
     this.filterCurp.set('');
     this.filterNombre.set('');
     this.filterCarrera.set('');

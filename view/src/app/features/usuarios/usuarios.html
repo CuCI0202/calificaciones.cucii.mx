@@ -108,11 +108,22 @@
       <div class="px-5 py-4 border-b border-gray-100 flex flex-col sm:flex-row gap-3 items-center">
         <input
           type="text"
-          placeholder="Filtrar por nombre, apellido o correo..."
-          [value]="filterQ()"
-          (input)="filterQ.set($any($event.target).value)"
+          placeholder="Buscar por nombre, apellido o correo..."
+          [value]="filterDraft()"
+          (input)="filterDraft.set($any($event.target).value)"
+          (keydown.enter)="buscar()"
           class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
+        <button (click)="buscar()"
+          class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
+          Buscar
+        </button>
+        @if (filterQ()) {
+          <button (click)="limpiarFiltro()"
+            class="border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+            Limpiar
+          </button>
+        }
         <span class="text-sm text-gray-500">{{ filtrados().length }} resultado(s)</span>
       </div>
 

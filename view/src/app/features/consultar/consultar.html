@@ -87,8 +87,9 @@
                 type="text"
                 placeholder="GAMA990101..."
                 maxlength="18"
-                [value]="filterCurp()"
-                (input)="filterCurp.set($any($event.target).value.toUpperCase())"
+                [value]="filterCurpDraft()"
+                (input)="filterCurpDraft.set($any($event.target).value.toUpperCase())"
+                (keydown.enter)="buscar()"
                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -98,8 +99,9 @@
               <input
                 type="text"
                 placeholder="Nombre del alumno..."
-                [value]="filterNombre()"
-                (input)="filterNombre.set($any($event.target).value)"
+                [value]="filterNombreDraft()"
+                (input)="filterNombreDraft.set($any($event.target).value)"
+                (keydown.enter)="buscar()"
                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -139,12 +141,19 @@
                 Mostrando todos los alumnos — {{ alumnosFiltrados().length }} en total
               }
             </p>
-            <button
-              (click)="limpiarFiltros()"
-              [disabled]="!hayFiltros()"
-              class="border border-gray-300 text-gray-600 px-4 py-1.5 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-40 transition-colors">
-              Limpiar filtros
-            </button>
+            <div class="flex gap-2">
+              <button
+                (click)="buscar()"
+                class="bg-primary text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
+                Buscar
+              </button>
+              <button
+                (click)="limpiarFiltros()"
+                [disabled]="!hayFiltros()"
+                class="border border-gray-300 text-gray-600 px-4 py-1.5 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-40 transition-colors">
+                Limpiar filtros
+              </button>
+            </div>
           </div>
         </div>
 

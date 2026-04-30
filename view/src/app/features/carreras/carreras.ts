@@ -13,6 +13,7 @@ export class Carreras {
   private readonly fb = inject(FormBuilder);
 
   readonly carreras = this.carrerasService.carreras;
+  readonly filterDraft = signal('');
   readonly filterQ = signal('');
   readonly editingId = signal<number | null>(null);
   readonly showAddForm = signal(false);
@@ -36,6 +37,15 @@ export class Carreras {
     rvoe: ['', Validators.required],
     fechaRvoe: ['', Validators.required],
   });
+
+  buscar(): void {
+    this.filterQ.set(this.filterDraft());
+  }
+
+  limpiarFiltro(): void {
+    this.filterDraft.set('');
+    this.filterQ.set('');
+  }
 
   startEdit(carrera: Carrera): void {
     this.editingId.set(carrera.id);

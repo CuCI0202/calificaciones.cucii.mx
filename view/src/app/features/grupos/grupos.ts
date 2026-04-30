@@ -19,6 +19,7 @@ export class Grupos {
   readonly grupos = this.gruposService.grupos;
   readonly carreras = this.carrerasService.carreras;
   readonly planteles = this.plantelesService.planteles;
+  readonly filterDraft = signal('');
   readonly filterQ = signal('');
   readonly editingId = signal<number | null>(null);
   readonly showAddForm = signal(false);
@@ -44,6 +45,15 @@ export class Grupos {
     carreraId: ['', Validators.required],
     plantelId: ['', Validators.required],
   });
+
+  buscar(): void {
+    this.filterQ.set(this.filterDraft());
+  }
+
+  limpiarFiltro(): void {
+    this.filterDraft.set('');
+    this.filterQ.set('');
+  }
 
   getNombreCarrera(id: number): string {
     return this.carreras().find((c) => c.id === id)?.nombre ?? String(id);

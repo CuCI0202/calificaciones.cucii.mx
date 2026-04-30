@@ -13,6 +13,7 @@ export class Usuarios {
   private readonly fb = inject(FormBuilder);
 
   readonly usuarios = this.usuariosService.usuarios;
+  readonly filterDraft = signal('');
   readonly filterQ = signal('');
   readonly editingId = signal<number | null>(null);
   readonly showAddForm = signal(false);
@@ -45,6 +46,15 @@ export class Usuarios {
     password: [''],
     role: ['profesor' as UserRole, Validators.required],
   });
+
+  buscar(): void {
+    this.filterQ.set(this.filterDraft());
+  }
+
+  limpiarFiltro(): void {
+    this.filterDraft.set('');
+    this.filterQ.set('');
+  }
 
   getRolLabel(role: UserRole): string {
     return role === 'admin' ? 'Administrador' : 'Profesor';
