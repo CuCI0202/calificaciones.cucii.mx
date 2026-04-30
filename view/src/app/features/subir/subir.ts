@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { CalificacionesService } from '../../core/services/calificaciones.service';
 import { AlumnosService } from '../../core/services/alumnos.service';
 import { CarrerasService } from '../../core/services/carreras.service';
+import { GruposService } from '../../core/services/grupos.service';
 import { Calificacion } from '../../core/models/calificacion.model';
 import { Alumno } from '../../core/models/alumno.model';
 import { Materia } from '../../core/models/materia.model';
@@ -27,6 +28,7 @@ export class Subir {
   private readonly calificacionesService = inject(CalificacionesService);
   private readonly alumnosService = inject(AlumnosService);
   private readonly carrerasService = inject(CarrerasService);
+  private readonly gruposService = inject(GruposService);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
 
@@ -34,9 +36,11 @@ export class Subir {
   readonly activeTab = signal<'manual' | 'csv'>('manual');
 
   // ── Búsqueda de alumno ───────────────────────────────────────────────────
-  readonly searchCurp = signal('');
+  readonly searchQuery = signal('');
   readonly foundAlumno = signal<Alumno | null>(null);
   readonly searchError = signal('');
+  readonly showModal = signal(false);
+  readonly searchResults = signal<Alumno[]>([]);
 
   readonly materiasDeAlumno = computed<Materia[]>(() => {
     const alumno = this.foundAlumno();
@@ -46,17 +50,31 @@ export class Subir {
   });
 
   buscarAlumno(): void {
-    const curp = this.searchCurp().trim().toUpperCase();
-    if (!curp) return;
-    const alumno = this.alumnosService.alumnos().find((a) => a.curp === curp);
-    if (alumno) {
-      this.foundAlumno.set(alumno);
-      this.searchError.set('');
-      this.form.controls.materiaId.setValue('');
-    } else {
-      this.foundAlumno.set(null);
-      this.searchError.set('No se encontró ningún alumno con esa CURP.');
-    }
+    const query = this.searchQuery().trim();
+    if (!query) return;
+    const queryUpper = query.toUpperCase();
+    const queryLower = query.toLowerCase();
+    const results = this.alumnosService.alumnos().filter(
+      (a) => a.curp === queryUpper || a.nombre.toLowerCase().includes(queryLower),
+    );
+    this.searchResults.set(results);
+    this.showModal.set(true);
+    this.searchError.set('');
+  }
+
+  seleccionarAlumno(alumno: Alumno): void {
+    this.foundAlumno.set(alumno);
+    this.showModal.set(false);
+    this.searchError.set('');
+    this.form.controls.materiaId.setValue('');
+  }
+
+  cerrarModal(): void {
+    this.showModal.set(false);
+  }
+
+  grupoNombre(grupoId: number): string {
+    return this.gruposService.grupos().find((g) => g.id === grupoId)?.nombre ?? '—';
   }
 
   // ── Manual form ──────────────────────────────────────────────────────────
@@ -96,7 +114,7 @@ export class Subir {
       this.errorMsg.set('');
       this.form.reset({ cuatrimestre: 0, calificacion: 0 });
       this.foundAlumno.set(null);
-      this.searchCurp.set('');
+      this.searchQuery.set('');
       this.searchError.set('');
       setTimeout(() => this.successMsg.set(''), 3000);
     });

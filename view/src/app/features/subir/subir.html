@@ -40,16 +40,15 @@
 
         <!-- Búsqueda de alumno -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Buscar alumno por CURP</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Buscar alumno por CURP o Nombre</label>
           <div class="flex gap-2">
             <input
               type="text"
-              placeholder="GAMA990101HDFRCR01"
-              maxlength="18"
-              [value]="searchCurp()"
-              (input)="searchCurp.set($any($event.target).value.toUpperCase())"
+              placeholder="CURP o nombre del alumno"
+              [value]="searchQuery()"
+              (input)="searchQuery.set($any($event.target).value)"
               (keydown.enter)="buscarAlumno()"
-              class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-primary" />
+              class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
             <button
               type="button"
               (click)="buscarAlumno()"
@@ -61,6 +60,52 @@
             <p class="text-red-500 text-xs mt-1">{{ searchError() }}</p>
           }
         </div>
+
+        <!-- Modal de resultados de búsqueda -->
+        @if (showModal()) {
+          <div class="fixed inset-0 z-50 flex items-center justify-center">
+            <div class="absolute inset-0 bg-black/40" (click)="cerrarModal()"></div>
+            <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+              <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h2 class="text-base font-semibold text-brand-dark">Resultados de búsqueda</h2>
+                <button type="button" (click)="cerrarModal()" class="text-gray-400 hover:text-gray-600 text-lg leading-none">&times;</button>
+              </div>
+              @if (searchResults().length === 0) {
+                <p class="text-center text-sm text-gray-500 py-10">No se encontró ningún alumno con ese criterio.</p>
+              } @else {
+                <div class="overflow-y-auto max-h-80">
+                  <table class="w-full text-sm">
+                    <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide sticky top-0">
+                      <tr>
+                        <th class="px-4 py-3 text-left">CURP</th>
+                        <th class="px-4 py-3 text-left">Nombre</th>
+                        <th class="px-4 py-3 text-left">Grupo</th>
+                        <th class="px-4 py-3"></th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                      @for (alumno of searchResults(); track alumno.id) {
+                        <tr class="hover:bg-gray-50">
+                          <td class="px-4 py-3 font-mono text-xs text-gray-600">{{ alumno.curp }}</td>
+                          <td class="px-4 py-3 text-gray-800">{{ alumno.nombre }}</td>
+                          <td class="px-4 py-3 text-gray-600">{{ grupoNombre(alumno.grupoId) }}</td>
+                          <td class="px-4 py-3 text-right">
+                            <button
+                              type="button"
+                              (click)="seleccionarAlumno(alumno)"
+                              class="bg-primary text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-primary-dark transition-colors">
+                              Seleccionar
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </div>
+          </div>
+        }
 
         <!-- Alumno encontrado -->
         @if (foundAlumno()) {
@@ -77,8 +122,9 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Cuatrimestre</label>
               <select formControlName="cuatrimestre"
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                [class.border-red-400]="form.controls.cuatrimestre.invalid && form.controls.cuatrimestre.touched">
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-gray-100 disabled:cursor-not-allowed"
+                [class.border-red-400]="form.controls.cuatrimestre.invalid && form.controls.cuatrimestre.touched"
+                [attr.disabled]="!foundAlumno() ? true : null">
                 <option [value]="0" disabled>Selecciona...</option>
                 @for (n of cuatrimestres; track n) {
                   <option [value]="n">{{ n }}° Cuatrimestre</option>
@@ -93,7 +139,7 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Materia</label>
               <select formControlName="materiaId"
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-gray-100 disabled:cursor-not-allowed"
                 [class.border-red-400]="form.controls.materiaId.invalid && form.controls.materiaId.touched"
                 [attr.disabled]="!foundAlumno() ? true : null">
                 <option value="" disabled>
@@ -112,8 +158,9 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Calificación (0–100)</label>
               <input formControlName="calificacion" type="number" min="0" max="100"
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                [class.border-red-400]="form.controls.calificacion.invalid && form.controls.calificacion.touched" />
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-gray-100 disabled:cursor-not-allowed"
+                [class.border-red-400]="form.controls.calificacion.invalid && form.controls.calificacion.touched"
+                [attr.disabled]="!foundAlumno() ? true : null" />
               @if (form.controls.calificacion.touched && form.controls.calificacion.errors) {
                 <p class="text-red-500 text-xs mt-1">Ingresa un valor entre 0 y 100.</p>
               }
