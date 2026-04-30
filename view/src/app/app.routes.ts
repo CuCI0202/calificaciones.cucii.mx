@@ -48,6 +48,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/planteles/planteles').then((m) => m.Planteles),
   },
   {
+    path: 'usuarios',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/usuarios/usuarios').then((m) => m.Usuarios),
+  },
+  {
     path: '**',
     redirectTo: 'consultar',
   },

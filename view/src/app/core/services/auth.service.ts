@@ -3,10 +3,10 @@ import { Observable, of, throwError } from 'rxjs';
 import { Profesor, UserRole } from '../models/profesor.model';
 
 const MOCK_PROFESORES: Profesor[] = [
-  { id: 1, nombre: 'Admin Servicios Escolares', email: 'admin@cucii.edu.mx', password: '1234', role: 'admin' },
-  { id: 2, nombre: 'Juan García', email: 'juan@cucii.edu.mx', password: '1234', role: 'profesor' },
-  { id: 3, nombre: 'María López', email: 'maria@cucii.edu.mx', password: '1234', role: 'profesor' },
-  { id: 4, nombre: 'Carlos Ruiz', email: 'carlos@cucii.edu.mx', password: '1234', role: 'profesor' },
+  { id: 1, nombre: 'Admin', apellido: 'Servicios Escolares', email: 'admin@cucii.edu.mx', password: '1234', role: 'admin' },
+  { id: 2, nombre: 'Juan', apellido: 'García', email: 'juan@cucii.edu.mx', password: '1234', role: 'profesor' },
+  { id: 3, nombre: 'María', apellido: 'López', email: 'maria@cucii.edu.mx', password: '1234', role: 'profesor' },
+  { id: 4, nombre: 'Carlos', apellido: 'Ruiz', email: 'carlos@cucii.edu.mx', password: '1234', role: 'profesor' },
 ];
 
 @Injectable({ providedIn: 'root' })
