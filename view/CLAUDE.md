@@ -127,7 +127,7 @@ Lógica de detalle: join en memoria — `calificaciones().filter(c => c.alumnoId
 
 ### `/subir` — dos tabs
 
-- **Manual**: campo CURP + botón "Buscar" → resuelve alumno desde `AlumnosService`. Una vez encontrado, dropdown de materias viene de `CarrerasService` (materias de la carrera del alumno). Form: `cuatrimestre` (1–10), `materiaId`, `calificacion` (0–100).
+- **Manual**: campo de texto libre + botón "Buscar" → abre modal con resultados que coincidan por CURP exacta o nombre parcial. El modal muestra CURP, nombre y grupo de cada alumno con botón "Seleccionar". Al seleccionar se cierra el modal y se habilitan los tres campos del formulario (`cuatrimestre`, `materiaId`, `calificacion`), que permanecen `disabled` hasta entonces. Dropdown de materias viene de `CarrerasService` (materias de la carrera del alumno seleccionado).
 - **CSV**: formato de 4 columnas `alumno_curp,materia_id,cuatrimestre,calificacion`. Valida CURP existente en `AlumnosService`. Preview con filas válidas/inválidas antes de confirmar.
 
 ### `/materias` — pantalla de admin
@@ -175,6 +175,7 @@ Orden de links de **izquierda a derecha**:
 - **No usar `ngOnInit`** — inicialización en constructor o directamente en la clase
 - Forms: `FormBuilder.nonNullable.group({})` siempre
 - Filtrado carrera/grupo en listas: join en memoria via `Set<id>` sobre el signal correspondiente
+- **Búsqueda en listas**: patrón draft+committed — `filterDraft` (enlazado al input) y `filterQ` (aplicado al `computed()`). El filtro solo se ejecuta al llamar `buscar()` (botón o Enter). Nunca filtrar en automático con `(input)` directo al signal que alimenta el `computed()`.
 - Templates: `@if`, `@for`, `@empty` (sintaxis de control flow de Angular 17+, no directivas estructurales)
 - Clases CSS condicionales: `[class.nombre]="condicion"` o `[class]="método()"`
 - Inputs sin dos-way binding: `[value]="signal()"` + `(input)="signal.set($any($event.target).value)"`
