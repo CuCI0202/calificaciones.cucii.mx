@@ -5,7 +5,7 @@ import { adminGuard } from './core/guards/admin.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'consultar',
+    redirectTo: 'browse',
     pathMatch: 'full',
   },
   {
@@ -13,47 +13,47 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
   },
   {
-    path: 'consultar',
+    path: 'browse',
     canActivate: [authGuard],
-    loadComponent: () => import('./features/consultar/consultar').then((m) => m.Consultar),
+    loadComponent: () => import('./features/browse/browse').then((m) => m.Browse),
   },
   {
-    path: 'subir',
+    path: 'upload',
     canActivate: [authGuard],
-    loadComponent: () => import('./features/subir/subir').then((m) => m.Subir),
+    loadComponent: () => import('./features/upload/upload').then((m) => m.Upload),
   },
   {
-    path: 'alumnos',
+    path: 'students',
     canActivate: [adminGuard],
-    loadComponent: () => import('./features/alumnos/alumnos').then((m) => m.Alumnos),
+    loadComponent: () => import('./features/students/students').then((m) => m.Students),
   },
   {
-    path: 'grupos',
+    path: 'groups',
     canActivate: [adminGuard],
-    loadComponent: () => import('./features/grupos/grupos').then((m) => m.Grupos),
+    loadComponent: () => import('./features/groups/groups').then((m) => m.Groups),
   },
   {
-    path: 'carreras',
+    path: 'programs',
     canActivate: [adminGuard],
-    loadComponent: () => import('./features/carreras/carreras').then((m) => m.Carreras),
+    loadComponent: () => import('./features/programs/programs').then((m) => m.Programs),
   },
   {
-    path: 'materias',
+    path: 'subjects',
     canActivate: [adminGuard],
-    loadComponent: () => import('./features/materias/materias').then((m) => m.Materias),
+    loadComponent: () => import('./features/subjects/subjects').then((m) => m.Subjects),
   },
   {
-    path: 'planteles',
+    path: 'campuses',
     canActivate: [adminGuard],
-    loadComponent: () => import('./features/planteles/planteles').then((m) => m.Planteles),
+    loadComponent: () => import('./features/campuses/campuses').then((m) => m.Campuses),
   },
   {
-    path: 'usuarios',
+    path: 'users',
     canActivate: [adminGuard],
-    loadComponent: () => import('./features/usuarios/usuarios').then((m) => m.Usuarios),
+    loadComponent: () => import('./features/users/users').then((m) => m.Users),
   },
   {
     path: '**',
-    redirectTo: 'consultar',
+    redirectTo: 'browse',
   },
 ];

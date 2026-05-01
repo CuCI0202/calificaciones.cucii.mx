@@ -5,14 +5,14 @@
     @if (auth.isAuthenticated()) {
     <div class="flex items-center gap-6 text-sm font-medium">
       <a
-        routerLink="/consultar"
+        routerLink="/browse"
         routerLinkActive="underline"
         class="hover:text-white/70 transition-colors"
       >
         Consultar
       </a>
       <a
-        routerLink="/subir"
+        routerLink="/upload"
         routerLinkActive="underline"
         class="hover:text-white/70 transition-colors"
       >
@@ -20,42 +20,42 @@
       </a>
       @if (auth.isAdmin()) {
       <a
-        routerLink="/alumnos"
+        routerLink="/students"
         routerLinkActive="underline"
         class="hover:text-white/70 transition-colors"
       >
         Alumnos
       </a>
       <a
-        routerLink="/grupos"
+        routerLink="/groups"
         routerLinkActive="underline"
         class="hover:text-white/70 transition-colors"
       >
         Grupos
       </a>
       <a
-        routerLink="/planteles"
+        routerLink="/campuses"
         routerLinkActive="underline"
         class="hover:text-white/70 transition-colors"
       >
         Planteles
       </a>
       <a
-        routerLink="/materias"
+        routerLink="/subjects"
         routerLinkActive="underline"
         class="hover:text-white/70 transition-colors"
       >
         Materias
       </a>
       <a
-        routerLink="/carreras"
+        routerLink="/programs"
         routerLinkActive="underline"
         class="hover:text-white/70 transition-colors"
       >
         Carreras
       </a>
       <a
-        routerLink="/usuarios"
+        routerLink="/users"
         routerLinkActive="underline"
         class="hover:text-white/70 transition-colors"
       >
