@@ -28,12 +28,10 @@
             class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             [class.border-red-400]="form.controls.email.invalid && form.controls.email.touched"
           />
-          @if (form.controls.email.touched && form.controls.email.errors) {
-            <p class="text-red-500 text-xs mt-1">
-              @if (form.controls.email.errors['required']) { El correo es obligatorio. }
-              @else if (form.controls.email.errors['email']) { Ingresa un correo válido. }
-            </p>
-          }
+          <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.email.touched && form.controls.email.errors)">
+            @if (form.controls.email.errors?.['required']) { El correo es obligatorio. }
+            @else if (form.controls.email.errors?.['email']) { Ingresa un correo válido. }
+          </p>
         </div>
 
         <div>
@@ -45,9 +43,7 @@
             class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             [class.border-red-400]="form.controls.password.invalid && form.controls.password.touched"
           />
-          @if (form.controls.password.touched && form.controls.password.errors?.['required']) {
-            <p class="text-red-500 text-xs mt-1">La contraseña es obligatoria.</p>
-          }
+          <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.password.touched && form.controls.password.errors?.['required'])">La contraseña es obligatoria.</p>
         </div>
 
         <button

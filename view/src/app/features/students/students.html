@@ -30,9 +30,7 @@
             <input formControlName="name" type="text" placeholder="Nombre Apellido"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               [class.border-red-400]="addForm.controls.name.invalid && addForm.controls.name.touched" />
-            @if (addForm.controls.name.touched && addForm.controls.name.errors?.['required']) {
-              <p class="text-red-500 text-xs mt-1">El nombre es obligatorio.</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.name.touched && addForm.controls.name.errors?.['required'])">El nombre es obligatorio.</p>
           </div>
           <!-- CURP -->
           <div>
@@ -41,9 +39,7 @@
               maxlength="18"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-primary"
               [class.border-red-400]="addForm.controls.curp.invalid && addForm.controls.curp.touched" />
-            @if (addForm.controls.curp.touched && addForm.controls.curp.errors) {
-              <p class="text-red-500 text-xs mt-1">CURP inválida (18 caracteres).</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.curp.touched && addForm.controls.curp.errors)">CURP inválida (18 caracteres).</p>
           </div>
           <!-- Program -->
           <div>
@@ -57,9 +53,7 @@
                 <option [value]="p.id">{{ p.name }}</option>
               }
             </select>
-            @if (addForm.controls.programId.touched && addForm.controls.programId.errors?.['required']) {
-              <p class="text-red-500 text-xs mt-1">La carrera es obligatoria.</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.programId.touched && addForm.controls.programId.errors?.['required'])">La carrera es obligatoria.</p>
           </div>
           <!-- Group -->
           <div>
@@ -75,9 +69,7 @@
                 <option [value]="g.id">{{ g.code }} — {{ g.name }}</option>
               }
             </select>
-            @if (addForm.controls.groupId.touched && addForm.controls.groupId.errors?.['required']) {
-              <p class="text-red-500 text-xs mt-1">El grupo es obligatorio.</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.groupId.touched && addForm.controls.groupId.errors?.['required'])">El grupo es obligatorio.</p>
           </div>
           <!-- Campus -->
           <div>
@@ -90,9 +82,7 @@
                 <option [value]="c.id">{{ c.name }}</option>
               }
             </select>
-            @if (addForm.controls.campusId.touched && addForm.controls.campusId.errors?.['required']) {
-              <p class="text-red-500 text-xs mt-1">El plantel es obligatorio.</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.campusId.touched && addForm.controls.campusId.errors?.['required'])">El plantel es obligatorio.</p>
           </div>
           <div class="sm:col-span-2 lg:col-span-3 flex justify-end">
             <button type="submit"

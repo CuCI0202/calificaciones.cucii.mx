@@ -29,18 +29,14 @@
             <input formControlName="code" type="text" placeholder="ISC-A"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               [class.border-red-400]="addForm.controls.code.invalid && addForm.controls.code.touched" />
-            @if (addForm.controls.code.touched && addForm.controls.code.errors?.['required']) {
-              <p class="text-red-500 text-xs mt-1">La clave es obligatoria.</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.code.touched && addForm.controls.code.errors?.['required'])">La clave es obligatoria.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
             <input formControlName="name" type="text" placeholder="Grupo A"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               [class.border-red-400]="addForm.controls.name.invalid && addForm.controls.name.touched" />
-            @if (addForm.controls.name.touched && addForm.controls.name.errors?.['required']) {
-              <p class="text-red-500 text-xs mt-1">El nombre es obligatorio.</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.name.touched && addForm.controls.name.errors?.['required'])">El nombre es obligatorio.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Carrera</label>
@@ -52,9 +48,7 @@
                 <option [value]="p.id">{{ p.name }}</option>
               }
             </select>
-            @if (addForm.controls.programId.touched && addForm.controls.programId.errors?.['required']) {
-              <p class="text-red-500 text-xs mt-1">La carrera es obligatoria.</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.programId.touched && addForm.controls.programId.errors?.['required'])">La carrera es obligatoria.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Plantel</label>
@@ -66,9 +60,7 @@
                 <option [value]="c.id">{{ c.name }}</option>
               }
             </select>
-            @if (addForm.controls.campusId.touched && addForm.controls.campusId.errors?.['required']) {
-              <p class="text-red-500 text-xs mt-1">El plantel es obligatorio.</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.campusId.touched && addForm.controls.campusId.errors?.['required'])">El plantel es obligatorio.</p>
           </div>
           <div class="sm:col-span-2 lg:col-span-4 flex justify-end">
             <button type="submit"

@@ -29,17 +29,13 @@
             <input formControlName="code" type="text" placeholder="Clave (ej. MAT-101)"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               [class.border-red-400]="addForm.controls.code.invalid && addForm.controls.code.touched" />
-            @if (addForm.controls.code.touched && addForm.controls.code.errors?.['required']) {
-              <p class="text-red-500 text-xs mt-1">La clave es obligatoria.</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.code.touched && addForm.controls.code.errors?.['required'])">La clave es obligatoria.</p>
           </div>
           <div>
             <input formControlName="name" type="text" placeholder="Nombre de la materia"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               [class.border-red-400]="addForm.controls.name.invalid && addForm.controls.name.touched" />
-            @if (addForm.controls.name.touched && addForm.controls.name.errors?.['required']) {
-              <p class="text-red-500 text-xs mt-1">El nombre es obligatorio.</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.name.touched && addForm.controls.name.errors?.['required'])">El nombre es obligatorio.</p>
           </div>
           <button type="submit"
             class="bg-primary text-white px-5 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm whitespace-nowrap">

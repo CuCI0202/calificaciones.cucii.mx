@@ -30,9 +30,7 @@
             <input formControlName="name" type="text" placeholder="Juan"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               [class.border-red-400]="addForm.controls.name.invalid && addForm.controls.name.touched" />
-            @if (addForm.controls.name.touched && addForm.controls.name.errors?.['required']) {
-              <p class="text-red-500 text-xs mt-1">El nombre es obligatorio.</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.name.touched && addForm.controls.name.errors?.['required'])">El nombre es obligatorio.</p>
           </div>
 
           <div>
@@ -40,9 +38,7 @@
             <input formControlName="lastName" type="text" placeholder="García"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               [class.border-red-400]="addForm.controls.lastName.invalid && addForm.controls.lastName.touched" />
-            @if (addForm.controls.lastName.touched && addForm.controls.lastName.errors?.['required']) {
-              <p class="text-red-500 text-xs mt-1">El apellido es obligatorio.</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.lastName.touched && addForm.controls.lastName.errors?.['required'])">El apellido es obligatorio.</p>
           </div>
 
           <div>
@@ -50,12 +46,10 @@
             <input formControlName="email" type="email" placeholder="usuario@cucii.edu.mx"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               [class.border-red-400]="addForm.controls.email.invalid && addForm.controls.email.touched" />
-            @if (addForm.controls.email.touched && addForm.controls.email.errors?.['required']) {
-              <p class="text-red-500 text-xs mt-1">El correo es obligatorio.</p>
-            }
-            @if (addForm.controls.email.touched && addForm.controls.email.errors?.['email']) {
-              <p class="text-red-500 text-xs mt-1">Ingresa un correo válido.</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.email.touched && addForm.controls.email.errors)">
+              @if (addForm.controls.email.errors?.['required']) { El correo es obligatorio. }
+              @else if (addForm.controls.email.errors?.['email']) { Ingresa un correo válido. }
+            </p>
           </div>
 
           <div>
@@ -78,9 +72,7 @@
                 }
               </button>
             </div>
-            @if (addForm.controls.password.touched && addForm.controls.password.errors?.['required']) {
-              <p class="text-red-500 text-xs mt-1">La contraseña es obligatoria.</p>
-            }
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.password.touched && addForm.controls.password.errors?.['required'])">La contraseña es obligatoria.</p>
           </div>
 
           <div>

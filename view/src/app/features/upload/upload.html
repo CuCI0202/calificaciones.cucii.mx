@@ -56,9 +56,7 @@
               Buscar
             </button>
           </div>
-          @if (searchError()) {
-            <p class="text-red-500 text-xs mt-1">{{ searchError() }}</p>
-          }
+          <p class="text-red-500 text-xs mt-1" [class.invisible]="!searchError()">{{ searchError() }}</p>
         </div>
 
         <!-- Search results modal -->
@@ -130,9 +128,7 @@
                   <option [value]="n">{{ n }}° Cuatrimestre</option>
                 }
               </select>
-              @if (form.controls.term.touched && form.controls.term.errors) {
-                <p class="text-red-500 text-xs mt-1">Selecciona un cuatrimestre.</p>
-              }
+              <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.term.touched && form.controls.term.errors)">Selecciona un cuatrimestre.</p>
             </div>
 
             <!-- Subject -->
@@ -149,9 +145,7 @@
                   <option [value]="s.id">{{ s.name }}</option>
                 }
               </select>
-              @if (form.controls.subjectId.touched && form.controls.subjectId.errors?.['required']) {
-                <p class="text-red-500 text-xs mt-1">Selecciona una materia.</p>
-              }
+              <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.subjectId.touched && form.controls.subjectId.errors?.['required'])">Selecciona una materia.</p>
             </div>
 
             <!-- Score -->
@@ -161,9 +155,7 @@
                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-gray-100 disabled:cursor-not-allowed"
                 [class.border-red-400]="form.controls.score.invalid && form.controls.score.touched"
                 [attr.disabled]="!foundStudent() ? true : null" />
-              @if (form.controls.score.touched && form.controls.score.errors) {
-                <p class="text-red-500 text-xs mt-1">Ingresa un valor entre 0 y 100.</p>
-              }
+              <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.score.touched && form.controls.score.errors)">Ingresa un valor entre 0 y 100.</p>
             </div>
           </div>
 
