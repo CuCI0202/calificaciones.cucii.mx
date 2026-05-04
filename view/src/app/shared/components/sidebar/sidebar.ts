@@ -1,15 +1,20 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-navbar',
+  selector: 'app-sidebar',
   imports: [RouterLink, RouterLinkActive],
-  templateUrl: './navbar.html',
+  templateUrl: './sidebar.html',
 })
-export class Navbar {
+export class Sidebar {
   protected readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  protected readonly collapsed = signal(false);
+
+  toggle(): void {
+    this.collapsed.update((v) => !v);
+  }
 
   logout(): void {
     this.auth.logout();

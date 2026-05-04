@@ -1,0 +1,210 @@
+<aside
+  class="bg-brand-dark text-white flex flex-col h-full shrink-0 transition-[width] duration-300 overflow-hidden"
+  [class.w-56]="!collapsed()"
+  [class.w-14]="collapsed()"
+>
+  <!-- Header -->
+  <div
+    class="border-b border-white/10 flex items-center h-[60px] px-3 shrink-0"
+    [class.justify-between]="!collapsed()"
+    [class.justify-center]="collapsed()"
+  >
+    @if (!collapsed()) {
+      <span class="text-sm font-bold tracking-tight leading-snug whitespace-nowrap">
+        Calificaciones<br />CUCII
+      </span>
+    }
+    <button
+      (click)="toggle()"
+      class="p-1.5 rounded-md hover:bg-white/10 transition-colors text-white/60 hover:text-white shrink-0"
+    >
+      @if (collapsed()) {
+        <!-- chevron-right -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        </svg>
+      } @else {
+        <!-- chevron-left -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+      }
+    </button>
+  </div>
+
+  <!-- Nav -->
+  <nav
+    class="flex-1 py-4 flex flex-col gap-1 text-sm overflow-y-auto"
+    [class.px-3]="!collapsed()"
+    [class.px-2]="collapsed()"
+  >
+    <a
+      routerLink="/browse"
+      routerLinkActive="bg-white/10"
+      class="flex items-center py-2 rounded-md hover:bg-white/10 transition-colors"
+      [class.px-3]="!collapsed()"
+      [class.gap-3]="!collapsed()"
+      [class.justify-center]="collapsed()"
+    >
+      <!-- magnifying-glass -->
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 shrink-0">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+      </svg>
+      @if (!collapsed()) {
+        <span class="whitespace-nowrap">Consultar Calificaciones</span>
+      }
+    </a>
+
+    <a
+      routerLink="/upload"
+      routerLinkActive="bg-white/10"
+      class="flex items-center py-2 rounded-md hover:bg-white/10 transition-colors"
+      [class.px-3]="!collapsed()"
+      [class.gap-3]="!collapsed()"
+      [class.justify-center]="collapsed()"
+    >
+      <!-- arrow-up-tray -->
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 shrink-0">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+      </svg>
+      @if (!collapsed()) {
+        <span class="whitespace-nowrap">Subir Calificaciones</span>
+      }
+    </a>
+
+    @if (auth.isAdmin()) {
+      @if (!collapsed()) {
+        <p class="mt-5 mb-1 px-3 text-xs font-semibold text-white/40 uppercase tracking-wider whitespace-nowrap">
+          Administración
+        </p>
+      } @else {
+        <hr class="mt-4 mb-1 border-white/10" />
+      }
+
+      <a
+        routerLink="/students"
+        routerLinkActive="bg-white/10"
+        class="flex items-center py-2 rounded-md hover:bg-white/10 transition-colors"
+        [class.px-3]="!collapsed()"
+        [class.gap-3]="!collapsed()"
+        [class.justify-center]="collapsed()"
+      >
+        <!-- user -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 shrink-0">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+        </svg>
+        @if (!collapsed()) {
+          <span class="whitespace-nowrap">Alumnos</span>
+        }
+      </a>
+
+      <a
+        routerLink="/groups"
+        routerLinkActive="bg-white/10"
+        class="flex items-center py-2 rounded-md hover:bg-white/10 transition-colors"
+        [class.px-3]="!collapsed()"
+        [class.gap-3]="!collapsed()"
+        [class.justify-center]="collapsed()"
+      >
+        <!-- user-group -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 shrink-0">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+        </svg>
+        @if (!collapsed()) {
+          <span class="whitespace-nowrap">Grupos</span>
+        }
+      </a>
+
+      <a
+        routerLink="/campuses"
+        routerLinkActive="bg-white/10"
+        class="flex items-center py-2 rounded-md hover:bg-white/10 transition-colors"
+        [class.px-3]="!collapsed()"
+        [class.gap-3]="!collapsed()"
+        [class.justify-center]="collapsed()"
+      >
+        <!-- building-office-2 -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 shrink-0">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
+        </svg>
+        @if (!collapsed()) {
+          <span class="whitespace-nowrap">Planteles</span>
+        }
+      </a>
+
+      <a
+        routerLink="/subjects"
+        routerLinkActive="bg-white/10"
+        class="flex items-center py-2 rounded-md hover:bg-white/10 transition-colors"
+        [class.px-3]="!collapsed()"
+        [class.gap-3]="!collapsed()"
+        [class.justify-center]="collapsed()"
+      >
+        <!-- book-open -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 shrink-0">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+        </svg>
+        @if (!collapsed()) {
+          <span class="whitespace-nowrap">Materias</span>
+        }
+      </a>
+
+      <a
+        routerLink="/programs"
+        routerLinkActive="bg-white/10"
+        class="flex items-center py-2 rounded-md hover:bg-white/10 transition-colors"
+        [class.px-3]="!collapsed()"
+        [class.gap-3]="!collapsed()"
+        [class.justify-center]="collapsed()"
+      >
+        <!-- academic-cap -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 shrink-0">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 3.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
+        </svg>
+        @if (!collapsed()) {
+          <span class="whitespace-nowrap">Carreras</span>
+        }
+      </a>
+
+      <a
+        routerLink="/users"
+        routerLinkActive="bg-white/10"
+        class="flex items-center py-2 rounded-md hover:bg-white/10 transition-colors"
+        [class.px-3]="!collapsed()"
+        [class.gap-3]="!collapsed()"
+        [class.justify-center]="collapsed()"
+      >
+        <!-- user-circle -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 shrink-0">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+        @if (!collapsed()) {
+          <span class="whitespace-nowrap">Usuarios</span>
+        }
+      </a>
+    }
+  </nav>
+
+  <!-- Logout -->
+  <div
+    class="border-t border-white/10 py-3"
+    [class.px-3]="!collapsed()"
+    [class.px-2]="collapsed()"
+  >
+    <button
+      (click)="logout()"
+      class="w-full flex items-center py-2 rounded-md hover:bg-white/10 transition-colors text-white/60 hover:text-white"
+      [class.px-3]="!collapsed()"
+      [class.gap-3]="!collapsed()"
+      [class.justify-center]="collapsed()"
+    >
+      <!-- arrow-right-on-rectangle -->
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 shrink-0">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
+      </svg>
+      @if (!collapsed()) {
+        <span class="whitespace-nowrap">Cerrar sesión</span>
+      }
+    </button>
+  </div>
+</aside>
