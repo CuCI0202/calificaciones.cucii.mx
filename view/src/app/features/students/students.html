@@ -55,6 +55,19 @@
             </select>
             <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.programId.touched && addForm.controls.programId.errors?.['required'])">La carrera es obligatoria.</p>
           </div>
+          <!-- Campus -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Plantel</label>
+            <select formControlName="campusId"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              [class.border-red-400]="addForm.controls.campusId.invalid && addForm.controls.campusId.touched">
+              <option value="" disabled>Selecciona...</option>
+              @for (c of campuses(); track c.id) {
+                <option [value]="c.id">{{ c.name }}</option>
+              }
+            </select>
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.campusId.touched && addForm.controls.campusId.errors?.['required'])">El plantel es obligatorio.</p>
+          </div>
           <!-- Group -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Grupo</label>
@@ -70,19 +83,6 @@
               }
             </select>
             <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.groupId.touched && addForm.controls.groupId.errors?.['required'])">El grupo es obligatorio.</p>
-          </div>
-          <!-- Campus -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Plantel</label>
-            <select formControlName="campusId"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.campusId.invalid && addForm.controls.campusId.touched">
-              <option value="" disabled>Selecciona...</option>
-              @for (c of campuses(); track c.id) {
-                <option [value]="c.id">{{ c.name }}</option>
-              }
-            </select>
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.campusId.touched && addForm.controls.campusId.errors?.['required'])">El plantel es obligatorio.</p>
           </div>
           <div class="sm:col-span-2 lg:col-span-3 flex justify-end">
             <button type="submit"
@@ -125,8 +125,8 @@
               <th class="px-4 py-3 text-left">Nombre</th>
               <th class="px-4 py-3 text-left">CURP</th>
               <th class="px-4 py-3 text-left">Carrera</th>
-              <th class="px-4 py-3 text-left">Grupo</th>
               <th class="px-4 py-3 text-left">Plantel</th>
+              <th class="px-4 py-3 text-left">Grupo</th>
               <th class="px-4 py-3 text-center">Acciones</th>
             </tr>
           </thead>
@@ -155,20 +155,20 @@
                     </select>
                   </td>
                   <td class="px-4 py-2">
-                    <select [formControl]="editForm.controls.groupId"
-                      class="w-full border rounded px-2 py-1 text-xs">
-                      <option value="" disabled>Selecciona...</option>
-                      @for (g of groupsForEdit(); track g.id) {
-                        <option [value]="g.id">{{ g.code }}</option>
-                      }
-                    </select>
-                  </td>
-                  <td class="px-4 py-2">
                     <select [formControl]="editForm.controls.campusId"
                       class="w-full border rounded px-2 py-1 text-xs">
                       <option value="" disabled>Selecciona...</option>
                       @for (c of campuses(); track c.id) {
                         <option [value]="c.id">{{ c.name }}</option>
+                      }
+                    </select>
+                  </td>
+                  <td class="px-4 py-2">
+                    <select [formControl]="editForm.controls.groupId"
+                      class="w-full border rounded px-2 py-1 text-xs">
+                      <option value="" disabled>Selecciona...</option>
+                      @for (g of groupsForEdit(); track g.id) {
+                        <option [value]="g.id">{{ g.code }}</option>
                       }
                     </select>
                   </td>
@@ -191,8 +191,8 @@
                   <td class="px-4 py-3 font-medium text-gray-800">{{ student.name }}</td>
                   <td class="px-4 py-3 font-mono text-gray-500 text-xs">{{ student.curp }}</td>
                   <td class="px-4 py-3 text-gray-600">{{ getProgramName(student.programId) }}</td>
-                  <td class="px-4 py-3 text-gray-600">{{ getGroupName(student.groupId) }}</td>
                   <td class="px-4 py-3 text-gray-600">{{ getCampusName(student.campusId) }}</td>
+                  <td class="px-4 py-3 text-gray-600">{{ getGroupName(student.groupId) }}</td>
                   <td class="px-4 py-3 text-center">
                     <div class="flex justify-center gap-2">
                       <button (click)="startEdit(student)"
