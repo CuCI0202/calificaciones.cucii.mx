@@ -1,13 +1,13 @@
-package com.cucii.calificaciones;
+package mx.cucii.school.platform;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CalificacionesApplication {
+public class PlatformApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CalificacionesApplication.class, args);
+		SpringApplication.run(PlatformApplication.class, args);
 	}
 
 }
