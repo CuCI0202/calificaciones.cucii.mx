@@ -21,7 +21,7 @@ create table planteles
     updated_at           timestamp with time zone default current_timestamp
 );
 
-alter table planteles owner to admin_cuci;
+alter table planteles owner to ssant0;
 
 create index idx_planteles_ciudad on planteles (ciudad_municipio);
 create index idx_planteles_estado on planteles (estado);
@@ -49,7 +49,7 @@ create table coordinadores
             on update cascade on delete restrict
 );
 
-alter table coordinadores owner to admin_cuci;
+alter table coordinadores owner to ssant0;
 
 create index idx_coordinadores_plantel on coordinadores (plantel_id);
 create index idx_coordinadores_email   on coordinadores (email_institucional);
@@ -66,7 +66,7 @@ create table planes_estudio
     updated_at             timestamp with time zone default current_timestamp
 );
 
-alter table planes_estudio owner to admin_cuci;
+alter table planes_estudio owner to ssant0;
 
 -- ─── materias ────────────────────────────────────────────────────────────────
 
@@ -88,7 +88,7 @@ create table materias
             on update cascade on delete restrict
 );
 
-alter table materias owner to admin_cuci;
+alter table materias owner to ssant0;
 
 create index idx_materias_plan_estudio on materias (plan_estudio_id);
 
@@ -123,7 +123,7 @@ create table rvoes
             on update cascade on delete restrict
 );
 
-alter table rvoes owner to admin_cuci;
+alter table rvoes owner to ssant0;
 
 create index idx_rvoes_plantel     on rvoes (plantel_id);
 create index idx_rvoes_plan_estudio on rvoes (plan_estudio_id);
@@ -145,7 +145,7 @@ create table alumnos
     )
 );
 
-alter table alumnos owner to admin_cuci;
+alter table alumnos owner to ssant0;
 
 create index idx_alumnos_correo on alumnos (correo_institucional);
 
@@ -160,7 +160,7 @@ create table roles
     created_at  timestamp with time zone default current_timestamp
 );
 
-alter table roles owner to admin_cuci;
+alter table roles owner to ssant0;
 
 insert into roles (nombre, descripcion) values
     ('admin',                   'Administrador del sistema con acceso total'),
@@ -193,7 +193,7 @@ create table usuarios
             on update cascade on delete restrict
 );
 
-alter table usuarios owner to admin_cuci;
+alter table usuarios owner to ssant0;
 
 create index idx_usuarios_email   on usuarios (email);
 create index idx_usuarios_rol     on usuarios (rol_id);
@@ -226,7 +226,7 @@ create table grupos
             on update cascade on delete restrict
 );
 
-alter table grupos owner to admin_cuci;
+alter table grupos owner to ssant0;
 
 create index idx_grupos_plan_estudio on grupos (plan_estudio_id);
 create index idx_grupos_plantel      on grupos (plantel_id);
@@ -265,7 +265,7 @@ create table profesores_grupos
             on update cascade on delete restrict
 );
 
-alter table profesores_grupos owner to admin_cuci;
+alter table profesores_grupos owner to ssant0;
 
 create index idx_profesores_grupos_usuario on profesores_grupos (usuario_id);
 create index idx_profesores_grupos_grupo   on profesores_grupos (grupo_id);
