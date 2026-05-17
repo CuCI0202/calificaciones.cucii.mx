@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { ProgramsService } from '../../core/services/programs.service';
 import { Program } from '../../core/models/program.model';
 
@@ -11,6 +12,7 @@ import { Program } from '../../core/models/program.model';
 export class Programs {
   private readonly programsService = inject(ProgramsService);
   private readonly fb = inject(FormBuilder);
+  private readonly confirm = inject(ConfirmService);
 
   readonly programs = this.programsService.programs;
   readonly filterDraft = signal('');
@@ -80,8 +82,9 @@ export class Programs {
   }
 
   delete(id: number): void {
-    if (!confirm('¿Eliminar esta carrera?')) return;
-    this.programsService.delete(id).subscribe();
+    this.confirm.confirm('¿Eliminar esta carrera?').subscribe((ok) => {
+      if (ok) this.programsService.delete(id).subscribe();
+    });
   }
 
   toggleAddForm(): void {

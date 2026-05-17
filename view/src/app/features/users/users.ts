@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { UsersService } from '../../core/services/users.service';
 import { Teacher, UserRole } from '../../core/models/teacher.model';
 
@@ -11,6 +12,7 @@ import { Teacher, UserRole } from '../../core/models/teacher.model';
 export class Users {
   private readonly usersService = inject(UsersService);
   private readonly fb = inject(FormBuilder);
+  private readonly confirm = inject(ConfirmService);
 
   readonly users = this.usersService.users;
   readonly filterDraft = signal('');
@@ -113,7 +115,8 @@ export class Users {
   }
 
   delete(id: number): void {
-    if (!confirm('¿Eliminar este usuario?')) return;
-    this.usersService.delete(id).subscribe();
+    this.confirm.confirm('¿Eliminar este usuario?').subscribe((ok) => {
+      if (ok) this.usersService.delete(id).subscribe();
+    });
   }
 }
