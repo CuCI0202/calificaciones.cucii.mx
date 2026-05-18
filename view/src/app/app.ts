@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Sidebar } from './shared/components/sidebar/sidebar';
+import { ConfirmModal } from './shared/components/confirm-modal/confirm-modal';
 import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Sidebar],
+  imports: [RouterOutlet, Sidebar, ConfirmModal],
   template: `
     @if (auth.isAuthenticated()) {
       <div class="flex h-screen">
@@ -17,6 +18,7 @@ import { AuthService } from './core/services/auth.service';
     } @else {
       <router-outlet />
     }
+    <app-confirm-modal />
   `,
 })
 export class App {

@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { ProgramsService } from '../../core/services/programs.service';
 import { Subject } from '../../core/models/subject.model';
 
@@ -11,6 +12,7 @@ import { Subject } from '../../core/models/subject.model';
 export class Subjects {
   private readonly programsService = inject(ProgramsService);
   private readonly fb = inject(FormBuilder);
+  private readonly confirm = inject(ConfirmService);
 
   readonly programs = this.programsService.programs;
   readonly selectedProgramId = signal<number | null>(null);
@@ -66,9 +68,11 @@ export class Subjects {
   }
 
   delete(subjectId: number): void {
-    if (!confirm('¿Eliminar esta materia?')) return;
-    const programId = this.selectedProgramId();
-    if (programId === null) return;
-    this.programsService.deleteSubject(programId, subjectId).subscribe();
+    this.confirm.confirm('¿Eliminar esta materia?').subscribe((ok) => {
+      if (!ok) return;
+      const programId = this.selectedProgramId();
+      if (programId === null) return;
+      this.programsService.deleteSubject(programId, subjectId).subscribe();
+    });
   }
 }
