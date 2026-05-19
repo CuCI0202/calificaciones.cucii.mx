@@ -32,12 +32,14 @@ export class Programs {
     name: ['', Validators.required],
     rvoe: ['', Validators.required],
     rvoeDate: ['', Validators.required],
+    terms: [1, [Validators.required, Validators.min(1)]],
   });
 
   readonly addForm = this.fb.nonNullable.group({
     name: ['', Validators.required],
     rvoe: ['', Validators.required],
     rvoeDate: ['', Validators.required],
+    terms: [1, [Validators.required, Validators.min(1)]],
   });
 
   search(): void {
@@ -56,6 +58,7 @@ export class Programs {
       name: program.name,
       rvoe: program.rvoe,
       rvoeDate: program.rvoeDate,
+      terms: program.terms,
     });
   }
 

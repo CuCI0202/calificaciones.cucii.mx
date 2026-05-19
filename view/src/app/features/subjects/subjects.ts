@@ -24,14 +24,24 @@ export class Subjects {
     return this.programs().find((p) => p.id === id)?.subjects ?? [];
   });
 
+  readonly termOptions = computed<number[]>(() => {
+    const id = this.selectedProgramId();
+    if (id === null) return [];
+    const program = this.programs().find((p) => p.id === id);
+    if (!program) return [];
+    return Array.from({ length: program.terms }, (_, i) => i + 1);
+  });
+
   readonly addForm = this.fb.nonNullable.group({
     code: ['', Validators.required],
     name: ['', Validators.required],
+    term: [1, [Validators.required, Validators.min(1)]],
   });
 
   readonly editForm = this.fb.nonNullable.group({
     code: ['', Validators.required],
     name: ['', Validators.required],
+    term: [1, [Validators.required, Validators.min(1)]],
   });
 
   onProgramChange(value: string): void {
@@ -41,7 +51,7 @@ export class Subjects {
 
   startEdit(subject: Subject): void {
     this.editingId.set(subject.id);
-    this.editForm.setValue({ code: subject.code, name: subject.name });
+    this.editForm.setValue({ code: subject.code, name: subject.name, term: subject.term });
   }
 
   saveEdit(subjectId: number): void {
