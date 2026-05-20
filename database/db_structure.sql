@@ -60,10 +60,15 @@ create table planes_estudio
 (
     id                     integer generated always as identity primary key,
     nombre                 varchar(120) not null,
+    grado                  varchar(20)  not null,
+    numero_rvoe            varchar(50)  not null unique,
+    fecha_rvoe             date         not null,
     duracion_cuatrimestres integer      not null,
     is_active              boolean                  default true,
     created_at             timestamp with time zone default current_timestamp,
-    updated_at             timestamp with time zone default current_timestamp
+    updated_at             timestamp with time zone default current_timestamp,
+
+    constraint chk_grado check (grado in ('Licenciatura', 'Maestría', 'Doctorado'))
 );
 
 alter table planes_estudio owner to ssant0;
@@ -92,42 +97,6 @@ alter table materias owner to ssant0;
 
 create index idx_materias_plan_estudio on materias (plan_estudio_id);
 
--- ─── rvoes ───────────────────────────────────────────────────────────────────
-
-create table rvoes
-(
-    id                         integer generated always as identity primary key,
-    plantel_id                 integer     not null,
-    numero_rvoe                varchar(50) not null unique,
-    plan_estudio_id            integer     not null,
-    nivel_educativo            varchar(50) not null,
-    modalidad                  varchar(50) not null,
-    clave                      varchar(50),
-    numero_expediente          varchar(50) not null,
-    fecha_expedicion           date        not null,
-    vigencia_partir            date        not null,
-    fecha_ultima_actualizacion date,
-    estatus_administrativo     varchar(50)              default 'Activo',
-    is_active                  boolean                  default true,
-    created_at                 timestamp with time zone default current_timestamp,
-    updated_at                 timestamp with time zone default current_timestamp,
-
-    constraint fk_rvoe_plantel
-        foreign key (plantel_id)
-            references planteles (id)
-            on update cascade on delete restrict,
-
-    constraint fk_rvoe_plan_estudio
-        foreign key (plan_estudio_id)
-            references planes_estudio (id)
-            on update cascade on delete restrict
-);
-
-alter table rvoes owner to ssant0;
-
-create index idx_rvoes_plantel     on rvoes (plantel_id);
-create index idx_rvoes_plan_estudio on rvoes (plan_estudio_id);
-
 -- ─── alumnos ─────────────────────────────────────────────────────────────────
 
 create table alumnos
@@ -138,6 +107,9 @@ create table alumnos
     segundo_apellido     varchar(80),
     curp                 char(18)     not null unique,
     correo_institucional varchar(120) unique,
+    is_active            boolean                  default true,
+    created_at           timestamp with time zone default current_timestamp,
+    updated_at           timestamp with time zone default current_timestamp,
 
     constraint chk_curp_length check (char_length(curp) = 18),
     constraint chk_curp_format check (
@@ -163,10 +135,10 @@ create table roles
 alter table roles owner to ssant0;
 
 insert into roles (nombre, descripcion) values
-    ('admin',                   'Administrador del sistema con acceso total'),
-    ('rector',                  'Rector del plantel'),
-    ('docente',                 'Docente / profesor'),
-    ('school services manager', 'Responsable de servicios escolares');
+    ('admin',               'Administrador del sistema con acceso total'),
+    ('rector',              'Rector del plantel'),
+    ('docente',             'Docente / profesor'),
+    ('servicios_escolares', 'Responsable de servicios escolares');
 
 -- ─── usuarios ────────────────────────────────────────────────────────────────
 
@@ -289,10 +261,10 @@ values
     (2, 'Patricia', 'Ibarra Gutiérrez', 'Mtra.', 'pibarra@cuci.edu.mx',   'pibarra@gmail.com',   '3322223333', 'Coordinación Académica');
 
 -- ─── planes_estudio (id: 1, 2) ───────────────────────────────────────────────
-insert into planes_estudio (nombre, duracion_cuatrimestres)
+insert into planes_estudio (nombre, grado, numero_rvoe, fecha_rvoe, duracion_cuatrimestres)
 values
-    ('Ingeniería en Desarrollo de Software',       12),
-    ('Licenciatura en Administración de Empresas', 12);
+    ('Ingeniería en Desarrollo de Software',       'Licenciatura', 'RVOE-2021-001', '2021-06-15', 12),
+    ('Licenciatura en Administración de Empresas', 'Licenciatura', 'RVOE-2022-004', '2022-03-10', 12);
 
 -- ─── materias (plan 1 → ids 1-4 | plan 2 → ids 5-8) ─────────────────────────
 insert into materias (nombre, clave, creditos, cuatrimestre, plan_estudio_id)
@@ -306,12 +278,6 @@ values
     ('Mercadotecnia',               'MK-201', 8, 2, 2),
     ('Gestión de Proyectos',        'GP-301', 8, 3, 2);
 
--- ─── rvoes (id: 1, 2) ────────────────────────────────────────────────────────
-insert into rvoes (plantel_id, numero_rvoe, plan_estudio_id, nivel_educativo, modalidad, numero_expediente, fecha_expedicion, vigencia_partir)
-values
-    (1, 'RVOE-2021-001', 1, 'Licenciatura', 'Escolarizada', 'EXP-2021-0041', '2021-06-15', '2021-09-01'),
-    (2, 'RVOE-2022-004', 2, 'Licenciatura', 'Escolarizada', 'EXP-2022-0089', '2022-03-10', '2022-09-01');
-
 -- ─── usuarios (id: 1 admin | 2 rector | 3-4 docentes | 5 servicios) ──────────
 -- roles: 1=admin 2=rector 3=docente 4=school services manager
 insert into usuarios (nombre, email, password_hash, rol_id, plantel_id)
@@ -322,7 +288,7 @@ values
     ('Ing. Luis Pérez',      'lperez@cuci.edu.mx',   '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 3, 1),
     ('Mtra. Carmen Salinas', 'csalinas@cuci.edu.mx', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 4, 1);
 
--- ─── grupos (clave generada por secuencia: CGSV-1, CGSV-2, CGSV-3) ──────────
+-- ─── grupos (clave generada por secuencia: CG-1, CG-2, CG-3) ───────────────
 insert into grupos (nombre, plan_estudio_id, plantel_id)
 values
     ('IDS-2024A — Primer Cuatrimestre',   1, 1),
