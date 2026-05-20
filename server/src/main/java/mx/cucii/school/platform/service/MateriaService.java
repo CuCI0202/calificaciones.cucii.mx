@@ -1,0 +1,101 @@
+package mx.cucii.school.platform.service;
+
+import lombok.RequiredArgsConstructor;
+import mx.cucii.school.platform.dto.MateriaRequest;
+import mx.cucii.school.platform.dto.MateriaResponse;
+import mx.cucii.school.platform.exception.ResourceNotFoundException;
+import mx.cucii.school.platform.model.Materia;
+import mx.cucii.school.platform.model.PlanEstudio;
+import mx.cucii.school.platform.repository.MateriaRepository;
+import mx.cucii.school.platform.repository.PlanEstudioRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.OffsetDateTime;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class MateriaService {
+
+    private final MateriaRepository materiaRepository;
+    private final PlanEstudioRepository planEstudioRepository;
+
+    public List<MateriaResponse> findAll() {
+        return materiaRepository.findAll().stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public MateriaResponse findById(Integer id) {
+        return materiaRepository.findById(id)
+                .map(this::toResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("Materia no encontrada: " + id));
+    }
+
+    @Transactional
+    public MateriaResponse create(MateriaRequest request) {
+        PlanEstudio plan = planEstudioRepository.findById(request.planEstudioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Plan de estudio no encontrado"));
+        validateCuatrimestre(request.cuatrimestre(), plan.duracionCuatrimestres());
+        OffsetDateTime now = OffsetDateTime.now();
+        Materia nueva = new Materia(
+                null,
+                request.nombre(),
+                request.clave(),
+                request.creditos(),
+                request.cuatrimestre(),
+                request.planEstudioId(),
+                true,
+                now,
+                now
+        );
+        return toResponse(materiaRepository.save(nueva));
+    }
+
+    @Transactional
+    public MateriaResponse update(Integer id, MateriaRequest request) {
+        Materia existing = materiaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Materia no encontrada: " + id));
+        PlanEstudio plan = planEstudioRepository.findById(request.planEstudioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Plan de estudio no encontrado"));
+        validateCuatrimestre(request.cuatrimestre(), plan.duracionCuatrimestres());
+        Materia updated = new Materia(
+                existing.id(),
+                request.nombre(),
+                request.clave(),
+                request.creditos(),
+                request.cuatrimestre(),
+                request.planEstudioId(),
+                existing.isActive(),
+                existing.createdAt(),
+                OffsetDateTime.now()
+        );
+        return toResponse(materiaRepository.save(updated));
+    }
+
+    @Transactional
+    public void delete(Integer id) {
+        Materia existing = materiaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Materia no encontrada: " + id));
+        materiaRepository.save(new Materia(
+                existing.id(), existing.nombre(), existing.clave(),
+                existing.creditos(), existing.cuatrimestre(), existing.planEstudioId(),
+                false, existing.createdAt(), OffsetDateTime.now()
+        ));
+    }
+
+    private void validateCuatrimestre(Integer cuatrimestre, Integer duracionCuatrimestres) {
+        if (cuatrimestre != null && (cuatrimestre <= 0 || cuatrimestre > duracionCuatrimestres)) {
+            throw new IllegalArgumentException(
+                    "El cuatrimestre debe estar entre 1 y " + duracionCuatrimestres);
+        }
+    }
+
+    private MateriaResponse toResponse(Materia m) {
+        return new MateriaResponse(
+                m.id(), m.nombre(), m.clave(), m.creditos(), m.cuatrimestre(),
+                m.planEstudioId(), m.isActive(), m.createdAt(), m.updatedAt()
+        );
+    }
+}
