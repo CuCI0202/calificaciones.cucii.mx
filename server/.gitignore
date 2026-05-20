@@ -1,0 +1,23 @@
+HELP.md
+target/
+
+### Maven wrapper (keep the properties file, ignore downloaded distros) ###
+!.mvn/wrapper/maven-wrapper.properties
+.mvn/wrapper/maven-wrapper.jar
+.mvn/repository/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+### Spring Boot local config overrides ###
+src/main/resources/application-local.properties
+src/main/resources/application-local.yml

@@ -51,6 +51,7 @@ platform/
 ### Delete
 - **Soft delete** por defecto: se pone `is_active = false` y se guarda el record actualizado
 - No se usa `deleteById()` salvo que sea explícitamente necesario
+- **Cascade soft-delete**: cuando un recurso padre se desactiva, sus hijos activos se desactivan en la misma `@Transactional`. Ejemplo: `PlanEstudio.delete` desactiva todas sus `Materia` activas antes de desactivar el plan
 
 ### CORS
 - Configurado en `SecurityConfig` vía bean `CorsConfigurationSource`
@@ -59,11 +60,20 @@ platform/
 - `allowCredentials = true` para enviar el header `Authorization` con el JWT
 
 ### Seguridad y roles
-- Los roles en la DB son en minúsculas con espacios: `admin`, `rector`, `docente`, `school services manager`
-- `UsuarioDetailsService` los convierte a authority con prefijo: `ROLE_ADMIN`, `ROLE_SCHOOL_SERVICES_MANAGER`
+- Los roles en la DB son: `admin`, `rector`, `docente`, `servicios_escolares`
+- `UsuarioDetailsService` los convierte a authority con prefijo: `ROLE_ADMIN`, `ROLE_RECTOR`, `ROLE_DOCENTE`, `ROLE_SERVICIOS_ESCOLARES`
 - En `SecurityConfig`, la autorización por rol usa `.hasRole("ADMIN")` (Spring añade el prefijo `ROLE_` automáticamente)
-- Rutas públicas solo en `/auth/**`; el resto requiere JWT válido; recursos admin usan `.hasRole("ADMIN")` en `SecurityConfig`
 - El token JWT incluye el nombre del rol original (minúsculas) como claim `rol`
+
+Rutas actuales en `SecurityConfig`:
+
+| Patrón | Acceso |
+|--------|--------|
+| `/auth/**` | público |
+| `/usuarios/**` | público |
+| `/planes-estudio/**` | solo `ADMIN` |
+| `/materias/**` | solo `ADMIN` |
+| cualquier otra | JWT válido |
 
 ### Manejo de errores
 - `ResourceNotFoundException` → 404
@@ -79,6 +89,6 @@ platform/
 ## Base de datos
 
 El esquema completo está en `../database/db_structure.sql`. Tablas principales:
-`planteles`, `coordinadores`, `planes_estudio`, `materias`, `rvoes`, `alumnos`, `roles`, `usuarios`, `grupos`, `profesores_grupos`
+`planteles`, `coordinadores`, `planes_estudio`, `materias`, `alumnos`, `roles`, `usuarios`, `grupos`, `profesores_grupos`
 
 Los IDs se generan con `GENERATED ALWAYS AS IDENTITY` — al hacer insert desde Java el campo `id` debe ser `null`.
