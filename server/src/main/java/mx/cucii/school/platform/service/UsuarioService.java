@@ -82,20 +82,24 @@ public class UsuarioService {
     }
 
     @Transactional
-    public void delete(Integer id) {
+    public void delete(Integer id, boolean deactivate) {
         Usuario existing = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado: " + id));
-        usuarioRepository.save(new Usuario(
-                existing.id(),
-                existing.nombre(),
-                existing.email(),
-                existing.passwordHash(),
-                existing.rolId(),
-                existing.plantelId(),
-                false,
-                existing.createdAt(),
-                OffsetDateTime.now()
-        ));
+        if (deactivate) {
+            usuarioRepository.save(new Usuario(
+                    existing.id(),
+                    existing.nombre(),
+                    existing.email(),
+                    existing.passwordHash(),
+                    existing.rolId(),
+                    existing.plantelId(),
+                    false,
+                    existing.createdAt(),
+                    OffsetDateTime.now()
+            ));
+        } else {
+            usuarioRepository.deleteById(id);
+        }
     }
 
     private UsuarioResponse toResponse(Usuario u) {
