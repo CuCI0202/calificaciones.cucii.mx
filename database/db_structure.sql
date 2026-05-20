@@ -90,7 +90,7 @@ create table materias
     constraint fk_materias_plan_estudio
         foreign key (plan_estudio_id)
             references planes_estudio (id)
-            on update cascade on delete restrict
+            on update cascade on delete cascade
 );
 
 alter table materias owner to ssant0;
