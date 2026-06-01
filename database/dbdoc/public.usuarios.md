@@ -5,7 +5,8 @@
 | Name | Type | Default | Nullable | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
 | id | integer |  | false | [public.profesores_grupos](public.profesores_grupos.md) |  |  |
-| nombre | varchar(150) |  | false |  |  |  |
+| nombre | varchar(100) |  | false |  |  |  |
+| apellido | varchar(100) |  | true |  |  |  |
 | email | varchar(150) |  | false |  |  |  |
 | password_hash | varchar(255) |  | false |  |  |  |
 | rol_id | integer |  | false |  | [public.roles](public.roles.md) |  |

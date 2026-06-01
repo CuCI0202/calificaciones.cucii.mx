@@ -4,7 +4,7 @@
 
 | Name | Type | Default | Nullable | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-| id | integer |  | false |  |  |  |
+| id | integer |  | false | [public.alumnos_grupos](public.alumnos_grupos.md) |  |  |
 | nombres | varchar(80) |  | false |  |  |  |
 | primer_apellido | varchar(80) |  | false |  |  |  |
 | segundo_apellido | varchar(80) |  | true |  |  |  |
@@ -13,7 +13,6 @@
 | is_active | boolean | true | true |  |  |  |
 | created_at | timestamp with time zone | CURRENT_TIMESTAMP | true |  |  |  |
 | updated_at | timestamp with time zone | CURRENT_TIMESTAMP | true |  |  |  |
-| grupo_id | integer |  | true |  | [public.grupos](public.grupos.md) |  |
 
 ## Constraints
 
@@ -28,7 +27,6 @@
 | alumnos_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 | alumnos_curp_key | UNIQUE | UNIQUE (curp) |
 | alumnos_correo_institucional_key | UNIQUE | UNIQUE (correo_institucional) |
-| fk_alumnos_grupo | FOREIGN KEY | FOREIGN KEY (grupo_id) REFERENCES grupos(id) ON UPDATE CASCADE ON DELETE SET NULL |
 
 ## Indexes
 
@@ -38,7 +36,6 @@
 | alumnos_curp_key | CREATE UNIQUE INDEX alumnos_curp_key ON public.alumnos USING btree (curp) |
 | alumnos_correo_institucional_key | CREATE UNIQUE INDEX alumnos_correo_institucional_key ON public.alumnos USING btree (correo_institucional) |
 | idx_alumnos_correo | CREATE INDEX idx_alumnos_correo ON public.alumnos USING btree (correo_institucional) |
-| idx_alumnos_grupo | CREATE INDEX idx_alumnos_grupo ON public.alumnos USING btree (grupo_id) |
 
 ## Relations
 

@@ -4,7 +4,7 @@
 
 | Name | Type | Default | Nullable | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-| id | integer |  | false | [public.coordinadores](public.coordinadores.md) [public.usuarios](public.usuarios.md) [public.grupos](public.grupos.md) |  |  |
+| id | integer |  | false | [public.usuarios](public.usuarios.md) [public.grupos](public.grupos.md) |  |  |
 | nombre_oficial | varchar(150) |  | false |  |  |  |
 | nombre_corto | varchar(50) |  | true |  |  |  |
 | direccion_calle | varchar(100) |  | true |  |  |  |

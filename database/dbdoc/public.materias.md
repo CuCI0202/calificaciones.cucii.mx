@@ -4,7 +4,7 @@
 
 | Name | Type | Default | Nullable | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-| id | integer |  | false |  |  |  |
+| id | integer |  | false | [public.profesores_grupos](public.profesores_grupos.md) |  |  |
 | nombre | varchar(120) |  | false |  |  |  |
 | clave | varchar(20) |  | true |  |  |  |
 | creditos | integer |  | true |  |  |  |

@@ -175,194 +175,6 @@
       ]
     },
     {
-      "name": "public.coordinadores",
-      "type": "BASE TABLE",
-      "columns": [
-        {
-          "name": "id",
-          "type": "integer",
-          "nullable": false
-        },
-        {
-          "name": "plantel_id",
-          "type": "integer",
-          "nullable": false
-        },
-        {
-          "name": "nombres",
-          "type": "varchar(100)",
-          "nullable": false
-        },
-        {
-          "name": "apellidos",
-          "type": "varchar(100)",
-          "nullable": false
-        },
-        {
-          "name": "titulo_cortesia",
-          "type": "varchar(20)",
-          "nullable": true
-        },
-        {
-          "name": "email_institucional",
-          "type": "varchar(150)",
-          "nullable": false
-        },
-        {
-          "name": "email_personal",
-          "type": "varchar(150)",
-          "nullable": true
-        },
-        {
-          "name": "telefono_movil",
-          "type": "varchar(20)",
-          "nullable": true
-        },
-        {
-          "name": "departamento",
-          "type": "varchar(100)",
-          "nullable": true
-        },
-        {
-          "name": "is_active",
-          "type": "boolean",
-          "nullable": true,
-          "default": "true"
-        },
-        {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "nullable": true,
-          "default": "CURRENT_TIMESTAMP"
-        },
-        {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "nullable": true,
-          "default": "CURRENT_TIMESTAMP"
-        }
-      ],
-      "indexes": [
-        {
-          "name": "coordinadores_pkey",
-          "def": "CREATE UNIQUE INDEX coordinadores_pkey ON public.coordinadores USING btree (id)",
-          "table": "public.coordinadores",
-          "columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "coordinadores_email_institucional_key",
-          "def": "CREATE UNIQUE INDEX coordinadores_email_institucional_key ON public.coordinadores USING btree (email_institucional)",
-          "table": "public.coordinadores",
-          "columns": [
-            "email_institucional"
-          ]
-        },
-        {
-          "name": "idx_coordinadores_plantel",
-          "def": "CREATE INDEX idx_coordinadores_plantel ON public.coordinadores USING btree (plantel_id)",
-          "table": "public.coordinadores",
-          "columns": [
-            "plantel_id"
-          ]
-        },
-        {
-          "name": "idx_coordinadores_email",
-          "def": "CREATE INDEX idx_coordinadores_email ON public.coordinadores USING btree (email_institucional)",
-          "table": "public.coordinadores",
-          "columns": [
-            "email_institucional"
-          ]
-        }
-      ],
-      "constraints": [
-        {
-          "name": "coordinadores_apellidos_not_null",
-          "type": "n",
-          "def": "NOT NULL apellidos",
-          "table": "public.coordinadores",
-          "referenced_table": "",
-          "columns": [
-            "apellidos"
-          ]
-        },
-        {
-          "name": "coordinadores_email_institucional_not_null",
-          "type": "n",
-          "def": "NOT NULL email_institucional",
-          "table": "public.coordinadores",
-          "referenced_table": "",
-          "columns": [
-            "email_institucional"
-          ]
-        },
-        {
-          "name": "coordinadores_id_not_null",
-          "type": "n",
-          "def": "NOT NULL id",
-          "table": "public.coordinadores",
-          "referenced_table": "",
-          "columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "coordinadores_nombres_not_null",
-          "type": "n",
-          "def": "NOT NULL nombres",
-          "table": "public.coordinadores",
-          "referenced_table": "",
-          "columns": [
-            "nombres"
-          ]
-        },
-        {
-          "name": "coordinadores_plantel_id_not_null",
-          "type": "n",
-          "def": "NOT NULL plantel_id",
-          "table": "public.coordinadores",
-          "referenced_table": "",
-          "columns": [
-            "plantel_id"
-          ]
-        },
-        {
-          "name": "fk_coordinador_plantel",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (plantel_id) REFERENCES planteles(id) ON UPDATE CASCADE ON DELETE RESTRICT",
-          "table": "public.coordinadores",
-          "referenced_table": "public.planteles",
-          "columns": [
-            "plantel_id"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "coordinadores_pkey",
-          "type": "PRIMARY KEY",
-          "def": "PRIMARY KEY (id)",
-          "table": "public.coordinadores",
-          "referenced_table": "",
-          "columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "coordinadores_email_institucional_key",
-          "type": "UNIQUE",
-          "def": "UNIQUE (email_institucional)",
-          "table": "public.coordinadores",
-          "referenced_table": "",
-          "columns": [
-            "email_institucional"
-          ]
-        }
-      ]
-    },
-    {
       "name": "public.planes_estudio",
       "type": "BASE TABLE",
       "columns": [
@@ -704,11 +516,6 @@
           "type": "timestamp with time zone",
           "nullable": true,
           "default": "CURRENT_TIMESTAMP"
-        },
-        {
-          "name": "grupo_id",
-          "type": "integer",
-          "nullable": true
         }
       ],
       "indexes": [
@@ -742,14 +549,6 @@
           "table": "public.alumnos",
           "columns": [
             "correo_institucional"
-          ]
-        },
-        {
-          "name": "idx_alumnos_grupo",
-          "def": "CREATE INDEX idx_alumnos_grupo ON public.alumnos USING btree (grupo_id)",
-          "table": "public.alumnos",
-          "columns": [
-            "grupo_id"
           ]
         }
       ],
@@ -842,19 +641,6 @@
           "referenced_table": "",
           "columns": [
             "correo_institucional"
-          ]
-        },
-        {
-          "name": "fk_alumnos_grupo",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (grupo_id) REFERENCES grupos(id) ON UPDATE CASCADE ON DELETE SET NULL",
-          "table": "public.alumnos",
-          "referenced_table": "public.grupos",
-          "columns": [
-            "grupo_id"
-          ],
-          "referenced_columns": [
-            "id"
           ]
         }
       ]
@@ -963,8 +749,13 @@
         },
         {
           "name": "nombre",
-          "type": "varchar(150)",
+          "type": "varchar(100)",
           "nullable": false
+        },
+        {
+          "name": "apellido",
+          "type": "varchar(100)",
+          "nullable": true
         },
         {
           "name": "email",
@@ -1329,6 +1120,153 @@
       ]
     },
     {
+      "name": "public.alumnos_grupos",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "alumno_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "grupo_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": true,
+          "default": "true"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "alumnos_grupos_pkey",
+          "def": "CREATE UNIQUE INDEX alumnos_grupos_pkey ON public.alumnos_grupos USING btree (id)",
+          "table": "public.alumnos_grupos",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "uq_alumno_grupo",
+          "def": "CREATE UNIQUE INDEX uq_alumno_grupo ON public.alumnos_grupos USING btree (alumno_id, grupo_id)",
+          "table": "public.alumnos_grupos",
+          "columns": [
+            "alumno_id",
+            "grupo_id"
+          ]
+        },
+        {
+          "name": "idx_alumnos_grupos_alumno",
+          "def": "CREATE INDEX idx_alumnos_grupos_alumno ON public.alumnos_grupos USING btree (alumno_id)",
+          "table": "public.alumnos_grupos",
+          "columns": [
+            "alumno_id"
+          ]
+        },
+        {
+          "name": "idx_alumnos_grupos_grupo",
+          "def": "CREATE INDEX idx_alumnos_grupos_grupo ON public.alumnos_grupos USING btree (grupo_id)",
+          "table": "public.alumnos_grupos",
+          "columns": [
+            "grupo_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "alumnos_grupos_alumno_id_not_null",
+          "type": "n",
+          "def": "NOT NULL alumno_id",
+          "table": "public.alumnos_grupos",
+          "referenced_table": "",
+          "columns": [
+            "alumno_id"
+          ]
+        },
+        {
+          "name": "alumnos_grupos_grupo_id_not_null",
+          "type": "n",
+          "def": "NOT NULL grupo_id",
+          "table": "public.alumnos_grupos",
+          "referenced_table": "",
+          "columns": [
+            "grupo_id"
+          ]
+        },
+        {
+          "name": "alumnos_grupos_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.alumnos_grupos",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "fk_alumnos_grupos_alumno",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (alumno_id) REFERENCES alumnos(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "table": "public.alumnos_grupos",
+          "referenced_table": "public.alumnos",
+          "columns": [
+            "alumno_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "fk_alumnos_grupos_grupo",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (grupo_id) REFERENCES grupos(id) ON UPDATE CASCADE ON DELETE RESTRICT",
+          "table": "public.alumnos_grupos",
+          "referenced_table": "public.grupos",
+          "columns": [
+            "grupo_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "alumnos_grupos_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.alumnos_grupos",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "uq_alumno_grupo",
+          "type": "UNIQUE",
+          "def": "UNIQUE (alumno_id, grupo_id)",
+          "table": "public.alumnos_grupos",
+          "referenced_table": "",
+          "columns": [
+            "alumno_id",
+            "grupo_id"
+          ]
+        }
+      ]
+    },
+    {
       "name": "public.profesores_grupos",
       "type": "BASE TABLE",
       "columns": [
@@ -1344,6 +1282,11 @@
         },
         {
           "name": "grupo_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "materia_id",
           "type": "integer",
           "nullable": false
         },
@@ -1370,12 +1313,13 @@
           ]
         },
         {
-          "name": "uq_profesor_grupo",
-          "def": "CREATE UNIQUE INDEX uq_profesor_grupo ON public.profesores_grupos USING btree (usuario_id, grupo_id)",
+          "name": "uq_profesor_grupo_materia",
+          "def": "CREATE UNIQUE INDEX uq_profesor_grupo_materia ON public.profesores_grupos USING btree (usuario_id, grupo_id, materia_id)",
           "table": "public.profesores_grupos",
           "columns": [
             "usuario_id",
-            "grupo_id"
+            "grupo_id",
+            "materia_id"
           ]
         },
         {
@@ -1392,6 +1336,14 @@
           "table": "public.profesores_grupos",
           "columns": [
             "grupo_id"
+          ]
+        },
+        {
+          "name": "idx_profesores_grupos_materia",
+          "def": "CREATE INDEX idx_profesores_grupos_materia ON public.profesores_grupos USING btree (materia_id)",
+          "table": "public.profesores_grupos",
+          "columns": [
+            "materia_id"
           ]
         }
       ],
@@ -1417,6 +1369,16 @@
           ]
         },
         {
+          "name": "profesores_grupos_materia_id_not_null",
+          "type": "n",
+          "def": "NOT NULL materia_id",
+          "table": "public.profesores_grupos",
+          "referenced_table": "",
+          "columns": [
+            "materia_id"
+          ]
+        },
+        {
           "name": "profesores_grupos_usuario_id_not_null",
           "type": "n",
           "def": "NOT NULL usuario_id",
@@ -1424,6 +1386,19 @@
           "referenced_table": "",
           "columns": [
             "usuario_id"
+          ]
+        },
+        {
+          "name": "fk_profesores_grupos_materia",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (materia_id) REFERENCES materias(id) ON UPDATE CASCADE ON DELETE RESTRICT",
+          "table": "public.profesores_grupos",
+          "referenced_table": "public.materias",
+          "columns": [
+            "materia_id"
+          ],
+          "referenced_columns": [
+            "id"
           ]
         },
         {
@@ -1463,33 +1438,21 @@
           ]
         },
         {
-          "name": "uq_profesor_grupo",
+          "name": "uq_profesor_grupo_materia",
           "type": "UNIQUE",
-          "def": "UNIQUE (usuario_id, grupo_id)",
+          "def": "UNIQUE (usuario_id, grupo_id, materia_id)",
           "table": "public.profesores_grupos",
           "referenced_table": "",
           "columns": [
             "usuario_id",
-            "grupo_id"
+            "grupo_id",
+            "materia_id"
           ]
         }
       ]
     }
   ],
   "relations": [
-    {
-      "table": "public.coordinadores",
-      "columns": [
-        "plantel_id"
-      ],
-      "cardinality": "zero_or_more",
-      "parent_table": "public.planteles",
-      "parent_columns": [
-        "id"
-      ],
-      "parent_cardinality": "exactly_one",
-      "def": "FOREIGN KEY (plantel_id) REFERENCES planteles(id) ON UPDATE CASCADE ON DELETE RESTRICT"
-    },
     {
       "table": "public.materias",
       "columns": [
@@ -1502,19 +1465,6 @@
       ],
       "parent_cardinality": "exactly_one",
       "def": "FOREIGN KEY (plan_estudio_id) REFERENCES planes_estudio(id) ON UPDATE CASCADE ON DELETE CASCADE"
-    },
-    {
-      "table": "public.alumnos",
-      "columns": [
-        "grupo_id"
-      ],
-      "cardinality": "zero_or_more",
-      "parent_table": "public.grupos",
-      "parent_columns": [
-        "id"
-      ],
-      "parent_cardinality": "zero_or_one",
-      "def": "FOREIGN KEY (grupo_id) REFERENCES grupos(id) ON UPDATE CASCADE ON DELETE SET NULL"
     },
     {
       "table": "public.usuarios",
@@ -1569,6 +1519,45 @@
       "def": "FOREIGN KEY (plan_estudio_id) REFERENCES planes_estudio(id) ON UPDATE CASCADE ON DELETE RESTRICT"
     },
     {
+      "table": "public.alumnos_grupos",
+      "columns": [
+        "alumno_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.alumnos",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (alumno_id) REFERENCES alumnos(id) ON UPDATE CASCADE ON DELETE CASCADE"
+    },
+    {
+      "table": "public.alumnos_grupos",
+      "columns": [
+        "grupo_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.grupos",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (grupo_id) REFERENCES grupos(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.profesores_grupos",
+      "columns": [
+        "materia_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.materias",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (materia_id) REFERENCES materias(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
       "table": "public.profesores_grupos",
       "columns": [
         "usuario_id"
@@ -1597,7 +1586,7 @@
   ],
   "driver": {
     "name": "postgres",
-    "database_version": "PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "database_version": "PostgreSQL 18.4 (Debian 18.4-1.pgdg13+1) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
     "meta": {
       "current_schema": "public",
       "search_paths": [
