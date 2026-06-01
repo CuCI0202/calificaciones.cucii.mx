@@ -1,7 +1,0 @@
-
-user: ssant0
-password: 2004
-
-db
-name: ss-platform
-

@@ -40,6 +40,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers("/planes-estudio/**").hasRole("ADMIN")
+                        .requestMatchers("/materias/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

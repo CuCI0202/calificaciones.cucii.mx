@@ -1,0 +1,17 @@
+
+services:
+  db:
+    container_name: cucii-ss-platform
+    image: postgres:18
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=2004
+      - POSTGRES_USER=ssant0
+      - POSTGRES_DB=ss-platform
+    volumes:
+      - ss-platform-data:/var/lib/postgresql
+
+
+volumes:
+  ss-platform-data:

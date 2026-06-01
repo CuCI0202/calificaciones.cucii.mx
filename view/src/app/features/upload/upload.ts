@@ -66,6 +66,7 @@ export class Upload {
     this.foundStudent.set(student);
     this.showModal.set(false);
     this.searchError.set('');
+    this.searchQuery.set(student.curp);
     this.form.controls.subjectId.setValue('');
   }
 

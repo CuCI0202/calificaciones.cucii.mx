@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { ProgramsService } from '../../core/services/programs.service';
 import { Subject } from '../../core/models/subject.model';
 
@@ -11,6 +12,7 @@ import { Subject } from '../../core/models/subject.model';
 export class Subjects {
   private readonly programsService = inject(ProgramsService);
   private readonly fb = inject(FormBuilder);
+  private readonly confirm = inject(ConfirmService);
 
   readonly programs = this.programsService.programs;
   readonly selectedProgramId = signal<number | null>(null);
@@ -22,14 +24,24 @@ export class Subjects {
     return this.programs().find((p) => p.id === id)?.subjects ?? [];
   });
 
+  readonly termOptions = computed<number[]>(() => {
+    const id = this.selectedProgramId();
+    if (id === null) return [];
+    const program = this.programs().find((p) => p.id === id);
+    if (!program) return [];
+    return Array.from({ length: program.terms }, (_, i) => i + 1);
+  });
+
   readonly addForm = this.fb.nonNullable.group({
     code: ['', Validators.required],
     name: ['', Validators.required],
+    term: [1, [Validators.required, Validators.min(1)]],
   });
 
   readonly editForm = this.fb.nonNullable.group({
     code: ['', Validators.required],
     name: ['', Validators.required],
+    term: [1, [Validators.required, Validators.min(1)]],
   });
 
   onProgramChange(value: string): void {
@@ -39,7 +51,7 @@ export class Subjects {
 
   startEdit(subject: Subject): void {
     this.editingId.set(subject.id);
-    this.editForm.setValue({ code: subject.code, name: subject.name });
+    this.editForm.setValue({ code: subject.code, name: subject.name, term: subject.term });
   }
 
   saveEdit(subjectId: number): void {
@@ -66,9 +78,11 @@ export class Subjects {
   }
 
   delete(subjectId: number): void {
-    if (!confirm('¿Eliminar esta materia?')) return;
-    const programId = this.selectedProgramId();
-    if (programId === null) return;
-    this.programsService.deleteSubject(programId, subjectId).subscribe();
+    this.confirm.confirm('¿Eliminar esta materia?').subscribe((ok) => {
+      if (!ok) return;
+      const programId = this.selectedProgramId();
+      if (programId === null) return;
+      this.programsService.deleteSubject(programId, subjectId).subscribe();
+    });
   }
 }

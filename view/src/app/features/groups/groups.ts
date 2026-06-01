@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { GroupsService } from '../../core/services/groups.service';
 import { ProgramsService } from '../../core/services/programs.service';
 import { CampusesService } from '../../core/services/campuses.service';
@@ -15,6 +16,7 @@ export class Groups {
   private readonly programsService = inject(ProgramsService);
   private readonly campusesService = inject(CampusesService);
   private readonly fb = inject(FormBuilder);
+  private readonly confirm = inject(ConfirmService);
 
   readonly groups = this.groupsService.groups;
   readonly programs = this.programsService.programs;
@@ -107,8 +109,9 @@ export class Groups {
   }
 
   delete(id: number): void {
-    if (!confirm('¿Eliminar este grupo?')) return;
-    this.groupsService.delete(id).subscribe();
+    this.confirm.confirm('¿Eliminar este grupo?').subscribe((ok) => {
+      if (ok) this.groupsService.delete(id).subscribe();
+    });
   }
 
   toggleAddForm(): void {

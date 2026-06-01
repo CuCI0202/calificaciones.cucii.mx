@@ -62,8 +62,8 @@
         <!-- Search results modal -->
         @if (showModal()) {
           <div class="fixed inset-0 z-50 flex items-center justify-center">
-            <div class="absolute inset-0 bg-black/40" (click)="closeModal()"></div>
-            <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+            <div class="absolute inset-0 bg-black/40 h-screen" (click)="closeModal()"></div>
+            <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden">
               <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-base font-semibold text-brand-dark">Resultados de búsqueda</h2>
                 <button type="button" (click)="closeModal()" class="text-gray-400 hover:text-gray-600 text-lg leading-none">&times;</button>
