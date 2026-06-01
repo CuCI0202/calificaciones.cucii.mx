@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { ProgramsService } from '../../core/services/programs.service';
-import { Program } from '../../core/models/program.model';
+import { Program, Degree } from '../../core/models/program.model';
 
 @Component({
   selector: 'app-programs',
@@ -28,8 +28,11 @@ export class Programs {
     );
   });
 
+  readonly degrees: Degree[] = ['Licenciatura', 'Maestría', 'Doctorado'];
+
   readonly editForm = this.fb.nonNullable.group({
     name: ['', Validators.required],
+    degree: ['Licenciatura' as Degree, Validators.required],
     rvoe: ['', Validators.required],
     rvoeDate: ['', Validators.required],
     terms: [1, [Validators.required, Validators.min(1)]],
@@ -37,6 +40,7 @@ export class Programs {
 
   readonly addForm = this.fb.nonNullable.group({
     name: ['', Validators.required],
+    degree: ['Licenciatura' as Degree, Validators.required],
     rvoe: ['', Validators.required],
     rvoeDate: ['', Validators.required],
     terms: [1, [Validators.required, Validators.min(1)]],
@@ -56,6 +60,7 @@ export class Programs {
     this.showAddForm.set(false);
     this.editForm.setValue({
       name: program.name,
+      degree: program.degree,
       rvoe: program.rvoe,
       rvoeDate: program.rvoeDate,
       terms: program.terms,
