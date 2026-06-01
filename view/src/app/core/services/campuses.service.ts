@@ -3,8 +3,29 @@ import { Observable, of } from 'rxjs';
 import { Campus } from '../models/campus.model';
 
 const MOCK_CAMPUSES: Campus[] = [
-  { id: 1, name: 'Plantel Centro', address: 'Av. Principal 100, CDMX' },
-  { id: 2, name: 'Plantel Norte', address: 'Blvd. Norte 250, CDMX' },
+  {
+    id: 1,
+    name: 'Plantel Centro',
+    shortName: 'Centro',
+    street: 'Av. Principal',
+    extNumber: '100',
+    neighborhood: 'Centro Histórico',
+    zipCode: '06010',
+    city: 'Ciudad de México',
+    state: 'Ciudad de México',
+    country: 'México',
+    directorName: 'Lic. María González',
+  },
+  {
+    id: 2,
+    name: 'Plantel Norte',
+    shortName: 'Norte',
+    street: 'Blvd. Norte',
+    extNumber: '250',
+    city: 'Ciudad de México',
+    state: 'Ciudad de México',
+    country: 'México',
+  },
 ];
 
 @Injectable({ providedIn: 'root' })
