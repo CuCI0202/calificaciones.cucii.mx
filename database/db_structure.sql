@@ -26,34 +26,6 @@ alter table planteles owner to ssant0;
 create index idx_planteles_ciudad on planteles (ciudad_municipio);
 create index idx_planteles_estado on planteles (estado);
 
--- ─── coordinadores ───────────────────────────────────────────────────────────
-
-create table coordinadores
-(
-    id                  integer generated always as identity primary key,
-    plantel_id          integer      not null,
-    nombres             varchar(100) not null,
-    apellidos           varchar(100) not null,
-    titulo_cortesia     varchar(20),
-    email_institucional varchar(150) not null unique,
-    email_personal      varchar(150),
-    telefono_movil      varchar(20),
-    departamento        varchar(100),
-    is_active           boolean                  default true,
-    created_at          timestamp with time zone default current_timestamp,
-    updated_at          timestamp with time zone default current_timestamp,
-
-    constraint fk_coordinador_plantel
-        foreign key (plantel_id)
-            references planteles (id)
-            on update cascade on delete restrict
-);
-
-alter table coordinadores owner to ssant0;
-
-create index idx_coordinadores_plantel on coordinadores (plantel_id);
-create index idx_coordinadores_email   on coordinadores (email_institucional);
-
 -- ─── planes_estudio ──────────────────────────────────────────────────────────
 
 create table planes_estudio
@@ -138,7 +110,8 @@ insert into roles (nombre, descripcion) values
     ('admin',               'Administrador del sistema con acceso total'),
     ('rector',              'Rector del plantel'),
     ('docente',             'Docente / profesor'),
-    ('servicios_escolares', 'Responsable de servicios escolares');
+    ('servicios_escolares', 'Responsable de servicios escolares'),
+    ('coordinador', 'Responsable de coordinar grupos y gestión de alumnos');
 
 -- ─── usuarios ────────────────────────────────────────────────────────────────
 
@@ -203,16 +176,33 @@ alter table grupos owner to ssant0;
 create index idx_grupos_plan_estudio on grupos (plan_estudio_id);
 create index idx_grupos_plantel      on grupos (plantel_id);
 
--- ─── alumnos: agregar referencia al grupo ────────────────────────────────────
+-- ─── alumnos_grupos ──────────────────────────────────────────────────────────
 
-alter table alumnos
-    add column grupo_id integer,
-    add constraint fk_alumnos_grupo
+create table alumnos_grupos
+(
+    id         integer generated always as identity primary key,
+    alumno_id  integer not null,
+    grupo_id   integer not null,
+    is_active  boolean                  default true,
+    created_at timestamp with time zone default current_timestamp,
+
+    constraint uq_alumno_grupo unique (alumno_id, grupo_id),
+
+    constraint fk_alumnos_grupos_alumno
+        foreign key (alumno_id)
+            references alumnos (id)
+            on update cascade on delete cascade,
+
+    constraint fk_alumnos_grupos_grupo
         foreign key (grupo_id)
             references grupos (id)
-            on update cascade on delete set null;
+            on update cascade on delete restrict
+);
 
-create index idx_alumnos_grupo on alumnos (grupo_id);
+alter table alumnos_grupos owner to ssant0;
+
+create index idx_alumnos_grupos_alumno on alumnos_grupos (alumno_id);
+create index idx_alumnos_grupos_grupo  on alumnos_grupos (grupo_id);
 
 -- ─── profesores_grupos ────────────────────────────────────────────────────────
 
@@ -221,10 +211,11 @@ create table profesores_grupos
     id         integer generated always as identity primary key,
     usuario_id integer not null,
     grupo_id   integer not null,
+    materia_id integer not null,
     is_active  boolean                  default true,
     created_at timestamp with time zone default current_timestamp,
 
-    constraint uq_profesor_grupo unique (usuario_id, grupo_id),
+    constraint uq_profesor_grupo_materia unique (usuario_id, grupo_id, materia_id),
 
     constraint fk_profesores_grupos_usuario
         foreign key (usuario_id)
@@ -234,6 +225,11 @@ create table profesores_grupos
     constraint fk_profesores_grupos_grupo
         foreign key (grupo_id)
             references grupos (id)
+            on update cascade on delete restrict,
+
+    constraint fk_profesores_grupos_materia
+        foreign key (materia_id)
+            references materias (id)
             on update cascade on delete restrict
 );
 
@@ -241,6 +237,7 @@ alter table profesores_grupos owner to ssant0;
 
 create index idx_profesores_grupos_usuario on profesores_grupos (usuario_id);
 create index idx_profesores_grupos_grupo   on profesores_grupos (grupo_id);
+create index idx_profesores_grupos_materia on profesores_grupos (materia_id);
 
 -- =============================================================================
 -- DATOS DE PRUEBA
@@ -253,12 +250,6 @@ insert into planteles (nombre_oficial, nombre_corto, direccion_calle, direccion_
 values
     ('Centro Universitario de Ciencias de la Información', 'CUCI Norte', 'Av. Revolución',      '1234', 'Centro',         '44100', 'Guadalajara', 'Jalisco', 20.65769900, -103.34940000, 'Dr. Arturo Vega Ramírez'),
     ('Centro Universitario de Ciencias de la Información', 'CUCI Sur',   'Calle Independencia', '567',  'Zona Industrial', '45150', 'Tlaquepaque', 'Jalisco', 20.63250000, -103.31870000, 'Mtra. Sofía Delgado Fuentes');
-
--- ─── coordinadores (id: 1, 2) ────────────────────────────────────────────────
-insert into coordinadores (plantel_id, nombres, apellidos, titulo_cortesia, email_institucional, email_personal, telefono_movil, departamento)
-values
-    (1, 'Roberto',  'Castillo Núñez',   'Lic.',  'rcastillo@cuci.edu.mx', 'rcastillo@gmail.com', '3310001111', 'Coordinación Académica'),
-    (2, 'Patricia', 'Ibarra Gutiérrez', 'Mtra.', 'pibarra@cuci.edu.mx',   'pibarra@gmail.com',   '3322223333', 'Coordinación Académica');
 
 -- ─── planes_estudio (id: 1, 2) ───────────────────────────────────────────────
 insert into planes_estudio (nombre, grado, numero_rvoe, fecha_rvoe, duracion_cuatrimestres)
@@ -296,17 +287,26 @@ values
     ('LAE-2024A — Primer Cuatrimestre',   2, 2);
 
 -- ─── alumnos (id: 1-3) ───────────────────────────────────────────────────────
-insert into alumnos (nombres, primer_apellido, segundo_apellido, curp, correo_institucional, grupo_id)
+insert into alumnos (nombres, primer_apellido, segundo_apellido, curp, correo_institucional)
 values
-    ('Juan',   'García',    'López',     'GALJ950320HJCRPNA5', 'jgarcia@alumnos.cuci.edu.mx',   1),
-    ('María',  'Rodríguez', 'Hernández', 'ROHM980705MJCDRRB2', 'mrodriguez@alumnos.cuci.edu.mx', 1),
-    ('Carlos', 'Mendoza',   'Torres',    'METC001128HJCNRRC4', 'cmendoza@alumnos.cuci.edu.mx',   2);
+    ('Juan',   'García',    'López',     'GALJ950320HJCRPNA5', 'jgarcia@alumnos.cuci.edu.mx'),
+    ('María',  'Rodríguez', 'Hernández', 'ROHM980705MJCDRRB2', 'mrodriguez@alumnos.cuci.edu.mx'),
+    ('Carlos', 'Mendoza',   'Torres',    'METC001128HJCNRRC4', 'cmendoza@alumnos.cuci.edu.mx');
+
+-- ─── alumnos_grupos ──────────────────────────────────────────────────────────
+-- Juan y María en grupo 1 (IDS Primer Cuatrimestre)
+-- Carlos en grupo 2 (IDS Segundo Cuatrimestre)
+insert into alumnos_grupos (alumno_id, grupo_id)
+values
+    (1, 1),
+    (2, 1),
+    (3, 2);
 
 -- ─── profesores_grupos ───────────────────────────────────────────────────────
--- Ana Torres (usuario 3) imparte en grupos 1 y 2
--- Luis Pérez (usuario 4) imparte en grupo 1
-insert into profesores_grupos (usuario_id, grupo_id)
+-- Ana Torres (usuario 3): FP-101 en grupo 1, BD-201 en grupo 2
+-- Luis Pérez (usuario 4): MD-101 en grupo 1
+insert into profesores_grupos (usuario_id, grupo_id, materia_id)
 values
-    (3, 1),
-    (3, 2),
-    (4, 1);
+    (3, 1, 1),
+    (3, 2, 3),
+    (4, 1, 2);

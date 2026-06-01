@@ -1,0 +1,1612 @@
+{
+  "name": "ss-platform",
+  "tables": [
+    {
+      "name": "public.planteles",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "nombre_oficial",
+          "type": "varchar(150)",
+          "nullable": false
+        },
+        {
+          "name": "nombre_corto",
+          "type": "varchar(50)",
+          "nullable": true
+        },
+        {
+          "name": "direccion_calle",
+          "type": "varchar(100)",
+          "nullable": true
+        },
+        {
+          "name": "direccion_numero_ext",
+          "type": "varchar(20)",
+          "nullable": true
+        },
+        {
+          "name": "direccion_numero_int",
+          "type": "varchar(20)",
+          "nullable": true
+        },
+        {
+          "name": "colonia",
+          "type": "varchar(100)",
+          "nullable": true
+        },
+        {
+          "name": "codigo_postal",
+          "type": "varchar(10)",
+          "nullable": true
+        },
+        {
+          "name": "ciudad_municipio",
+          "type": "varchar(100)",
+          "nullable": false
+        },
+        {
+          "name": "estado",
+          "type": "varchar(100)",
+          "nullable": false
+        },
+        {
+          "name": "pais",
+          "type": "varchar(50)",
+          "nullable": true,
+          "default": "'México'::character varying"
+        },
+        {
+          "name": "latitud",
+          "type": "numeric(10,8)",
+          "nullable": true
+        },
+        {
+          "name": "longitud",
+          "type": "numeric(11,8)",
+          "nullable": true
+        },
+        {
+          "name": "director_nombre",
+          "type": "varchar(150)",
+          "nullable": true
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": true,
+          "default": "true"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "planteles_pkey",
+          "def": "CREATE UNIQUE INDEX planteles_pkey ON public.planteles USING btree (id)",
+          "table": "public.planteles",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "idx_planteles_ciudad",
+          "def": "CREATE INDEX idx_planteles_ciudad ON public.planteles USING btree (ciudad_municipio)",
+          "table": "public.planteles",
+          "columns": [
+            "ciudad_municipio"
+          ]
+        },
+        {
+          "name": "idx_planteles_estado",
+          "def": "CREATE INDEX idx_planteles_estado ON public.planteles USING btree (estado)",
+          "table": "public.planteles",
+          "columns": [
+            "estado"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "planteles_ciudad_municipio_not_null",
+          "type": "n",
+          "def": "NOT NULL ciudad_municipio",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "ciudad_municipio"
+          ]
+        },
+        {
+          "name": "planteles_estado_not_null",
+          "type": "n",
+          "def": "NOT NULL estado",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "estado"
+          ]
+        },
+        {
+          "name": "planteles_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "planteles_nombre_oficial_not_null",
+          "type": "n",
+          "def": "NOT NULL nombre_oficial",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "nombre_oficial"
+          ]
+        },
+        {
+          "name": "planteles_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.coordinadores",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "plantel_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "nombres",
+          "type": "varchar(100)",
+          "nullable": false
+        },
+        {
+          "name": "apellidos",
+          "type": "varchar(100)",
+          "nullable": false
+        },
+        {
+          "name": "titulo_cortesia",
+          "type": "varchar(20)",
+          "nullable": true
+        },
+        {
+          "name": "email_institucional",
+          "type": "varchar(150)",
+          "nullable": false
+        },
+        {
+          "name": "email_personal",
+          "type": "varchar(150)",
+          "nullable": true
+        },
+        {
+          "name": "telefono_movil",
+          "type": "varchar(20)",
+          "nullable": true
+        },
+        {
+          "name": "departamento",
+          "type": "varchar(100)",
+          "nullable": true
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": true,
+          "default": "true"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "coordinadores_pkey",
+          "def": "CREATE UNIQUE INDEX coordinadores_pkey ON public.coordinadores USING btree (id)",
+          "table": "public.coordinadores",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "coordinadores_email_institucional_key",
+          "def": "CREATE UNIQUE INDEX coordinadores_email_institucional_key ON public.coordinadores USING btree (email_institucional)",
+          "table": "public.coordinadores",
+          "columns": [
+            "email_institucional"
+          ]
+        },
+        {
+          "name": "idx_coordinadores_plantel",
+          "def": "CREATE INDEX idx_coordinadores_plantel ON public.coordinadores USING btree (plantel_id)",
+          "table": "public.coordinadores",
+          "columns": [
+            "plantel_id"
+          ]
+        },
+        {
+          "name": "idx_coordinadores_email",
+          "def": "CREATE INDEX idx_coordinadores_email ON public.coordinadores USING btree (email_institucional)",
+          "table": "public.coordinadores",
+          "columns": [
+            "email_institucional"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "coordinadores_apellidos_not_null",
+          "type": "n",
+          "def": "NOT NULL apellidos",
+          "table": "public.coordinadores",
+          "referenced_table": "",
+          "columns": [
+            "apellidos"
+          ]
+        },
+        {
+          "name": "coordinadores_email_institucional_not_null",
+          "type": "n",
+          "def": "NOT NULL email_institucional",
+          "table": "public.coordinadores",
+          "referenced_table": "",
+          "columns": [
+            "email_institucional"
+          ]
+        },
+        {
+          "name": "coordinadores_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.coordinadores",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "coordinadores_nombres_not_null",
+          "type": "n",
+          "def": "NOT NULL nombres",
+          "table": "public.coordinadores",
+          "referenced_table": "",
+          "columns": [
+            "nombres"
+          ]
+        },
+        {
+          "name": "coordinadores_plantel_id_not_null",
+          "type": "n",
+          "def": "NOT NULL plantel_id",
+          "table": "public.coordinadores",
+          "referenced_table": "",
+          "columns": [
+            "plantel_id"
+          ]
+        },
+        {
+          "name": "fk_coordinador_plantel",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (plantel_id) REFERENCES planteles(id) ON UPDATE CASCADE ON DELETE RESTRICT",
+          "table": "public.coordinadores",
+          "referenced_table": "public.planteles",
+          "columns": [
+            "plantel_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "coordinadores_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.coordinadores",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "coordinadores_email_institucional_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (email_institucional)",
+          "table": "public.coordinadores",
+          "referenced_table": "",
+          "columns": [
+            "email_institucional"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.planes_estudio",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "nombre",
+          "type": "varchar(120)",
+          "nullable": false
+        },
+        {
+          "name": "grado",
+          "type": "varchar(20)",
+          "nullable": false
+        },
+        {
+          "name": "numero_rvoe",
+          "type": "varchar(50)",
+          "nullable": false
+        },
+        {
+          "name": "fecha_rvoe",
+          "type": "date",
+          "nullable": false
+        },
+        {
+          "name": "duracion_cuatrimestres",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": true,
+          "default": "true"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "planes_estudio_pkey",
+          "def": "CREATE UNIQUE INDEX planes_estudio_pkey ON public.planes_estudio USING btree (id)",
+          "table": "public.planes_estudio",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "planes_estudio_numero_rvoe_key",
+          "def": "CREATE UNIQUE INDEX planes_estudio_numero_rvoe_key ON public.planes_estudio USING btree (numero_rvoe)",
+          "table": "public.planes_estudio",
+          "columns": [
+            "numero_rvoe"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "chk_grado",
+          "type": "CHECK",
+          "def": "CHECK (((grado)::text = ANY ((ARRAY['Licenciatura'::character varying, 'Maestría'::character varying, 'Doctorado'::character varying])::text[])))",
+          "table": "public.planes_estudio",
+          "referenced_table": "",
+          "columns": [
+            "grado"
+          ]
+        },
+        {
+          "name": "planes_estudio_duracion_cuatrimestres_not_null",
+          "type": "n",
+          "def": "NOT NULL duracion_cuatrimestres",
+          "table": "public.planes_estudio",
+          "referenced_table": "",
+          "columns": [
+            "duracion_cuatrimestres"
+          ]
+        },
+        {
+          "name": "planes_estudio_fecha_rvoe_not_null",
+          "type": "n",
+          "def": "NOT NULL fecha_rvoe",
+          "table": "public.planes_estudio",
+          "referenced_table": "",
+          "columns": [
+            "fecha_rvoe"
+          ]
+        },
+        {
+          "name": "planes_estudio_grado_not_null",
+          "type": "n",
+          "def": "NOT NULL grado",
+          "table": "public.planes_estudio",
+          "referenced_table": "",
+          "columns": [
+            "grado"
+          ]
+        },
+        {
+          "name": "planes_estudio_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.planes_estudio",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "planes_estudio_nombre_not_null",
+          "type": "n",
+          "def": "NOT NULL nombre",
+          "table": "public.planes_estudio",
+          "referenced_table": "",
+          "columns": [
+            "nombre"
+          ]
+        },
+        {
+          "name": "planes_estudio_numero_rvoe_not_null",
+          "type": "n",
+          "def": "NOT NULL numero_rvoe",
+          "table": "public.planes_estudio",
+          "referenced_table": "",
+          "columns": [
+            "numero_rvoe"
+          ]
+        },
+        {
+          "name": "planes_estudio_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.planes_estudio",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "planes_estudio_numero_rvoe_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (numero_rvoe)",
+          "table": "public.planes_estudio",
+          "referenced_table": "",
+          "columns": [
+            "numero_rvoe"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.materias",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "nombre",
+          "type": "varchar(120)",
+          "nullable": false
+        },
+        {
+          "name": "clave",
+          "type": "varchar(20)",
+          "nullable": true
+        },
+        {
+          "name": "creditos",
+          "type": "integer",
+          "nullable": true
+        },
+        {
+          "name": "cuatrimestre",
+          "type": "integer",
+          "nullable": true
+        },
+        {
+          "name": "plan_estudio_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": true,
+          "default": "true"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "materias_pkey",
+          "def": "CREATE UNIQUE INDEX materias_pkey ON public.materias USING btree (id)",
+          "table": "public.materias",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "idx_materias_plan_estudio",
+          "def": "CREATE INDEX idx_materias_plan_estudio ON public.materias USING btree (plan_estudio_id)",
+          "table": "public.materias",
+          "columns": [
+            "plan_estudio_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "materias_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.materias",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "materias_nombre_not_null",
+          "type": "n",
+          "def": "NOT NULL nombre",
+          "table": "public.materias",
+          "referenced_table": "",
+          "columns": [
+            "nombre"
+          ]
+        },
+        {
+          "name": "materias_plan_estudio_id_not_null",
+          "type": "n",
+          "def": "NOT NULL plan_estudio_id",
+          "table": "public.materias",
+          "referenced_table": "",
+          "columns": [
+            "plan_estudio_id"
+          ]
+        },
+        {
+          "name": "fk_materias_plan_estudio",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (plan_estudio_id) REFERENCES planes_estudio(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "table": "public.materias",
+          "referenced_table": "public.planes_estudio",
+          "columns": [
+            "plan_estudio_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "materias_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.materias",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.alumnos",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "nombres",
+          "type": "varchar(80)",
+          "nullable": false
+        },
+        {
+          "name": "primer_apellido",
+          "type": "varchar(80)",
+          "nullable": false
+        },
+        {
+          "name": "segundo_apellido",
+          "type": "varchar(80)",
+          "nullable": true
+        },
+        {
+          "name": "curp",
+          "type": "character(18)",
+          "nullable": false
+        },
+        {
+          "name": "correo_institucional",
+          "type": "varchar(120)",
+          "nullable": true
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": true,
+          "default": "true"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        {
+          "name": "grupo_id",
+          "type": "integer",
+          "nullable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "alumnos_pkey",
+          "def": "CREATE UNIQUE INDEX alumnos_pkey ON public.alumnos USING btree (id)",
+          "table": "public.alumnos",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "alumnos_curp_key",
+          "def": "CREATE UNIQUE INDEX alumnos_curp_key ON public.alumnos USING btree (curp)",
+          "table": "public.alumnos",
+          "columns": [
+            "curp"
+          ]
+        },
+        {
+          "name": "alumnos_correo_institucional_key",
+          "def": "CREATE UNIQUE INDEX alumnos_correo_institucional_key ON public.alumnos USING btree (correo_institucional)",
+          "table": "public.alumnos",
+          "columns": [
+            "correo_institucional"
+          ]
+        },
+        {
+          "name": "idx_alumnos_correo",
+          "def": "CREATE INDEX idx_alumnos_correo ON public.alumnos USING btree (correo_institucional)",
+          "table": "public.alumnos",
+          "columns": [
+            "correo_institucional"
+          ]
+        },
+        {
+          "name": "idx_alumnos_grupo",
+          "def": "CREATE INDEX idx_alumnos_grupo ON public.alumnos USING btree (grupo_id)",
+          "table": "public.alumnos",
+          "columns": [
+            "grupo_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "alumnos_curp_not_null",
+          "type": "n",
+          "def": "NOT NULL curp",
+          "table": "public.alumnos",
+          "referenced_table": "",
+          "columns": [
+            "curp"
+          ]
+        },
+        {
+          "name": "alumnos_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.alumnos",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "alumnos_nombres_not_null",
+          "type": "n",
+          "def": "NOT NULL nombres",
+          "table": "public.alumnos",
+          "referenced_table": "",
+          "columns": [
+            "nombres"
+          ]
+        },
+        {
+          "name": "alumnos_primer_apellido_not_null",
+          "type": "n",
+          "def": "NOT NULL primer_apellido",
+          "table": "public.alumnos",
+          "referenced_table": "",
+          "columns": [
+            "primer_apellido"
+          ]
+        },
+        {
+          "name": "chk_curp_format",
+          "type": "CHECK",
+          "def": "CHECK ((curp ~ '^[A-Z][AEIOUX][A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HMX][A-Z]{2}[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z][0-9]$'::text))",
+          "table": "public.alumnos",
+          "referenced_table": "",
+          "columns": [
+            "curp"
+          ]
+        },
+        {
+          "name": "chk_curp_length",
+          "type": "CHECK",
+          "def": "CHECK ((char_length(curp) = 18))",
+          "table": "public.alumnos",
+          "referenced_table": "",
+          "columns": [
+            "curp"
+          ]
+        },
+        {
+          "name": "alumnos_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.alumnos",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "alumnos_curp_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (curp)",
+          "table": "public.alumnos",
+          "referenced_table": "",
+          "columns": [
+            "curp"
+          ]
+        },
+        {
+          "name": "alumnos_correo_institucional_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (correo_institucional)",
+          "table": "public.alumnos",
+          "referenced_table": "",
+          "columns": [
+            "correo_institucional"
+          ]
+        },
+        {
+          "name": "fk_alumnos_grupo",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (grupo_id) REFERENCES grupos(id) ON UPDATE CASCADE ON DELETE SET NULL",
+          "table": "public.alumnos",
+          "referenced_table": "public.grupos",
+          "columns": [
+            "grupo_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.roles",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "nombre",
+          "type": "varchar(50)",
+          "nullable": false
+        },
+        {
+          "name": "descripcion",
+          "type": "varchar(200)",
+          "nullable": true
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": true,
+          "default": "true"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "roles_pkey",
+          "def": "CREATE UNIQUE INDEX roles_pkey ON public.roles USING btree (id)",
+          "table": "public.roles",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "roles_nombre_key",
+          "def": "CREATE UNIQUE INDEX roles_nombre_key ON public.roles USING btree (nombre)",
+          "table": "public.roles",
+          "columns": [
+            "nombre"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "roles_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.roles",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "roles_nombre_not_null",
+          "type": "n",
+          "def": "NOT NULL nombre",
+          "table": "public.roles",
+          "referenced_table": "",
+          "columns": [
+            "nombre"
+          ]
+        },
+        {
+          "name": "roles_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.roles",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "roles_nombre_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (nombre)",
+          "table": "public.roles",
+          "referenced_table": "",
+          "columns": [
+            "nombre"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.usuarios",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "nombre",
+          "type": "varchar(150)",
+          "nullable": false
+        },
+        {
+          "name": "email",
+          "type": "varchar(150)",
+          "nullable": false
+        },
+        {
+          "name": "password_hash",
+          "type": "varchar(255)",
+          "nullable": false
+        },
+        {
+          "name": "rol_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "plantel_id",
+          "type": "integer",
+          "nullable": true
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": true,
+          "default": "true"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "usuarios_pkey",
+          "def": "CREATE UNIQUE INDEX usuarios_pkey ON public.usuarios USING btree (id)",
+          "table": "public.usuarios",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "usuarios_email_key",
+          "def": "CREATE UNIQUE INDEX usuarios_email_key ON public.usuarios USING btree (email)",
+          "table": "public.usuarios",
+          "columns": [
+            "email"
+          ]
+        },
+        {
+          "name": "idx_usuarios_email",
+          "def": "CREATE INDEX idx_usuarios_email ON public.usuarios USING btree (email)",
+          "table": "public.usuarios",
+          "columns": [
+            "email"
+          ]
+        },
+        {
+          "name": "idx_usuarios_rol",
+          "def": "CREATE INDEX idx_usuarios_rol ON public.usuarios USING btree (rol_id)",
+          "table": "public.usuarios",
+          "columns": [
+            "rol_id"
+          ]
+        },
+        {
+          "name": "idx_usuarios_plantel",
+          "def": "CREATE INDEX idx_usuarios_plantel ON public.usuarios USING btree (plantel_id)",
+          "table": "public.usuarios",
+          "columns": [
+            "plantel_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "usuarios_email_not_null",
+          "type": "n",
+          "def": "NOT NULL email",
+          "table": "public.usuarios",
+          "referenced_table": "",
+          "columns": [
+            "email"
+          ]
+        },
+        {
+          "name": "usuarios_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.usuarios",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "usuarios_nombre_not_null",
+          "type": "n",
+          "def": "NOT NULL nombre",
+          "table": "public.usuarios",
+          "referenced_table": "",
+          "columns": [
+            "nombre"
+          ]
+        },
+        {
+          "name": "usuarios_password_hash_not_null",
+          "type": "n",
+          "def": "NOT NULL password_hash",
+          "table": "public.usuarios",
+          "referenced_table": "",
+          "columns": [
+            "password_hash"
+          ]
+        },
+        {
+          "name": "usuarios_rol_id_not_null",
+          "type": "n",
+          "def": "NOT NULL rol_id",
+          "table": "public.usuarios",
+          "referenced_table": "",
+          "columns": [
+            "rol_id"
+          ]
+        },
+        {
+          "name": "fk_usuarios_plantel",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (plantel_id) REFERENCES planteles(id) ON UPDATE CASCADE ON DELETE RESTRICT",
+          "table": "public.usuarios",
+          "referenced_table": "public.planteles",
+          "columns": [
+            "plantel_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "fk_usuarios_rol",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (rol_id) REFERENCES roles(id) ON UPDATE CASCADE ON DELETE RESTRICT",
+          "table": "public.usuarios",
+          "referenced_table": "public.roles",
+          "columns": [
+            "rol_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "usuarios_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.usuarios",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "usuarios_email_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (email)",
+          "table": "public.usuarios",
+          "referenced_table": "",
+          "columns": [
+            "email"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.grupos",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "clave",
+          "type": "varchar(20)",
+          "nullable": false,
+          "default": "('CG-'::text || (nextval('grupos_numero_seq'::regclass))::text)"
+        },
+        {
+          "name": "nombre",
+          "type": "varchar(120)",
+          "nullable": false
+        },
+        {
+          "name": "plan_estudio_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "plantel_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": true,
+          "default": "true"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "grupos_pkey",
+          "def": "CREATE UNIQUE INDEX grupos_pkey ON public.grupos USING btree (id)",
+          "table": "public.grupos",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "grupos_clave_key",
+          "def": "CREATE UNIQUE INDEX grupos_clave_key ON public.grupos USING btree (clave)",
+          "table": "public.grupos",
+          "columns": [
+            "clave"
+          ]
+        },
+        {
+          "name": "idx_grupos_plan_estudio",
+          "def": "CREATE INDEX idx_grupos_plan_estudio ON public.grupos USING btree (plan_estudio_id)",
+          "table": "public.grupos",
+          "columns": [
+            "plan_estudio_id"
+          ]
+        },
+        {
+          "name": "idx_grupos_plantel",
+          "def": "CREATE INDEX idx_grupos_plantel ON public.grupos USING btree (plantel_id)",
+          "table": "public.grupos",
+          "columns": [
+            "plantel_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "grupos_clave_not_null",
+          "type": "n",
+          "def": "NOT NULL clave",
+          "table": "public.grupos",
+          "referenced_table": "",
+          "columns": [
+            "clave"
+          ]
+        },
+        {
+          "name": "grupos_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.grupos",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "grupos_nombre_not_null",
+          "type": "n",
+          "def": "NOT NULL nombre",
+          "table": "public.grupos",
+          "referenced_table": "",
+          "columns": [
+            "nombre"
+          ]
+        },
+        {
+          "name": "grupos_plan_estudio_id_not_null",
+          "type": "n",
+          "def": "NOT NULL plan_estudio_id",
+          "table": "public.grupos",
+          "referenced_table": "",
+          "columns": [
+            "plan_estudio_id"
+          ]
+        },
+        {
+          "name": "grupos_plantel_id_not_null",
+          "type": "n",
+          "def": "NOT NULL plantel_id",
+          "table": "public.grupos",
+          "referenced_table": "",
+          "columns": [
+            "plantel_id"
+          ]
+        },
+        {
+          "name": "fk_grupos_plantel",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (plantel_id) REFERENCES planteles(id) ON UPDATE CASCADE ON DELETE RESTRICT",
+          "table": "public.grupos",
+          "referenced_table": "public.planteles",
+          "columns": [
+            "plantel_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "fk_grupos_plan_estudio",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (plan_estudio_id) REFERENCES planes_estudio(id) ON UPDATE CASCADE ON DELETE RESTRICT",
+          "table": "public.grupos",
+          "referenced_table": "public.planes_estudio",
+          "columns": [
+            "plan_estudio_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "grupos_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.grupos",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "grupos_clave_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (clave)",
+          "table": "public.grupos",
+          "referenced_table": "",
+          "columns": [
+            "clave"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.profesores_grupos",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "usuario_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "grupo_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": true,
+          "default": "true"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "profesores_grupos_pkey",
+          "def": "CREATE UNIQUE INDEX profesores_grupos_pkey ON public.profesores_grupos USING btree (id)",
+          "table": "public.profesores_grupos",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "uq_profesor_grupo",
+          "def": "CREATE UNIQUE INDEX uq_profesor_grupo ON public.profesores_grupos USING btree (usuario_id, grupo_id)",
+          "table": "public.profesores_grupos",
+          "columns": [
+            "usuario_id",
+            "grupo_id"
+          ]
+        },
+        {
+          "name": "idx_profesores_grupos_usuario",
+          "def": "CREATE INDEX idx_profesores_grupos_usuario ON public.profesores_grupos USING btree (usuario_id)",
+          "table": "public.profesores_grupos",
+          "columns": [
+            "usuario_id"
+          ]
+        },
+        {
+          "name": "idx_profesores_grupos_grupo",
+          "def": "CREATE INDEX idx_profesores_grupos_grupo ON public.profesores_grupos USING btree (grupo_id)",
+          "table": "public.profesores_grupos",
+          "columns": [
+            "grupo_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "profesores_grupos_grupo_id_not_null",
+          "type": "n",
+          "def": "NOT NULL grupo_id",
+          "table": "public.profesores_grupos",
+          "referenced_table": "",
+          "columns": [
+            "grupo_id"
+          ]
+        },
+        {
+          "name": "profesores_grupos_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.profesores_grupos",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "profesores_grupos_usuario_id_not_null",
+          "type": "n",
+          "def": "NOT NULL usuario_id",
+          "table": "public.profesores_grupos",
+          "referenced_table": "",
+          "columns": [
+            "usuario_id"
+          ]
+        },
+        {
+          "name": "fk_profesores_grupos_usuario",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON UPDATE CASCADE ON DELETE RESTRICT",
+          "table": "public.profesores_grupos",
+          "referenced_table": "public.usuarios",
+          "columns": [
+            "usuario_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "fk_profesores_grupos_grupo",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (grupo_id) REFERENCES grupos(id) ON UPDATE CASCADE ON DELETE RESTRICT",
+          "table": "public.profesores_grupos",
+          "referenced_table": "public.grupos",
+          "columns": [
+            "grupo_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "profesores_grupos_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.profesores_grupos",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "uq_profesor_grupo",
+          "type": "UNIQUE",
+          "def": "UNIQUE (usuario_id, grupo_id)",
+          "table": "public.profesores_grupos",
+          "referenced_table": "",
+          "columns": [
+            "usuario_id",
+            "grupo_id"
+          ]
+        }
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "table": "public.coordinadores",
+      "columns": [
+        "plantel_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.planteles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (plantel_id) REFERENCES planteles(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.materias",
+      "columns": [
+        "plan_estudio_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.planes_estudio",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (plan_estudio_id) REFERENCES planes_estudio(id) ON UPDATE CASCADE ON DELETE CASCADE"
+    },
+    {
+      "table": "public.alumnos",
+      "columns": [
+        "grupo_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.grupos",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (grupo_id) REFERENCES grupos(id) ON UPDATE CASCADE ON DELETE SET NULL"
+    },
+    {
+      "table": "public.usuarios",
+      "columns": [
+        "plantel_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.planteles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (plantel_id) REFERENCES planteles(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.usuarios",
+      "columns": [
+        "rol_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.roles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (rol_id) REFERENCES roles(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.grupos",
+      "columns": [
+        "plantel_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.planteles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (plantel_id) REFERENCES planteles(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.grupos",
+      "columns": [
+        "plan_estudio_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.planes_estudio",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (plan_estudio_id) REFERENCES planes_estudio(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.profesores_grupos",
+      "columns": [
+        "usuario_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.usuarios",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.profesores_grupos",
+      "columns": [
+        "grupo_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.grupos",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (grupo_id) REFERENCES grupos(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    }
+  ],
+  "driver": {
+    "name": "postgres",
+    "database_version": "PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "meta": {
+      "current_schema": "public",
+      "search_paths": [
+        "ssant0",
+        "public"
+      ],
+      "dict": {
+        "Functions": "Stored procedures and functions"
+      }
+    }
+  }
+}
