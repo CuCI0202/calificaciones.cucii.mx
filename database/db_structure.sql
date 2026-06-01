@@ -118,7 +118,8 @@ insert into roles (nombre, descripcion) values
 create table usuarios
 (
     id            integer generated always as identity primary key,
-    nombre        varchar(150) not null,
+    nombre        varchar(100) not null,
+    apellido      varchar(100),
     email         varchar(150) not null unique,
     password_hash varchar(255) not null,
     rol_id        integer      not null,
@@ -271,13 +272,13 @@ values
 
 -- ─── usuarios (id: 1 admin | 2 rector | 3-4 docentes | 5 servicios) ──────────
 -- roles: 1=admin 2=rector 3=docente 4=school services manager
-insert into usuarios (nombre, email, password_hash, rol_id, plantel_id)
+insert into usuarios (nombre, apellido, email, password_hash, rol_id, plantel_id)
 values
-    ('Admin Sistema',        'admin@cuci.edu.mx',    '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 1, null),
-    ('Dr. Marco Herrera',    'mherrera@cuci.edu.mx', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 2, 1),
-    ('Lic. Ana Torres',      'atorres@cuci.edu.mx',  '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 3, 1),
-    ('Ing. Luis Pérez',      'lperez@cuci.edu.mx',   '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 3, 1),
-    ('Mtra. Carmen Salinas', 'csalinas@cuci.edu.mx', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 4, 1);
+    ('Admin',   'Sistema',  'admin@cuci.edu.mx',    '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 1, null),
+    ('Marco',   'Herrera',  'mherrera@cuci.edu.mx', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 2, 1),
+    ('Ana',     'Torres',   'atorres@cuci.edu.mx',  '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 3, 1),
+    ('Luis',    'Pérez',    'lperez@cuci.edu.mx',   '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 3, 1),
+    ('Carmen',  'Salinas',  'csalinas@cuci.edu.mx', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 4, 1);
 
 -- ─── grupos (clave generada por secuencia: CG-1, CG-2, CG-3) ───────────────
 insert into grupos (nombre, plan_estudio_id, plantel_id)
