@@ -7,6 +7,7 @@ const MOCK_PROGRAMS: Program[] = [
   {
     id: 1,
     name: 'Ingeniería en Sistemas Computacionales',
+    degree: 'Licenciatura',
     rvoe: 'RVOE-ISC-2020',
     rvoeDate: '2020-09-01',
     terms: 10,
@@ -24,6 +25,7 @@ const MOCK_PROGRAMS: Program[] = [
   {
     id: 2,
     name: 'Administración de Empresas',
+    degree: 'Licenciatura',
     rvoe: 'RVOE-ADE-2019',
     rvoeDate: '2019-01-15',
     terms: 9,
