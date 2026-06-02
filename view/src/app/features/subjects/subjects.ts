@@ -36,12 +36,14 @@ export class Subjects {
     code: ['', Validators.required],
     name: ['', Validators.required],
     term: [1, [Validators.required, Validators.min(1)]],
+    credits: this.fb.control<number | null>(null, Validators.min(0)),
   });
 
   readonly editForm = this.fb.nonNullable.group({
     code: ['', Validators.required],
     name: ['', Validators.required],
     term: [1, [Validators.required, Validators.min(1)]],
+    credits: this.fb.control<number | null>(null, Validators.min(0)),
   });
 
   onProgramChange(value: string): void {
@@ -51,7 +53,7 @@ export class Subjects {
 
   startEdit(subject: Subject): void {
     this.editingId.set(subject.id);
-    this.editForm.setValue({ code: subject.code, name: subject.name, term: subject.term });
+    this.editForm.setValue({ code: subject.code, name: subject.name, term: subject.term, credits: subject.credits });
   }
 
   saveEdit(subjectId: number): void {

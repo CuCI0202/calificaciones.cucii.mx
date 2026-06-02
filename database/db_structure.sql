@@ -52,7 +52,7 @@ create table materias
     id              integer generated always as identity primary key,
     nombre          varchar(120) not null,
     clave           varchar(20),
-    creditos        integer,
+    creditos        numeric(5, 2),
     cuatrimestre    integer,
     plan_estudio_id integer      not null,
     is_active       boolean                  default true,

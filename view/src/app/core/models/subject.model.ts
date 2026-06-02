@@ -3,4 +3,5 @@ export interface Subject {
   code: string;
   name: string;
   term: number;
+  credits: number | null;
 }
