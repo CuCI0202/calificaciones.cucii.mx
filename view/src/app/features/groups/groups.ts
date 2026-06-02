@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { GroupsService } from '../../core/services/groups.service';
 import { ProgramsService } from '../../core/services/programs.service';
@@ -12,6 +13,7 @@ import { Group } from '../../core/models/group.model';
   templateUrl: './groups.html',
 })
 export class Groups {
+  private readonly router = inject(Router);
   private readonly groupsService = inject(GroupsService);
   private readonly programsService = inject(ProgramsService);
   private readonly campusesService = inject(CampusesService);
@@ -118,5 +120,9 @@ export class Groups {
     this.showAddForm.update((v) => !v);
     this.editingId.set(null);
     if (!this.showAddForm()) this.addForm.reset();
+  }
+
+  goToStudents(id: number): void {
+    this.router.navigate(['/groups', id, 'students']);
   }
 }

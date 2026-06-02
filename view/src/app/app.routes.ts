@@ -58,6 +58,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/users/users').then((m) => m.Users),
   },
   {
+    path: 'groups/:id/students',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./features/groups/group-students/group-students').then(
+        (m) => m.GroupStudents
+      ),
+  },
+  {
     path: '**',
     redirectTo: 'browse',
   },

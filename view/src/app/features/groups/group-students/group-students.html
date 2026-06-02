@@ -1,0 +1,125 @@
+<div class="min-h-screen bg-gray-50 py-10 px-4">
+  <div class="max-w-5xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
+      <div class="flex items-start gap-4">
+        <button (click)="goBack()"
+          class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors mt-0.5 cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Volver
+        </button>
+        <div>
+          <h1 class="text-2xl font-bold text-brand-dark">
+            Alumnos — {{ group()?.code ?? '…' }}
+          </h1>
+          <p class="text-gray-500 text-sm">{{ assignedStudents().length }} alumno(s) asignado(s)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assigned students -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+      <div class="px-5 py-4 border-b border-gray-100">
+        <h2 class="text-base font-semibold text-gray-800">Alumnos asignados</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-gray-500 uppercase text-xs tracking-wide">
+            <tr>
+              <th class="px-4 py-3 text-left">Nombre completo</th>
+              <th class="px-4 py-3 text-left">CURP</th>
+              <th class="px-4 py-3 text-left">Correo institucional</th>
+              <th class="px-4 py-3 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            @for (student of assignedStudents(); track student.id) {
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-4 py-3 font-medium text-gray-800">{{ fullName(student) }}</td>
+                <td class="px-4 py-3 font-mono text-gray-500 text-xs">{{ student.curp }}</td>
+                <td class="px-4 py-3 text-gray-600">{{ student.correoInstitucional }}</td>
+                <td class="px-4 py-3 text-center">
+                  <button (click)="remove(student.id)"
+                    class="text-red-500 hover:text-red-700 text-xs font-medium cursor-pointer">
+                    Quitar
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="px-4 py-10 text-center text-gray-400">
+                  Este grupo no tiene alumnos asignados.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Available students -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="px-5 py-4 border-b border-gray-100">
+        <h2 class="text-base font-semibold text-gray-800 mb-3">Agregar alumnos</h2>
+        <div class="flex flex-col sm:flex-row gap-3 items-center">
+          <input
+            type="text"
+            placeholder="Buscar por nombre o CURP..."
+            [value]="filterDraft()"
+            (input)="filterDraft.set($any($event.target).value)"
+            (keydown.enter)="search()"
+            class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          <button (click)="search()"
+            class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors cursor-pointer">
+            Buscar
+          </button>
+          @if (filterQ()) {
+            <button (click)="clearFilter()"
+              class="border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors cursor-pointer">
+              Limpiar
+            </button>
+          }
+          <span class="text-sm text-gray-500">{{ availableStudents().length }} resultado(s)</span>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-gray-500 uppercase text-xs tracking-wide">
+            <tr>
+              <th class="px-4 py-3 text-left">Nombre completo</th>
+              <th class="px-4 py-3 text-left">CURP</th>
+              <th class="px-4 py-3 text-left">Correo institucional</th>
+              <th class="px-4 py-3 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            @for (student of availableStudents(); track student.id) {
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-4 py-3 font-medium text-gray-800">{{ fullName(student) }}</td>
+                <td class="px-4 py-3 font-mono text-gray-500 text-xs">{{ student.curp }}</td>
+                <td class="px-4 py-3 text-gray-600">{{ student.correoInstitucional }}</td>
+                <td class="px-4 py-3 text-center">
+                  <button (click)="assign(student.id)"
+                    class="bg-primary text-white px-3 py-1 rounded text-xs hover:bg-primary-dark transition-colors cursor-pointer">
+                    Asignar
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="px-4 py-10 text-center text-gray-400">
+                  No hay alumnos disponibles para agregar.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

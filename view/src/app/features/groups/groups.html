@@ -158,12 +158,16 @@
                   <td class="px-4 py-3 text-gray-600">{{ getCampusName(group.campusId) }}</td>
                   <td class="px-4 py-3 text-center">
                     <div class="flex justify-center gap-2">
+                      <button (click)="goToStudents(group.id)"
+                        class="text-blue-600 hover:text-blue-800 text-xs font-medium cursor-pointer">
+                        Alumnos
+                      </button>
                       <button (click)="startEdit(group)"
-                        class="text-primary hover:text-primary-dark text-xs font-medium">
+                        class="text-primary hover:text-primary-dark text-xs font-medium cursor-pointer">
                         Editar
                       </button>
                       <button (click)="delete(group.id)"
-                        class="text-red-500 hover:text-red-700 text-xs font-medium">
+                        class="text-red-500 hover:text-red-700 text-xs font-medium cursor-pointer">
                         Eliminar
                       </button>
                     </div>
