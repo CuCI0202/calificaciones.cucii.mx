@@ -1,23 +1,23 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Student } from '../models/student.model';
+import { Student, fullName } from '../models/student.model';
 
 const MOCK_STUDENTS: Student[] = [
   {
     id: 1,
+    nombres: 'Marco Antonio',
+    primerApellido: 'García',
+    segundoApellido: 'Martínez',
     curp: 'GAMA990101HDFRCR01',
-    name: 'Marco Antonio García Martínez',
-    programId: 1,
-    groupId: 1,
-    campusId: 1,
+    correoInstitucional: 'marco.garcia@cucii.edu.mx',
   },
   {
     id: 2,
+    nombres: 'Brenda',
+    primerApellido: 'López',
+    segundoApellido: 'Pérez',
     curp: 'LOPB010315MDFPZN02',
-    name: 'Brenda López Pérez',
-    programId: 2,
-    groupId: 3,
-    campusId: 1,
+    correoInstitucional: 'brenda.lopez@cucii.edu.mx',
   },
 ];
 
@@ -38,14 +38,6 @@ export class StudentsService {
     return of(this._students().find((s) => s.curp === curp.toUpperCase()));
   }
 
-  getByProgram(programId: number): Observable<Student[]> {
-    return of(this._students().filter((s) => s.programId === programId));
-  }
-
-  getByGroup(groupId: number): Observable<Student[]> {
-    return of(this._students().filter((s) => s.groupId === groupId));
-  }
-
   add(student: Omit<Student, 'id'>): Observable<Student> {
     const created: Student = {
       ...student,
@@ -61,7 +53,11 @@ export class StudentsService {
     this._students.update((list) =>
       list.map((s) => {
         if (s.id === id) {
-          updated = { ...s, ...changes, curp: changes.curp ? changes.curp.toUpperCase() : s.curp };
+          updated = {
+            ...s,
+            ...changes,
+            curp: changes.curp ? changes.curp.toUpperCase() : s.curp,
+          };
           return updated;
         }
         return s;
@@ -73,5 +69,9 @@ export class StudentsService {
   delete(id: number): Observable<void> {
     this._students.update((list) => list.filter((s) => s.id !== id));
     return of(void 0);
+  }
+
+  fullName(student: Student): string {
+    return fullName(student);
   }
 }

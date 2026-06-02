@@ -77,7 +77,6 @@
                       <tr>
                         <th class="px-4 py-3 text-left">CURP</th>
                         <th class="px-4 py-3 text-left">Nombre</th>
-                        <th class="px-4 py-3 text-left">Grupo</th>
                         <th class="px-4 py-3"></th>
                       </tr>
                     </thead>
@@ -85,8 +84,7 @@
                       @for (student of searchResults(); track student.id) {
                         <tr class="hover:bg-gray-50">
                           <td class="px-4 py-3 font-mono text-xs text-gray-600">{{ student.curp }}</td>
-                          <td class="px-4 py-3 text-gray-800">{{ student.name }}</td>
-                          <td class="px-4 py-3 text-gray-600">{{ groupName(student.groupId) }}</td>
+                          <td class="px-4 py-3 text-gray-800">{{ fullName(student) }}</td>
                           <td class="px-4 py-3 text-right">
                             <button
                               type="button"
@@ -108,7 +106,7 @@
         <!-- Found student -->
         @if (foundStudent()) {
           <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 text-sm text-blue-800">
-            <p class="font-semibold">{{ foundStudent()!.name }}</p>
+            <p class="font-semibold">{{ fullName(foundStudent()!) }}</p>
             <p class="text-xs font-mono text-blue-600 mt-0.5">{{ foundStudent()!.curp }}</p>
           </div>
         }
@@ -139,7 +137,7 @@
                 [class.border-red-400]="form.controls.subjectId.invalid && form.controls.subjectId.touched"
                 [attr.disabled]="!foundStudent() ? true : null">
                 <option value="" disabled>
-                  @if (!foundStudent()) { Busca un alumno primero } @else { Selecciona... }
+                  @if (!foundStudent()) { Busca un alumno primero } @else { Sin materias disponibles (pendiente de inscripción) }
                 </option>
                 @for (s of studentSubjects(); track s.id) {
                   <option [value]="s.id">{{ s.name }}</option>

@@ -1,8 +1,12 @@
 export interface Student {
   id: number;
+  nombres: string;
+  primerApellido: string;
+  segundoApellido?: string;
   curp: string;
-  name: string;
-  programId: number;
-  groupId: number;
-  campusId: number;
+  correoInstitucional: string;
+}
+
+export function fullName(student: Student): string {
+  return `${student.nombres} ${student.primerApellido}${student.segundoApellido ? ' ' + student.segundoApellido : ''}`;
 }

@@ -4,9 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import { GradesService } from '../../core/services/grades.service';
 import { StudentsService } from '../../core/services/students.service';
 import { ProgramsService } from '../../core/services/programs.service';
-import { GroupsService } from '../../core/services/groups.service';
 import { Grade } from '../../core/models/grade.model';
-import { Student } from '../../core/models/student.model';
+import { Student, fullName } from '../../core/models/student.model';
 import { Subject } from '../../core/models/subject.model';
 
 const TERMS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -28,7 +27,6 @@ export class Upload {
   private readonly gradesService = inject(GradesService);
   private readonly studentsService = inject(StudentsService);
   private readonly programsService = inject(ProgramsService);
-  private readonly groupsService = inject(GroupsService);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
 
@@ -42,12 +40,11 @@ export class Upload {
   readonly showModal = signal(false);
   readonly searchResults = signal<Student[]>([]);
 
-  readonly studentSubjects = computed<Subject[]>(() => {
-    const student = this.foundStudent();
-    if (!student) return [];
-    const program = this.programsService.programs().find((p) => p.id === student.programId);
-    return program?.subjects ?? [];
-  });
+  readonly studentSubjects = computed<Subject[]>(() => []);
+
+  fullName(student: Student): string {
+    return fullName(student);
+  }
 
   searchStudent(): void {
     const query = this.searchQuery().trim();
@@ -55,7 +52,7 @@ export class Upload {
     const queryUpper = query.toUpperCase();
     const queryLower = query.toLowerCase();
     const results = this.studentsService.students().filter(
-      (s) => s.curp === queryUpper || s.name.toLowerCase().includes(queryLower),
+      (s) => s.curp === queryUpper || fullName(s).toLowerCase().includes(queryLower),
     );
     this.searchResults.set(results);
     this.showModal.set(true);
@@ -72,10 +69,6 @@ export class Upload {
 
   closeModal(): void {
     this.showModal.set(false);
-  }
-
-  groupName(groupId: number): string {
-    return this.groupsService.groups().find((g) => g.id === groupId)?.name ?? '—';
   }
 
   // ── Manual form ──────────────────────────────────────────────────────────
@@ -102,10 +95,10 @@ export class Upload {
 
     const newGrade: Omit<Grade, 'id'> = {
       studentId: student.id,
-      studentName: student.name,
+      studentName: fullName(student),
       studentCurp: student.curp,
       subjectId: subjectIdNum,
-      subjectName: subject.name,
+      subjectName: subject?.name ?? String(subjectIdNum),
       term: +v.term,
       score: +v.score,
     };
@@ -191,15 +184,14 @@ export class Upload {
     if (valid.length === 0) return;
 
     const students = this.studentsService.students();
-    const programs = this.programsService.programs();
+    const allSubjects = this.programsService.programs().flatMap((p) => p.subjects);
 
     const grades: Omit<Grade, 'id'>[] = valid.map((r) => {
       const student = students.find((s) => s.curp === r.studentCurp)!;
-      const program = programs.find((p) => p.id === student.programId);
-      const subject = program?.subjects.find((s) => s.id === r.subjectId);
+      const subject = allSubjects.find((s) => s.id === r.subjectId);
       return {
         studentId: student.id,
-        studentName: student.name,
+        studentName: fullName(student),
         studentCurp: student.curp,
         subjectId: r.subjectId,
         subjectName: subject?.name ?? String(r.subjectId),
