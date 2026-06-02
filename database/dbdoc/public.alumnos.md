@@ -4,7 +4,7 @@
 
 | Name | Type | Default | Nullable | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-| id | integer |  | false | [public.alumnos_grupos](public.alumnos_grupos.md) |  |  |
+| id | integer |  | false | [public.alumnos_grupos](public.alumnos_grupos.md) [public.calificaciones](public.calificaciones.md) |  |  |
 | nombres | varchar(80) |  | false |  |  |  |
 | primer_apellido | varchar(80) |  | false |  |  |  |
 | segundo_apellido | varchar(80) |  | true |  |  |  |

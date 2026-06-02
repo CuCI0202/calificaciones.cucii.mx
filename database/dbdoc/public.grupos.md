@@ -4,7 +4,7 @@
 
 | Name | Type | Default | Nullable | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-| id | integer |  | false | [public.alumnos_grupos](public.alumnos_grupos.md) [public.profesores_grupos](public.profesores_grupos.md) |  |  |
+| id | integer |  | false | [public.alumnos_grupos](public.alumnos_grupos.md) [public.profesores_grupos](public.profesores_grupos.md) [public.calificaciones](public.calificaciones.md) |  |  |
 | clave | varchar(20) | ('CG-'::text || (nextval('grupos_numero_seq'::regclass))::text) | false |  |  |  |
 | nombre | varchar(120) |  | false |  |  |  |
 | plan_estudio_id | integer |  | false |  | [public.planes_estudio](public.planes_estudio.md) |  |

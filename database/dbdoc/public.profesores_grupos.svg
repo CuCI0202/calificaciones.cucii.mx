@@ -142,7 +142,7 @@
 <text text-anchor="start" x="924.75" y="-255.6" font-family="Arial" font-size="14.00" fill="#666666">[varchar(20)]</text>
 <polygon fill="none" stroke="black" points="881.18,-212.6 881.18,-243.4 1134.86,-243.4 1134.86,-212.6 881.18,-212.6"/>
 <text text-anchor="start" x="888.18" y="-224.8" font-family="Arial" font-size="14.00">creditos </text>
-<text text-anchor="start" x="941.09" y="-224.8" font-family="Arial" font-size="14.00" fill="#666666">[integer]</text>
+<text text-anchor="start" x="941.09" y="-224.8" font-family="Arial" font-size="14.00" fill="#666666">[numeric(5,2)]</text>
 <polygon fill="none" stroke="black" points="881.18,-181.8 881.18,-212.6 1134.86,-212.6 1134.86,-181.8 881.18,-181.8"/>
 <text text-anchor="start" x="888.18" y="-194" font-family="Arial" font-size="14.00">cuatrimestre </text>
 <text text-anchor="start" x="969.09" y="-194" font-family="Arial" font-size="14.00" fill="#666666">[integer]</text>

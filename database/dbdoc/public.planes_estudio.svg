@@ -65,7 +65,7 @@
 <text text-anchor="start" x="329.17" y="-681.4" font-family="Arial" font-size="14.00" fill="#666666">[varchar(20)]</text>
 <polygon fill="none" stroke="black" points="285.6,-638.4 285.6,-669.2 539.28,-669.2 539.28,-638.4 285.6,-638.4"/>
 <text text-anchor="start" x="292.6" y="-650.6" font-family="Arial" font-size="14.00">creditos </text>
-<text text-anchor="start" x="345.51" y="-650.6" font-family="Arial" font-size="14.00" fill="#666666">[integer]</text>
+<text text-anchor="start" x="345.51" y="-650.6" font-family="Arial" font-size="14.00" fill="#666666">[numeric(5,2)]</text>
 <polygon fill="none" stroke="black" points="285.6,-607.6 285.6,-638.4 539.28,-638.4 539.28,-607.6 285.6,-607.6"/>
 <text text-anchor="start" x="292.6" y="-619.8" font-family="Arial" font-size="14.00">cuatrimestre </text>
 <text text-anchor="start" x="373.51" y="-619.8" font-family="Arial" font-size="14.00" fill="#666666">[integer]</text>

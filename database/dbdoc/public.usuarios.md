@@ -4,7 +4,7 @@
 
 | Name | Type | Default | Nullable | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-| id | integer |  | false | [public.profesores_grupos](public.profesores_grupos.md) |  |  |
+| id | integer |  | false | [public.profesores_grupos](public.profesores_grupos.md) [public.calificaciones](public.calificaciones.md) |  |  |
 | nombre | varchar(100) |  | false |  |  |  |
 | apellido | varchar(100) |  | true |  |  |  |
 | email | varchar(150) |  | false |  |  |  |

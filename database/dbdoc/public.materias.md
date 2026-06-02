@@ -4,10 +4,10 @@
 
 | Name | Type | Default | Nullable | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-| id | integer |  | false | [public.profesores_grupos](public.profesores_grupos.md) |  |  |
+| id | integer |  | false | [public.profesores_grupos](public.profesores_grupos.md) [public.calificaciones](public.calificaciones.md) |  |  |
 | nombre | varchar(120) |  | false |  |  |  |
 | clave | varchar(20) |  | true |  |  |  |
-| creditos | integer |  | true |  |  |  |
+| creditos | numeric(5,2) |  | true |  |  |  |
 | cuatrimestre | integer |  | true |  |  |  |
 | plan_estudio_id | integer |  | false |  | [public.planes_estudio](public.planes_estudio.md) |  |
 | is_active | boolean | true | true |  |  |  |

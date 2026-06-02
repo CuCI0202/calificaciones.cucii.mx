@@ -359,7 +359,7 @@
         },
         {
           "name": "creditos",
-          "type": "integer",
+          "type": "numeric(5,2)",
           "nullable": true
         },
         {
@@ -1450,6 +1450,240 @@
           ]
         }
       ]
+    },
+    {
+      "name": "public.calificaciones",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "alumno_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "grupo_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "materia_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "calificacion",
+          "type": "numeric(5,2)",
+          "nullable": false
+        },
+        {
+          "name": "registrado_por",
+          "type": "integer",
+          "nullable": true
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": true,
+          "default": "true"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "calificaciones_pkey",
+          "def": "CREATE UNIQUE INDEX calificaciones_pkey ON public.calificaciones USING btree (id)",
+          "table": "public.calificaciones",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "uq_alumno_materia_grupo",
+          "def": "CREATE UNIQUE INDEX uq_alumno_materia_grupo ON public.calificaciones USING btree (alumno_id, materia_id, grupo_id)",
+          "table": "public.calificaciones",
+          "columns": [
+            "alumno_id",
+            "materia_id",
+            "grupo_id"
+          ]
+        },
+        {
+          "name": "idx_calificaciones_alumno",
+          "def": "CREATE INDEX idx_calificaciones_alumno ON public.calificaciones USING btree (alumno_id)",
+          "table": "public.calificaciones",
+          "columns": [
+            "alumno_id"
+          ]
+        },
+        {
+          "name": "idx_calificaciones_grupo",
+          "def": "CREATE INDEX idx_calificaciones_grupo ON public.calificaciones USING btree (grupo_id)",
+          "table": "public.calificaciones",
+          "columns": [
+            "grupo_id"
+          ]
+        },
+        {
+          "name": "idx_calificaciones_materia",
+          "def": "CREATE INDEX idx_calificaciones_materia ON public.calificaciones USING btree (materia_id)",
+          "table": "public.calificaciones",
+          "columns": [
+            "materia_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "calificaciones_alumno_id_not_null",
+          "type": "n",
+          "def": "NOT NULL alumno_id",
+          "table": "public.calificaciones",
+          "referenced_table": "",
+          "columns": [
+            "alumno_id"
+          ]
+        },
+        {
+          "name": "calificaciones_calificacion_not_null",
+          "type": "n",
+          "def": "NOT NULL calificacion",
+          "table": "public.calificaciones",
+          "referenced_table": "",
+          "columns": [
+            "calificacion"
+          ]
+        },
+        {
+          "name": "calificaciones_grupo_id_not_null",
+          "type": "n",
+          "def": "NOT NULL grupo_id",
+          "table": "public.calificaciones",
+          "referenced_table": "",
+          "columns": [
+            "grupo_id"
+          ]
+        },
+        {
+          "name": "calificaciones_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.calificaciones",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "calificaciones_materia_id_not_null",
+          "type": "n",
+          "def": "NOT NULL materia_id",
+          "table": "public.calificaciones",
+          "referenced_table": "",
+          "columns": [
+            "materia_id"
+          ]
+        },
+        {
+          "name": "chk_calificacion",
+          "type": "CHECK",
+          "def": "CHECK (((calificacion \u003e= (0)::numeric) AND (calificacion \u003c= (100)::numeric)))",
+          "table": "public.calificaciones",
+          "referenced_table": "",
+          "columns": [
+            "calificacion"
+          ]
+        },
+        {
+          "name": "fk_calificaciones_materia",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (materia_id) REFERENCES materias(id) ON UPDATE CASCADE ON DELETE RESTRICT",
+          "table": "public.calificaciones",
+          "referenced_table": "public.materias",
+          "columns": [
+            "materia_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "fk_calificaciones_alumno",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (alumno_id) REFERENCES alumnos(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "table": "public.calificaciones",
+          "referenced_table": "public.alumnos",
+          "columns": [
+            "alumno_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "fk_calificaciones_registrado_por",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (registrado_por) REFERENCES usuarios(id) ON UPDATE CASCADE ON DELETE SET NULL",
+          "table": "public.calificaciones",
+          "referenced_table": "public.usuarios",
+          "columns": [
+            "registrado_por"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "fk_calificaciones_grupo",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (grupo_id) REFERENCES grupos(id) ON UPDATE CASCADE ON DELETE RESTRICT",
+          "table": "public.calificaciones",
+          "referenced_table": "public.grupos",
+          "columns": [
+            "grupo_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "calificaciones_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.calificaciones",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "uq_alumno_materia_grupo",
+          "type": "UNIQUE",
+          "def": "UNIQUE (alumno_id, materia_id, grupo_id)",
+          "table": "public.calificaciones",
+          "referenced_table": "",
+          "columns": [
+            "alumno_id",
+            "materia_id",
+            "grupo_id"
+          ]
+        }
+      ]
     }
   ],
   "relations": [
@@ -1572,6 +1806,58 @@
     },
     {
       "table": "public.profesores_grupos",
+      "columns": [
+        "grupo_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.grupos",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (grupo_id) REFERENCES grupos(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.calificaciones",
+      "columns": [
+        "materia_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.materias",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (materia_id) REFERENCES materias(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.calificaciones",
+      "columns": [
+        "alumno_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.alumnos",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (alumno_id) REFERENCES alumnos(id) ON UPDATE CASCADE ON DELETE CASCADE"
+    },
+    {
+      "table": "public.calificaciones",
+      "columns": [
+        "registrado_por"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.usuarios",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (registrado_por) REFERENCES usuarios(id) ON UPDATE CASCADE ON DELETE SET NULL"
+    },
+    {
+      "table": "public.calificaciones",
       "columns": [
         "grupo_id"
       ],
