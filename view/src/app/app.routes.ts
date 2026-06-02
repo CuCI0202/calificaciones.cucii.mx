@@ -28,6 +28,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/students/students').then((m) => m.Students),
   },
   {
+    path: 'profesores',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/profesores/profesores').then((m) => m.Profesores),
+  },
+  {
     path: 'groups',
     canActivate: [adminGuard],
     loadComponent: () => import('./features/groups/groups').then((m) => m.Groups),

@@ -1,0 +1,139 @@
+<div class="min-h-screen bg-gray-50 py-10 px-4">
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-brand-dark">Asignación de Profesores</h1>
+        <p class="text-gray-500 text-sm">{{ assignments().length }} asignación(es) registrada(s)</p>
+      </div>
+      <button (click)="toggleAddForm()"
+        class="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm">
+        @if (showAddForm()) {
+          Cancelar
+        } @else {
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Nueva asignación
+        }
+      </button>
+    </div>
+
+    <!-- Add form -->
+    @if (showAddForm()) {
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+        <h2 class="text-base font-semibold text-gray-800 mb-4">Nueva asignación</h2>
+        @if (duplicateError()) {
+          <div class="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-2.5">
+            Esta combinación de profesor, grupo y materia ya existe.
+          </div>
+        }
+        <form [formGroup]="addForm" (ngSubmit)="submitAdd()" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Profesor</label>
+            <select formControlName="userId"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              [class.border-red-400]="addForm.controls.userId.invalid && addForm.controls.userId.touched">
+              <option value="" disabled>Selecciona...</option>
+              @for (t of teachers(); track t.id) {
+                <option [value]="t.id">{{ t.name }} {{ t.lastName }}</option>
+              }
+            </select>
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.userId.touched && addForm.controls.userId.errors?.['required'])">El profesor es obligatorio.</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Grupo</label>
+            <select formControlName="groupId"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              [class.border-red-400]="addForm.controls.groupId.invalid && addForm.controls.groupId.touched"
+              (change)="onGroupChange($any($event.target).value)">
+              <option value="" disabled>Selecciona...</option>
+              @for (g of groups(); track g.id) {
+                <option [value]="g.id">{{ g.name }}</option>
+              }
+            </select>
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.groupId.touched && addForm.controls.groupId.errors?.['required'])">El grupo es obligatorio.</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Materia</label>
+            <select formControlName="subjectId"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-gray-100 disabled:cursor-not-allowed"
+              [class.border-red-400]="addForm.controls.subjectId.invalid && addForm.controls.subjectId.touched"
+              [attr.disabled]="!selectedGroupId() ? '' : null">
+              <option value="" disabled>{{ selectedGroupId() ? 'Selecciona...' : 'Selecciona un grupo primero' }}</option>
+              @for (s of availableSubjects(); track s.id) {
+                <option [value]="s.id">{{ s.code }} – {{ s.name }}</option>
+              }
+            </select>
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.subjectId.touched && addForm.controls.subjectId.errors?.['required'])">La materia es obligatoria.</p>
+          </div>
+          <div class="sm:col-span-3 flex justify-end">
+            <button type="submit"
+              class="bg-primary text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm">
+              Guardar asignación
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <!-- Filter and table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="px-5 py-4 border-b border-gray-100 flex flex-col sm:flex-row gap-3 items-center">
+        <input
+          type="text"
+          placeholder="Buscar por nombre de profesor..."
+          [value]="filterDraft()"
+          (input)="filterDraft.set($any($event.target).value)"
+          (keydown.enter)="search()"
+          class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <button (click)="search()"
+          class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
+          Buscar
+        </button>
+        @if (filterQ()) {
+          <button (click)="clearFilter()"
+            class="border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+            Limpiar
+          </button>
+        }
+        <span class="text-sm text-gray-500">{{ filtered().length }} resultado(s)</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-gray-500 uppercase text-xs tracking-wide">
+            <tr>
+              <th class="px-4 py-3 text-left">Profesor</th>
+              <th class="px-4 py-3 text-left">Grupo</th>
+              <th class="px-4 py-3 text-left">Materia</th>
+              <th class="px-4 py-3 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            @for (assignment of filtered(); track assignment.id) {
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-4 py-3 font-medium text-gray-800">{{ getTeacherName(assignment.userId) }}</td>
+                <td class="px-4 py-3 text-gray-600">{{ getGroupName(assignment.groupId) }}</td>
+                <td class="px-4 py-3 text-gray-600">{{ getSubjectName(assignment.subjectId) }}</td>
+                <td class="px-4 py-3 text-center">
+                  <button (click)="delete(assignment.id)"
+                    class="text-red-500 hover:text-red-700 text-xs font-medium">
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="px-4 py-10 text-center text-gray-400">
+                  No hay asignaciones registradas.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
