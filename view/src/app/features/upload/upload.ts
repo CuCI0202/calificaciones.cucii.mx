@@ -4,7 +4,10 @@ import { Router, RouterLink } from '@angular/router';
 import { GradesService } from '../../core/services/grades.service';
 import { StudentsService } from '../../core/services/students.service';
 import { ProgramsService } from '../../core/services/programs.service';
+import { GroupsService } from '../../core/services/groups.service';
+import { GroupStudentsService } from '../../core/services/group-students.service';
 import { Grade } from '../../core/models/grade.model';
+import { Group } from '../../core/models/group.model';
 import { Student, fullName } from '../../core/models/student.model';
 import { Subject } from '../../core/models/subject.model';
 
@@ -27,6 +30,8 @@ export class Upload {
   private readonly gradesService = inject(GradesService);
   private readonly studentsService = inject(StudentsService);
   private readonly programsService = inject(ProgramsService);
+  private readonly groupsService = inject(GroupsService);
+  private readonly groupStudentsService = inject(GroupStudentsService);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
 
@@ -39,6 +44,17 @@ export class Upload {
   readonly searchError = signal('');
   readonly showModal = signal(false);
   readonly searchResults = signal<Student[]>([]);
+
+  readonly studentGroups = computed<Group[]>(() => {
+    const student = this.foundStudent();
+    if (!student) return [];
+    const assignedIds = new Set(
+      this.groupStudentsService.assignments()
+        .filter((a) => a.studentId === student.id)
+        .map((a) => a.groupId),
+    );
+    return this.groupsService.groups().filter((g) => assignedIds.has(g.id));
+  });
 
   readonly studentSubjects = computed<Subject[]>(() => []);
 
@@ -64,6 +80,7 @@ export class Upload {
     this.showModal.set(false);
     this.searchError.set('');
     this.searchQuery.set(student.curp);
+    this.form.controls.groupId.setValue('');
     this.form.controls.subjectId.setValue('');
   }
 
@@ -73,6 +90,7 @@ export class Upload {
 
   // ── Manual form ──────────────────────────────────────────────────────────
   readonly form = this.fb.nonNullable.group({
+    groupId: ['', Validators.required],
     term: [0, [Validators.required, Validators.min(1)]],
     subjectId: ['', Validators.required],
     score: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
@@ -97,6 +115,7 @@ export class Upload {
       studentId: student.id,
       studentName: fullName(student),
       studentCurp: student.curp,
+      groupId: +v.groupId,
       subjectId: subjectIdNum,
       subjectName: subject?.name ?? String(subjectIdNum),
       term: +v.term,
@@ -106,7 +125,7 @@ export class Upload {
     this.gradesService.addGrade(newGrade).subscribe(() => {
       this.successMsg.set('Calificación registrada correctamente.');
       this.errorMsg.set('');
-      this.form.reset({ term: 0, score: 0 });
+      this.form.reset({ groupId: '', term: 0, score: 0 });
       this.foundStudent.set(null);
       this.searchQuery.set('');
       this.searchError.set('');
@@ -193,6 +212,7 @@ export class Upload {
         studentId: student.id,
         studentName: fullName(student),
         studentCurp: student.curp,
+        groupId: 0,
         subjectId: r.subjectId,
         subjectName: subject?.name ?? String(r.subjectId),
         term: r.term,

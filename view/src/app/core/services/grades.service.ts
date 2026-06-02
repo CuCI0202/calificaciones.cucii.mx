@@ -12,6 +12,7 @@ const MOCK_GRADES: Grade[] = [
     subjectName: 'Matemáticas I',
     term: 1,
     score: 88,
+    groupId: 1
   },
   {
     id: 2,
@@ -22,6 +23,7 @@ const MOCK_GRADES: Grade[] = [
     subjectName: 'Comunicación Oral y Escrita',
     term: 1,
     score: 92,
+    groupId: 1
   },
   {
     id: 3,
@@ -32,6 +34,7 @@ const MOCK_GRADES: Grade[] = [
     subjectName: 'Introducción a la Programación',
     term: 1,
     score: 95,
+    groupId: 1
   },
   {
     id: 4,
@@ -42,6 +45,7 @@ const MOCK_GRADES: Grade[] = [
     subjectName: 'Fundamentos de Administración',
     term: 2,
     score: 78,
+    groupId: 1
   },
   {
     id: 5,
@@ -52,6 +56,7 @@ const MOCK_GRADES: Grade[] = [
     subjectName: 'Contabilidad General',
     term: 2,
     score: 85,
+    groupId: 1
   },
 ];
 

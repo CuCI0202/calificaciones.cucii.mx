@@ -240,6 +240,51 @@ create index idx_profesores_grupos_usuario on profesores_grupos (usuario_id);
 create index idx_profesores_grupos_grupo   on profesores_grupos (grupo_id);
 create index idx_profesores_grupos_materia on profesores_grupos (materia_id);
 
+-- ─── calificaciones ──────────────────────────────────────────────────────────
+
+create table calificaciones
+(
+    id             integer generated always as identity primary key,
+    alumno_id      integer       not null,
+    grupo_id       integer       not null,
+    materia_id     integer       not null,
+    calificacion   numeric(5, 2) not null,
+    registrado_por integer,
+    is_active      boolean                  default true,
+    created_at     timestamp with time zone default current_timestamp,
+    updated_at     timestamp with time zone default current_timestamp,
+
+    constraint chk_calificacion check (calificacion >= 0 and calificacion <= 100),
+
+    constraint uq_alumno_materia_grupo unique (alumno_id, materia_id, grupo_id),
+
+    constraint fk_calificaciones_alumno
+        foreign key (alumno_id)
+            references alumnos (id)
+            on update cascade on delete cascade,
+
+    constraint fk_calificaciones_grupo
+        foreign key (grupo_id)
+            references grupos (id)
+            on update cascade on delete restrict,
+
+    constraint fk_calificaciones_materia
+        foreign key (materia_id)
+            references materias (id)
+            on update cascade on delete restrict,
+
+    constraint fk_calificaciones_registrado_por
+        foreign key (registrado_por)
+            references usuarios (id)
+            on update cascade on delete set null
+);
+
+alter table calificaciones owner to ssant0;
+
+create index idx_calificaciones_alumno   on calificaciones (alumno_id);
+create index idx_calificaciones_grupo    on calificaciones (grupo_id);
+create index idx_calificaciones_materia  on calificaciones (materia_id);
+
 -- =============================================================================
 -- DATOS DE PRUEBA
 -- Asume DB limpia: los IDs generados arrancan en 1 por tabla.

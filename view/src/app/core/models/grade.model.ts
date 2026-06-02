@@ -3,6 +3,7 @@ export interface Grade {
   studentId: number;
   studentName: string;
   studentCurp: string;
+  groupId: number;
   subjectId: number;
   subjectName: string;
   term: number;
