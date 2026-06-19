@@ -6,8 +6,8 @@ import mx.cucii.school.platform.dto.MateriaResponse;
 import mx.cucii.school.platform.exception.ResourceNotFoundException;
 import mx.cucii.school.platform.model.Materia;
 import mx.cucii.school.platform.model.PlanEstudio;
-import mx.cucii.school.platform.repository.MateriaRepository;
-import mx.cucii.school.platform.repository.PlanEstudioRepository;
+import mx.cucii.school.platform.repository.MateriaJdbcRepository;
+import mx.cucii.school.platform.repository.PlanEstudioJdbcRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MateriaService {
 
-    private final MateriaRepository materiaRepository;
-    private final PlanEstudioRepository planEstudioRepository;
+    private final MateriaJdbcRepository materiaRepository;
+    private final PlanEstudioJdbcRepository planEstudioRepository;
 
     public List<MateriaResponse> findAll() {
         return materiaRepository.findAll().stream()
@@ -78,11 +78,7 @@ public class MateriaService {
     public void delete(Integer id) {
         Materia existing = materiaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Materia no encontrada: " + id));
-        materiaRepository.save(new Materia(
-                existing.id(), existing.nombre(), existing.clave(),
-                existing.creditos(), existing.cuatrimestre(), existing.planEstudioId(),
-                false, existing.createdAt(), OffsetDateTime.now()
-        ));
+        materiaRepository.softDeleteById(existing.id(), OffsetDateTime.now());
     }
 
     private void validateCuatrimestre(Integer cuatrimestre, Integer duracionCuatrimestres) {
