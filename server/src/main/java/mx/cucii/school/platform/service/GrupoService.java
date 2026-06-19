@@ -1,0 +1,131 @@
+package mx.cucii.school.platform.service;
+
+import lombok.RequiredArgsConstructor;
+import mx.cucii.school.platform.dto.GrupoRequest;
+import mx.cucii.school.platform.dto.GrupoResponse;
+import mx.cucii.school.platform.exception.ResourceNotFoundException;
+import mx.cucii.school.platform.model.Grupo;
+import mx.cucii.school.platform.repository.GrupoJdbcRepository;
+import mx.cucii.school.platform.repository.PlanEstudioJdbcRepository;
+import mx.cucii.school.platform.repository.PlantelJdbcRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.OffsetDateTime;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class GrupoService {
+
+    private final GrupoJdbcRepository repository;
+    private final PlanEstudioJdbcRepository planEstudioRepository;
+    private final PlantelJdbcRepository plantelRepository;
+
+    public List<GrupoResponse> findAll() {
+        return repository.findAll().stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public GrupoResponse findById(Integer id) {
+        return repository.findById(id)
+                .map(this::toResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("Grupo no encontrado: " + id));
+    }
+
+    @Transactional
+    public GrupoResponse create(GrupoRequest request) {
+        validateRequest(request);
+
+        planEstudioRepository.findById(request.planEstudioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Plan de estudio no encontrado"));
+        plantelRepository.findById(request.plantelId())
+                .orElseThrow(() -> new ResourceNotFoundException("Plantel no encontrado"));
+
+        String clave = request.clave();
+        if (clave == null || clave.isBlank()) {
+            clave = repository.generateNextClave();
+        } else {
+            String finalClave = clave;
+            repository.findByClave(clave).ifPresent(g -> {
+                throw new IllegalArgumentException("La clave ya está registrada: " + finalClave);
+            });
+        }
+
+        OffsetDateTime now = OffsetDateTime.now();
+        Grupo grupo = new Grupo(
+                null,
+                clave,
+                request.nombre(),
+                request.planEstudioId(),
+                request.plantelId(),
+                true,
+                now,
+                now
+        );
+        return toResponse(repository.save(grupo));
+    }
+
+    @Transactional
+    public GrupoResponse update(Integer id, GrupoRequest request) {
+        Grupo existing = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Grupo no encontrado: " + id));
+        validateRequest(request);
+
+        planEstudioRepository.findById(request.planEstudioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Plan de estudio no encontrado"));
+        plantelRepository.findById(request.plantelId())
+                .orElseThrow(() -> new ResourceNotFoundException("Plantel no encontrado"));
+
+        String clave = request.clave();
+        if (clave == null || clave.isBlank()) {
+            clave = existing.clave();
+        } else if (!clave.equals(existing.clave())) {
+            String finalClave = clave;
+            repository.findByClave(clave).ifPresent(g -> {
+                throw new IllegalArgumentException("La clave ya está registrada: " + finalClave);
+            });
+        }
+
+        Grupo updated = new Grupo(
+                existing.id(),
+                clave,
+                request.nombre(),
+                request.planEstudioId(),
+                request.plantelId(),
+                existing.isActive(),
+                existing.createdAt(),
+                OffsetDateTime.now()
+        );
+        return toResponse(repository.save(updated));
+    }
+
+    @Transactional
+    public void delete(Integer id) {
+        if (repository.findById(id).isEmpty()) {
+            throw new ResourceNotFoundException("Grupo no encontrado: " + id);
+        }
+        repository.softDeleteById(id, OffsetDateTime.now());
+    }
+
+    private void validateRequest(GrupoRequest request) {
+        if (request.nombre() == null || request.nombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+        if (request.planEstudioId() == null) {
+            throw new IllegalArgumentException("El plan de estudio es obligatorio");
+        }
+        if (request.plantelId() == null) {
+            throw new IllegalArgumentException("El plantel es obligatorio");
+        }
+    }
+
+    private GrupoResponse toResponse(Grupo g) {
+        return new GrupoResponse(
+                g.id(), g.clave(), g.nombre(),
+                g.planEstudioId(), g.plantelId(),
+                g.isActive(), g.createdAt(), g.updatedAt()
+        );
+    }
+}
