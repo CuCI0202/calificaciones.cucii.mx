@@ -319,11 +319,11 @@ values
 -- roles: 1=admin 2=rector 3=docente 4=school services manager
 insert into usuarios (nombre, apellido, email, password_hash, rol_id, plantel_id)
 values
-    ('Admin',   'Sistema',  'admin@cuci.edu.mx',    '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 1, null),
-    ('Marco',   'Herrera',  'mherrera@cuci.edu.mx', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 2, 1),
-    ('Ana',     'Torres',   'atorres@cuci.edu.mx',  '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 3, 1),
-    ('Luis',    'Pérez',    'lperez@cuci.edu.mx',   '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 3, 1),
-    ('Carmen',  'Salinas',  'csalinas@cuci.edu.mx', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 4, 1);
+    ('Admin',   'Sistema',  'admin@cuci.edu.mx',    '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 1, null),
+    ('Marco',   'Herrera',  'mherrera@cuci.edu.mx', '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 2, 1),
+    ('Ana',     'Torres',   'atorres@cuci.edu.mx',  '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 3, 1),
+    ('Luis',    'Pérez',    'lperez@cuci.edu.mx',   '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 3, 1),
+    ('Carmen',  'Salinas',  'csalinas@cuci.edu.mx', '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 4, 1);
 
 -- ─── grupos (clave generada por secuencia: CG-1, CG-2, CG-3) ───────────────
 insert into grupos (nombre, plan_estudio_id, plantel_id)
