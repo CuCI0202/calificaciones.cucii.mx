@@ -1,8 +1,8 @@
 package mx.cucii.school.platform.service;
 
 import lombok.RequiredArgsConstructor;
-import mx.cucii.school.platform.repository.RolRepository;
-import mx.cucii.school.platform.repository.UsuarioRepository;
+import mx.cucii.school.platform.repository.RolJdbcRepository;
+import mx.cucii.school.platform.repository.UsuarioJdbcRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UsuarioDetailsService implements UserDetailsService {
 
-    private final UsuarioRepository usuarioRepository;
-    private final RolRepository rolRepository;
+    private final UsuarioJdbcRepository usuarioRepository;
+    private final RolJdbcRepository rolRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
