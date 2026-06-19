@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import mx.cucii.school.platform.dto.LoginRequest;
 import mx.cucii.school.platform.dto.LoginResponse;
 import mx.cucii.school.platform.model.Rol;
-import mx.cucii.school.platform.repository.RolRepository;
-import mx.cucii.school.platform.repository.UsuarioRepository;
+import mx.cucii.school.platform.repository.RolJdbcRepository;
+import mx.cucii.school.platform.repository.UsuarioJdbcRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
-    private final UsuarioRepository usuarioRepository;
-    private final RolRepository rolRepository;
+    private final UsuarioJdbcRepository usuarioRepository;
+    private final RolJdbcRepository rolRepository;
     private final JwtService jwtService;
 
     public LoginResponse login(LoginRequest request) {
