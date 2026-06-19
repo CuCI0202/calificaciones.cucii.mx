@@ -16,6 +16,7 @@ public class UsuarioJdbcRepository {
         new Usuario(
                 rs.getInt("id"),
                 rs.getString("nombre"),
+                rs.getString("apellido"),
                 rs.getString("email"),
                 rs.getString("password_hash"),
                 rs.getInt("rol_id"),
@@ -59,12 +60,12 @@ public class UsuarioJdbcRepository {
     private Usuario insert(Usuario usuario) {
         return jdbcTemplate.queryForObject(
                 """
-                INSERT INTO usuarios (nombre, email, password_hash, rol_id, plantel_id, is_active, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO usuarios (nombre, apellido, email, password_hash, rol_id, plantel_id, is_active, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 RETURNING *
                 """,
                 USUARIO_MAPPER,
-                usuario.nombre(), usuario.email(), usuario.passwordHash(),
+                usuario.nombre(), usuario.apellido(), usuario.email(), usuario.passwordHash(),
                 usuario.rolId(), usuario.plantelId(),
                 usuario.isActive(), usuario.createdAt(), usuario.updatedAt()
         );
@@ -74,13 +75,13 @@ public class UsuarioJdbcRepository {
         return jdbcTemplate.queryForObject(
                 """
                 UPDATE usuarios
-                SET nombre = ?, email = ?, password_hash = ?, rol_id = ?,
+                SET nombre = ?, apellido = ?, email = ?, password_hash = ?, rol_id = ?,
                     plantel_id = ?, is_active = ?, updated_at = ?
                 WHERE id = ?
                 RETURNING *
                 """,
                 USUARIO_MAPPER,
-                usuario.nombre(), usuario.email(), usuario.passwordHash(),
+                usuario.nombre(), usuario.apellido(), usuario.email(), usuario.passwordHash(),
                 usuario.rolId(), usuario.plantelId(),
                 usuario.isActive(), usuario.updatedAt(), usuario.id()
         );

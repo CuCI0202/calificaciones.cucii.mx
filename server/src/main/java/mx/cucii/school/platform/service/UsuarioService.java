@@ -44,6 +44,7 @@ public class UsuarioService {
         Usuario nuevo = new Usuario(
                 null,
                 request.nombre(),
+                request.apellido(),
                 request.email(),
                 passwordEncoder.encode(request.password()),
                 request.rolId(),
@@ -70,6 +71,7 @@ public class UsuarioService {
         Usuario updated = new Usuario(
                 existing.id(),
                 request.nombre(),
+                request.apellido(),
                 request.email(),
                 passwordHash,
                 request.rolId(),
@@ -98,7 +100,7 @@ public class UsuarioService {
                 .map(Rol::nombre)
                 .orElse("");
         return new UsuarioResponse(
-                u.id(), u.nombre(), u.email(),
+                u.id(), u.nombre(), u.apellido(), u.email(),
                 u.rolId(), rolNombre,
                 u.plantelId(), u.isActive(),
                 u.createdAt(), u.updatedAt()

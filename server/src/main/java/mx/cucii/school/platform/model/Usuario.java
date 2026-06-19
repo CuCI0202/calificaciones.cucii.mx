@@ -10,6 +10,7 @@ import java.time.OffsetDateTime;
 public record Usuario(
         @Id Integer id,
         String nombre,
+        String apellido,
         String email,
         @Column("password_hash") String passwordHash,
         @Column("rol_id") Integer rolId,
