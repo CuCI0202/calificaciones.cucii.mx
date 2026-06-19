@@ -1,0 +1,46 @@
+package mx.cucii.school.platform.controller;
+
+import lombok.RequiredArgsConstructor;
+import mx.cucii.school.platform.dto.GrupoRequest;
+import mx.cucii.school.platform.dto.GrupoResponse;
+import mx.cucii.school.platform.service.GrupoService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/grupos")
+@RequiredArgsConstructor
+public class GrupoController {
+
+    private final GrupoService grupoService;
+
+    @GetMapping
+    public ResponseEntity<List<GrupoResponse>> getAll() {
+        return ResponseEntity.ok(grupoService.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<GrupoResponse> getById(@PathVariable Integer id) {
+        return ResponseEntity.ok(grupoService.findById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<GrupoResponse> create(@RequestBody GrupoRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(grupoService.create(request));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<GrupoResponse> update(@PathVariable Integer id,
+                                                 @RequestBody GrupoRequest request) {
+        return ResponseEntity.ok(grupoService.update(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        grupoService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}
