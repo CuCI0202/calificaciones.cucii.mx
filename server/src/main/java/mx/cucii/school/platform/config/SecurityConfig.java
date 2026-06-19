@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/planes-estudio/**").hasRole("ADMIN")
                         .requestMatchers("/materias/**").hasRole("ADMIN")
                         .requestMatchers("/planteles/**").hasRole("ADMIN")
+                        .requestMatchers("/alumnos/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
