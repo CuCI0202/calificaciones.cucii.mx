@@ -61,7 +61,7 @@ mx.cucii.school.platform/
 
 ### Repository (@Repository)
 - **Única responsabilidad:** hablar con la base de datos.
-- Recibe/retorna model records (`PlanEstudio`, `Materia`, `Usuario`, `Rol`).
+- Recibe/retorna model records (`PlanEstudio`, `Materia`, `Usuario`, `Rol`, etc.).
 - Usa `JdbcTemplate` con `RowMapper` para transformar filas SQL en records Java.
 - SQL explícito en todas las operaciones.
 - **Nombres:** `*JdbcRepository` (ej. `PlanEstudioJdbcRepository`, `UsuarioJdbcRepository`).
@@ -129,12 +129,27 @@ public class EntidadJdbcRepository {
 - **SQL directo:** `UPDATE tabla SET is_active = false, updated_at = ? WHERE id = ?`
 - **Cascade soft-delete:** padre e hijos se desactivan en la misma `@Transactional` con dos `UPDATE` consecutivos.
 - Ya no se carga el record en memoria, se reconstruye y se guarda de nuevo — se hace un solo `UPDATE`.
+- **Tablas sin `updated_at`:** `alumnos_grupos` y `profesores_grupos` no tienen columna `updated_at`. El soft-delete en esas tablas es solo `UPDATE ... SET is_active = false WHERE id = ?`.
 
 ### Campos notables en la BD
 
 | Tabla | Columna | Tipo | Java | Nota |
 |-------|---------|------|------|------|
-| `usuarios` | `apellido` | `varchar(100)` | `String apellido` | Nullable. Incluido en model, request y response. |
+| `usuarios` | `apellido` | `varchar(100)` | `String apellido` | Nullable. |
+| `planteles` | `latitud` | `numeric(10,8)` | `BigDecimal latitud` | Nullable. |
+| `planteles` | `longitud` | `numeric(11,8)` | `BigDecimal longitud` | Nullable. |
+| `planteles` | `pais` | `varchar(50)` | `String pais` | Default 'México'. Service asigna si es null. |
+| `alumnos` | `curp` | `char(18)` | `String curp` | UNIQUE, validado con regex en service. |
+| `alumnos` | `correo_institucional` | `varchar(120)` | `String correoInstitucional` | UNIQUE, nullable. |
+| `grupos` | `clave` | `varchar(20)` | `String clave` | UNIQUE. Auto-generada via `nextval('grupos_numero_seq')` → "CG-{n}". |
+| `calificaciones` | `calificacion` | `numeric(5,2)` | `BigDecimal calificacion` | Rango 0-100. Validado en service. |
+| `calificaciones` | `registrado_por` | `int` | `Integer registradoPor` | FK a `usuarios.id`, nullable, on delete set null. |
+
+### Tablas sin `updated_at`
+- `roles` — solo tiene `created_at`
+- `alumnos_grupos` — solo tiene `created_at`
+- `profesores_grupos` — solo tiene `created_at`
+- `profesores_grupos` — solo tiene `created_at`
 
 ## Endpoints
 
@@ -179,6 +194,56 @@ public class EntidadJdbcRepository {
 | POST | `/planteles` | Crear (201) |
 | PUT | `/planteles/{id}` | Actualizar |
 | DELETE | `/planteles/{id}` | Soft-delete (204) |
+
+### Alumnos (`/alumnos`)
+
+| Método | Ruta | Acción |
+|--------|------|--------|
+| GET | `/alumnos` | Listar todos |
+| GET | `/alumnos/{id}` | Obtener por ID |
+| POST | `/alumnos` | Crear (201). Valida CURP y correo únicos. |
+| PUT | `/alumnos/{id}` | Actualizar |
+| DELETE | `/alumnos/{id}` | Soft-delete (204) |
+
+### Grupos (`/grupos`)
+
+| Método | Ruta | Acción |
+|--------|------|--------|
+| GET | `/grupos` | Listar todos |
+| GET | `/grupos/{id}` | Obtener por ID |
+| POST | `/grupos` | Crear (201). Clave auto-generada si no se provee. |
+| PUT | `/grupos/{id}` | Actualizar |
+| DELETE | `/grupos/{id}` | Soft-delete (204) |
+
+### Alumnos-Grupos (`/alumnos-grupos`)
+
+| Método | Ruta | Acción |
+|--------|------|--------|
+| GET | `/alumnos-grupos` | Listar asignaciones |
+| GET | `/alumnos-grupos/{id}` | Obtener por ID |
+| POST | `/alumnos-grupos` | Asignar alumno a grupo (201). Unique: alumno+grupo. |
+| PUT | `/alumnos-grupos/{id}` | Actualizar |
+| DELETE | `/alumnos-grupos/{id}` | Soft-delete (204). Sin updated_at. |
+
+### Profesores-Grupos (`/profesores-grupos`)
+
+| Método | Ruta | Acción |
+|--------|------|--------|
+| GET | `/profesores-grupos` | Listar asignaciones |
+| GET | `/profesores-grupos/{id}` | Obtener por ID |
+| POST | `/profesores-grupos` | Asignar profesor a grupo+materia (201). Unique: profesor+grupo+materia. |
+| PUT | `/profesores-grupos/{id}` | Actualizar |
+| DELETE | `/profesores-grupos/{id}` | Soft-delete (204). Sin updated_at. |
+
+### Calificaciones (`/calificaciones`)
+
+| Método | Ruta | Acción |
+|--------|------|--------|
+| GET | `/calificaciones` | Listar todas |
+| GET | `/calificaciones/{id}` | Obtener por ID |
+| POST | `/calificaciones` | Registrar calificación (201). Rango 0-100. Unique: alumno+materia+grupo. |
+| PUT | `/calificaciones/{id}` | Actualizar |
+| DELETE | `/calificaciones/{id}` | Soft-delete (204) |
 
 ### Auth (`/auth`)
 
@@ -230,6 +295,11 @@ security.jwt.expiration=8640000000   # 100 días (dev)
 | `/planes-estudio/**` | `ADMIN` |
 | `/materias/**` | `ADMIN` |
 | `/planteles/**` | `ADMIN` |
+| `/alumnos/**` | `ADMIN` |
+| `/grupos/**` | `ADMIN` |
+| `/alumnos-grupos/**` | `ADMIN` |
+| `/profesores-grupos/**` | `ADMIN` |
+| `/calificaciones/**` | `ADMIN` |
 | cualquier otra | JWT válido |
 
 ## Rama de migración JdbcTemplate
@@ -242,5 +312,12 @@ Toda la migración de Spring Data JDBC → JdbcTemplate se realizó en la rama `
 | `jdbc-materia` | MateriaJdbcRepository + MateriaService |
 | `jdbc-usuario` | UsuarioJdbcRepository + RolJdbcRepository + UsuarioService |
 | `jdbc-auth` | AuthService + UsuarioDetailsService migrados a los nuevos repos |
+| `fix/lastname` | Agregar campo `apellido` a Usuario (model, DTOs, repository, service) |
+| `jdbc-plantel` | PlantelJdbcRepository + PlantelService + PlantelController |
+| `jdbc-alumno` | AlumnoJdbcRepository + AlumnoService + AlumnoController |
+| `jdbc-grupo` | GrupoJdbcRepository + GrupoService + GrupoController |
+| `jdbc-alumno-grupo` | AlumnoGrupoJdbcRepository + AlumnoGrupoService + AlumnoGrupoController |
+| `jdbc-profesor-grupo` | ProfesorGrupoJdbcRepository + ProfesorGrupoService + ProfesorGrupoController |
+| `jdbc-calificacion` | CalificacionJdbcRepository + CalificacionService + CalificacionController |
 
 Convención para futuras migraciones: `jdbc-{entidad}`.
