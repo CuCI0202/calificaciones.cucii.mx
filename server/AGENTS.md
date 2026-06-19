@@ -170,6 +170,16 @@ public class EntidadJdbcRepository {
 | PUT | `/usuarios/{id}` | Actualizar |
 | DELETE | `/usuarios/{id}?deactivate=true|false` | Soft-delete (true) o hard-delete (false) |
 
+### Planteles (`/planteles`)
+
+| Método | Ruta | Acción |
+|--------|------|--------|
+| GET | `/planteles` | Listar todos |
+| GET | `/planteles/{id}` | Obtener por ID |
+| POST | `/planteles` | Crear (201) |
+| PUT | `/planteles/{id}` | Actualizar |
+| DELETE | `/planteles/{id}` | Soft-delete (204) |
+
 ### Auth (`/auth`)
 
 | Método | Ruta | Acción |
@@ -219,6 +229,7 @@ security.jwt.expiration=8640000000   # 100 días (dev)
 | `/usuarios/**` | `ADMIN` |
 | `/planes-estudio/**` | `ADMIN` |
 | `/materias/**` | `ADMIN` |
+| `/planteles/**` | `ADMIN` |
 | cualquier otra | JWT válido |
 
 ## Rama de migración JdbcTemplate
