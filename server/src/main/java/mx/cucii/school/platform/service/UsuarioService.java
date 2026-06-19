@@ -6,8 +6,8 @@ import mx.cucii.school.platform.dto.UsuarioResponse;
 import mx.cucii.school.platform.exception.ResourceNotFoundException;
 import mx.cucii.school.platform.model.Rol;
 import mx.cucii.school.platform.model.Usuario;
-import mx.cucii.school.platform.repository.RolRepository;
-import mx.cucii.school.platform.repository.UsuarioRepository;
+import mx.cucii.school.platform.repository.RolJdbcRepository;
+import mx.cucii.school.platform.repository.UsuarioJdbcRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UsuarioService {
 
-    private final UsuarioRepository usuarioRepository;
-    private final RolRepository rolRepository;
+    private final UsuarioJdbcRepository usuarioRepository;
+    private final RolJdbcRepository rolRepository;
     private final PasswordEncoder passwordEncoder;
 
     public List<UsuarioResponse> findAll() {
@@ -83,20 +83,11 @@ public class UsuarioService {
 
     @Transactional
     public void delete(Integer id, boolean deactivate) {
-        Usuario existing = usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado: " + id));
+        if (!usuarioRepository.findById(id).isPresent()) {
+            throw new ResourceNotFoundException("Usuario no encontrado: " + id);
+        }
         if (deactivate) {
-            usuarioRepository.save(new Usuario(
-                    existing.id(),
-                    existing.nombre(),
-                    existing.email(),
-                    existing.passwordHash(),
-                    existing.rolId(),
-                    existing.plantelId(),
-                    false,
-                    existing.createdAt(),
-                    OffsetDateTime.now()
-            ));
+            usuarioRepository.softDeleteById(id, OffsetDateTime.now());
         } else {
             usuarioRepository.deleteById(id);
         }
