@@ -6,30 +6,40 @@
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
 | id | integer |  | false | [public.usuarios](public.usuarios.md) [public.grupos](public.grupos.md) |  |  |
 | nombre_oficial | varchar(150) |  | false |  |  |  |
-| nombre_corto | varchar(50) |  | true |  |  |  |
-| direccion_calle | varchar(100) |  | true |  |  |  |
-| direccion_numero_ext | varchar(20) |  | true |  |  |  |
-| direccion_numero_int | varchar(20) |  | true |  |  |  |
-| colonia | varchar(100) |  | true |  |  |  |
-| codigo_postal | varchar(10) |  | true |  |  |  |
-| ciudad_municipio | varchar(100) |  | false |  |  |  |
-| estado | varchar(100) |  | false |  |  |  |
-| pais | varchar(50) | 'México'::character varying | true |  |  |  |
+| nombre_corto | varchar(50) | ''::character varying | false |  |  |  |
+| direccion_calle | varchar(100) | ''::character varying | false |  |  |  |
+| direccion_numero_ext | varchar(20) | ''::character varying | false |  |  |  |
+| direccion_numero_int | varchar(20) | ''::character varying | true |  |  |  |
+| colonia | varchar(100) | ''::character varying | false |  |  |  |
+| codigo_postal | varchar(10) | ''::character varying | false |  |  |  |
+| ciudad_municipio | varchar(100) | ''::character varying | false |  |  |  |
+| estado | varchar(100) | ''::character varying | false |  |  |  |
+| pais | varchar(50) | 'México'::character varying | false |  |  |  |
 | latitud | numeric(10,8) |  | true |  |  |  |
 | longitud | numeric(11,8) |  | true |  |  |  |
-| director_nombre | varchar(150) |  | true |  |  |  |
-| is_active | boolean | true | true |  |  |  |
-| created_at | timestamp with time zone | CURRENT_TIMESTAMP | true |  |  |  |
-| updated_at | timestamp with time zone | CURRENT_TIMESTAMP | true |  |  |  |
+| director_nombre | varchar(150) | ''::character varying | false |  |  |  |
+| is_active | boolean | true | false |  |  |  |
+| created_at | timestamp with time zone | CURRENT_TIMESTAMP | false |  |  |  |
+| updated_at | timestamp with time zone | CURRENT_TIMESTAMP | false |  |  |  |
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
 | planteles_ciudad_municipio_not_null | n | NOT NULL ciudad_municipio |
+| planteles_codigo_postal_not_null | n | NOT NULL codigo_postal |
+| planteles_colonia_not_null | n | NOT NULL colonia |
+| planteles_created_at_not_null | n | NOT NULL created_at |
+| planteles_direccion_calle_not_null | n | NOT NULL direccion_calle |
+| planteles_direccion_numero_ext_not_null | n | NOT NULL direccion_numero_ext |
+| planteles_director_nombre_not_null | n | NOT NULL director_nombre |
 | planteles_estado_not_null | n | NOT NULL estado |
 | planteles_id_not_null | n | NOT NULL id |
+| planteles_is_active_not_null | n | NOT NULL is_active |
+| planteles_nombre_corto_not_null | n | NOT NULL nombre_corto |
 | planteles_nombre_oficial_not_null | n | NOT NULL nombre_oficial |
+| planteles_pais_not_null | n | NOT NULL pais |
+| planteles_updated_at_not_null | n | NOT NULL updated_at |
 | planteles_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 
 ## Indexes

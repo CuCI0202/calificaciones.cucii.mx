@@ -8,15 +8,17 @@
 | usuario_id | integer |  | false |  | [public.usuarios](public.usuarios.md) |  |
 | grupo_id | integer |  | false |  | [public.grupos](public.grupos.md) |  |
 | materia_id | integer |  | false |  | [public.materias](public.materias.md) |  |
-| is_active | boolean | true | true |  |  |  |
-| created_at | timestamp with time zone | CURRENT_TIMESTAMP | true |  |  |  |
+| is_active | boolean | true | false |  |  |  |
+| created_at | timestamp with time zone | CURRENT_TIMESTAMP | false |  |  |  |
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
+| profesores_grupos_created_at_not_null | n | NOT NULL created_at |
 | profesores_grupos_grupo_id_not_null | n | NOT NULL grupo_id |
 | profesores_grupos_id_not_null | n | NOT NULL id |
+| profesores_grupos_is_active_not_null | n | NOT NULL is_active |
 | profesores_grupos_materia_id_not_null | n | NOT NULL materia_id |
 | profesores_grupos_usuario_id_not_null | n | NOT NULL usuario_id |
 | fk_profesores_grupos_materia | FOREIGN KEY | FOREIGN KEY (materia_id) REFERENCES materias(id) ON UPDATE CASCADE ON DELETE RESTRICT |

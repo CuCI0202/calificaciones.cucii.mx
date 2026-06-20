@@ -9,19 +9,22 @@
 | nombre | varchar(120) |  | false |  |  |  |
 | plan_estudio_id | integer |  | false |  | [public.planes_estudio](public.planes_estudio.md) |  |
 | plantel_id | integer |  | false |  | [public.planteles](public.planteles.md) |  |
-| is_active | boolean | true | true |  |  |  |
-| created_at | timestamp with time zone | CURRENT_TIMESTAMP | true |  |  |  |
-| updated_at | timestamp with time zone | CURRENT_TIMESTAMP | true |  |  |  |
+| is_active | boolean | true | false |  |  |  |
+| created_at | timestamp with time zone | CURRENT_TIMESTAMP | false |  |  |  |
+| updated_at | timestamp with time zone | CURRENT_TIMESTAMP | false |  |  |  |
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
 | grupos_clave_not_null | n | NOT NULL clave |
+| grupos_created_at_not_null | n | NOT NULL created_at |
 | grupos_id_not_null | n | NOT NULL id |
+| grupos_is_active_not_null | n | NOT NULL is_active |
 | grupos_nombre_not_null | n | NOT NULL nombre |
 | grupos_plan_estudio_id_not_null | n | NOT NULL plan_estudio_id |
 | grupos_plantel_id_not_null | n | NOT NULL plantel_id |
+| grupos_updated_at_not_null | n | NOT NULL updated_at |
 | fk_grupos_plantel | FOREIGN KEY | FOREIGN KEY (plantel_id) REFERENCES planteles(id) ON UPDATE CASCADE ON DELETE RESTRICT |
 | fk_grupos_plan_estudio | FOREIGN KEY | FOREIGN KEY (plan_estudio_id) REFERENCES planes_estudio(id) ON UPDATE CASCADE ON DELETE RESTRICT |
 | grupos_pkey | PRIMARY KEY | PRIMARY KEY (id) |

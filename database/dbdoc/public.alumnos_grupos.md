@@ -7,16 +7,18 @@
 | id | integer |  | false |  |  |  |
 | alumno_id | integer |  | false |  | [public.alumnos](public.alumnos.md) |  |
 | grupo_id | integer |  | false |  | [public.grupos](public.grupos.md) |  |
-| is_active | boolean | true | true |  |  |  |
-| created_at | timestamp with time zone | CURRENT_TIMESTAMP | true |  |  |  |
+| is_active | boolean | true | false |  |  |  |
+| created_at | timestamp with time zone | CURRENT_TIMESTAMP | false |  |  |  |
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
 | alumnos_grupos_alumno_id_not_null | n | NOT NULL alumno_id |
+| alumnos_grupos_created_at_not_null | n | NOT NULL created_at |
 | alumnos_grupos_grupo_id_not_null | n | NOT NULL grupo_id |
 | alumnos_grupos_id_not_null | n | NOT NULL id |
+| alumnos_grupos_is_active_not_null | n | NOT NULL is_active |
 | fk_alumnos_grupos_alumno | FOREIGN KEY | FOREIGN KEY (alumno_id) REFERENCES alumnos(id) ON UPDATE CASCADE ON DELETE CASCADE |
 | fk_alumnos_grupos_grupo | FOREIGN KEY | FOREIGN KEY (grupo_id) REFERENCES grupos(id) ON UPDATE CASCADE ON DELETE RESTRICT |
 | alumnos_grupos_pkey | PRIMARY KEY | PRIMARY KEY (id) |

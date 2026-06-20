@@ -18,47 +18,55 @@
         {
           "name": "nombre_corto",
           "type": "varchar(50)",
-          "nullable": true
+          "nullable": false,
+          "default": "''::character varying"
         },
         {
           "name": "direccion_calle",
           "type": "varchar(100)",
-          "nullable": true
+          "nullable": false,
+          "default": "''::character varying"
         },
         {
           "name": "direccion_numero_ext",
           "type": "varchar(20)",
-          "nullable": true
+          "nullable": false,
+          "default": "''::character varying"
         },
         {
           "name": "direccion_numero_int",
           "type": "varchar(20)",
-          "nullable": true
+          "nullable": true,
+          "default": "''::character varying"
         },
         {
           "name": "colonia",
           "type": "varchar(100)",
-          "nullable": true
+          "nullable": false,
+          "default": "''::character varying"
         },
         {
           "name": "codigo_postal",
           "type": "varchar(10)",
-          "nullable": true
+          "nullable": false,
+          "default": "''::character varying"
         },
         {
           "name": "ciudad_municipio",
           "type": "varchar(100)",
-          "nullable": false
+          "nullable": false,
+          "default": "''::character varying"
         },
         {
           "name": "estado",
           "type": "varchar(100)",
-          "nullable": false
+          "nullable": false,
+          "default": "''::character varying"
         },
         {
           "name": "pais",
           "type": "varchar(50)",
-          "nullable": true,
+          "nullable": false,
           "default": "'México'::character varying"
         },
         {
@@ -74,24 +82,25 @@
         {
           "name": "director_nombre",
           "type": "varchar(150)",
-          "nullable": true
+          "nullable": false,
+          "default": "''::character varying"
         },
         {
           "name": "is_active",
           "type": "boolean",
-          "nullable": true,
+          "nullable": false,
           "default": "true"
         },
         {
           "name": "created_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         },
         {
           "name": "updated_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         }
       ],
@@ -133,6 +142,66 @@
           ]
         },
         {
+          "name": "planteles_codigo_postal_not_null",
+          "type": "n",
+          "def": "NOT NULL codigo_postal",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "codigo_postal"
+          ]
+        },
+        {
+          "name": "planteles_colonia_not_null",
+          "type": "n",
+          "def": "NOT NULL colonia",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "colonia"
+          ]
+        },
+        {
+          "name": "planteles_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
+          ]
+        },
+        {
+          "name": "planteles_direccion_calle_not_null",
+          "type": "n",
+          "def": "NOT NULL direccion_calle",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "direccion_calle"
+          ]
+        },
+        {
+          "name": "planteles_direccion_numero_ext_not_null",
+          "type": "n",
+          "def": "NOT NULL direccion_numero_ext",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "direccion_numero_ext"
+          ]
+        },
+        {
+          "name": "planteles_director_nombre_not_null",
+          "type": "n",
+          "def": "NOT NULL director_nombre",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "director_nombre"
+          ]
+        },
+        {
           "name": "planteles_estado_not_null",
           "type": "n",
           "def": "NOT NULL estado",
@@ -153,6 +222,26 @@
           ]
         },
         {
+          "name": "planteles_is_active_not_null",
+          "type": "n",
+          "def": "NOT NULL is_active",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "is_active"
+          ]
+        },
+        {
+          "name": "planteles_nombre_corto_not_null",
+          "type": "n",
+          "def": "NOT NULL nombre_corto",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "nombre_corto"
+          ]
+        },
+        {
           "name": "planteles_nombre_oficial_not_null",
           "type": "n",
           "def": "NOT NULL nombre_oficial",
@@ -160,6 +249,26 @@
           "referenced_table": "",
           "columns": [
             "nombre_oficial"
+          ]
+        },
+        {
+          "name": "planteles_pais_not_null",
+          "type": "n",
+          "def": "NOT NULL pais",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "pais"
+          ]
+        },
+        {
+          "name": "planteles_updated_at_not_null",
+          "type": "n",
+          "def": "NOT NULL updated_at",
+          "table": "public.planteles",
+          "referenced_table": "",
+          "columns": [
+            "updated_at"
           ]
         },
         {
@@ -217,13 +326,13 @@
         {
           "name": "created_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         },
         {
           "name": "updated_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         }
       ],
@@ -254,6 +363,16 @@
           "referenced_table": "",
           "columns": [
             "grado"
+          ]
+        },
+        {
+          "name": "planes_estudio_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.planes_estudio",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
           ]
         },
         {
@@ -317,6 +436,16 @@
           ]
         },
         {
+          "name": "planes_estudio_updated_at_not_null",
+          "type": "n",
+          "def": "NOT NULL updated_at",
+          "table": "public.planes_estudio",
+          "referenced_table": "",
+          "columns": [
+            "updated_at"
+          ]
+        },
+        {
           "name": "planes_estudio_pkey",
           "type": "PRIMARY KEY",
           "def": "PRIMARY KEY (id)",
@@ -355,17 +484,17 @@
         {
           "name": "clave",
           "type": "varchar(20)",
-          "nullable": true
+          "nullable": false
         },
         {
           "name": "creditos",
           "type": "numeric(5,2)",
-          "nullable": true
+          "nullable": false
         },
         {
           "name": "cuatrimestre",
           "type": "integer",
-          "nullable": true
+          "nullable": false
         },
         {
           "name": "plan_estudio_id",
@@ -375,19 +504,19 @@
         {
           "name": "is_active",
           "type": "boolean",
-          "nullable": true,
+          "nullable": false,
           "default": "true"
         },
         {
           "name": "created_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         },
         {
           "name": "updated_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         }
       ],
@@ -411,6 +540,46 @@
       ],
       "constraints": [
         {
+          "name": "materias_clave_not_null",
+          "type": "n",
+          "def": "NOT NULL clave",
+          "table": "public.materias",
+          "referenced_table": "",
+          "columns": [
+            "clave"
+          ]
+        },
+        {
+          "name": "materias_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.materias",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
+          ]
+        },
+        {
+          "name": "materias_creditos_not_null",
+          "type": "n",
+          "def": "NOT NULL creditos",
+          "table": "public.materias",
+          "referenced_table": "",
+          "columns": [
+            "creditos"
+          ]
+        },
+        {
+          "name": "materias_cuatrimestre_not_null",
+          "type": "n",
+          "def": "NOT NULL cuatrimestre",
+          "table": "public.materias",
+          "referenced_table": "",
+          "columns": [
+            "cuatrimestre"
+          ]
+        },
+        {
           "name": "materias_id_not_null",
           "type": "n",
           "def": "NOT NULL id",
@@ -418,6 +587,16 @@
           "referenced_table": "",
           "columns": [
             "id"
+          ]
+        },
+        {
+          "name": "materias_is_active_not_null",
+          "type": "n",
+          "def": "NOT NULL is_active",
+          "table": "public.materias",
+          "referenced_table": "",
+          "columns": [
+            "is_active"
           ]
         },
         {
@@ -438,6 +617,16 @@
           "referenced_table": "",
           "columns": [
             "plan_estudio_id"
+          ]
+        },
+        {
+          "name": "materias_updated_at_not_null",
+          "type": "n",
+          "def": "NOT NULL updated_at",
+          "table": "public.materias",
+          "referenced_table": "",
+          "columns": [
+            "updated_at"
           ]
         },
         {
@@ -487,7 +676,8 @@
         {
           "name": "segundo_apellido",
           "type": "varchar(80)",
-          "nullable": true
+          "nullable": true,
+          "default": "''::character varying"
         },
         {
           "name": "curp",
@@ -497,24 +687,24 @@
         {
           "name": "correo_institucional",
           "type": "varchar(120)",
-          "nullable": true
+          "nullable": false
         },
         {
           "name": "is_active",
           "type": "boolean",
-          "nullable": true,
+          "nullable": false,
           "default": "true"
         },
         {
           "name": "created_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         },
         {
           "name": "updated_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         }
       ],
@@ -554,6 +744,26 @@
       ],
       "constraints": [
         {
+          "name": "alumnos_correo_institucional_not_null",
+          "type": "n",
+          "def": "NOT NULL correo_institucional",
+          "table": "public.alumnos",
+          "referenced_table": "",
+          "columns": [
+            "correo_institucional"
+          ]
+        },
+        {
+          "name": "alumnos_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.alumnos",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
+          ]
+        },
+        {
           "name": "alumnos_curp_not_null",
           "type": "n",
           "def": "NOT NULL curp",
@@ -574,6 +784,16 @@
           ]
         },
         {
+          "name": "alumnos_is_active_not_null",
+          "type": "n",
+          "def": "NOT NULL is_active",
+          "table": "public.alumnos",
+          "referenced_table": "",
+          "columns": [
+            "is_active"
+          ]
+        },
+        {
           "name": "alumnos_nombres_not_null",
           "type": "n",
           "def": "NOT NULL nombres",
@@ -591,6 +811,16 @@
           "referenced_table": "",
           "columns": [
             "primer_apellido"
+          ]
+        },
+        {
+          "name": "alumnos_updated_at_not_null",
+          "type": "n",
+          "def": "NOT NULL updated_at",
+          "table": "public.alumnos",
+          "referenced_table": "",
+          "columns": [
+            "updated_at"
           ]
         },
         {
@@ -662,18 +892,18 @@
         {
           "name": "descripcion",
           "type": "varchar(200)",
-          "nullable": true
+          "nullable": false
         },
         {
           "name": "is_active",
           "type": "boolean",
-          "nullable": true,
+          "nullable": false,
           "default": "true"
         },
         {
           "name": "created_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         }
       ],
@@ -697,6 +927,26 @@
       ],
       "constraints": [
         {
+          "name": "roles_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.roles",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
+          ]
+        },
+        {
+          "name": "roles_descripcion_not_null",
+          "type": "n",
+          "def": "NOT NULL descripcion",
+          "table": "public.roles",
+          "referenced_table": "",
+          "columns": [
+            "descripcion"
+          ]
+        },
+        {
           "name": "roles_id_not_null",
           "type": "n",
           "def": "NOT NULL id",
@@ -704,6 +954,16 @@
           "referenced_table": "",
           "columns": [
             "id"
+          ]
+        },
+        {
+          "name": "roles_is_active_not_null",
+          "type": "n",
+          "def": "NOT NULL is_active",
+          "table": "public.roles",
+          "referenced_table": "",
+          "columns": [
+            "is_active"
           ]
         },
         {
@@ -755,7 +1015,7 @@
         {
           "name": "apellido",
           "type": "varchar(100)",
-          "nullable": true
+          "nullable": false
         },
         {
           "name": "email",
@@ -775,24 +1035,24 @@
         {
           "name": "plantel_id",
           "type": "integer",
-          "nullable": true
+          "nullable": false
         },
         {
           "name": "is_active",
           "type": "boolean",
-          "nullable": true,
+          "nullable": false,
           "default": "true"
         },
         {
           "name": "created_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         },
         {
           "name": "updated_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         }
       ],
@@ -840,6 +1100,26 @@
       ],
       "constraints": [
         {
+          "name": "usuarios_apellido_not_null",
+          "type": "n",
+          "def": "NOT NULL apellido",
+          "table": "public.usuarios",
+          "referenced_table": "",
+          "columns": [
+            "apellido"
+          ]
+        },
+        {
+          "name": "usuarios_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.usuarios",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
+          ]
+        },
+        {
           "name": "usuarios_email_not_null",
           "type": "n",
           "def": "NOT NULL email",
@@ -857,6 +1137,16 @@
           "referenced_table": "",
           "columns": [
             "id"
+          ]
+        },
+        {
+          "name": "usuarios_is_active_not_null",
+          "type": "n",
+          "def": "NOT NULL is_active",
+          "table": "public.usuarios",
+          "referenced_table": "",
+          "columns": [
+            "is_active"
           ]
         },
         {
@@ -880,6 +1170,16 @@
           ]
         },
         {
+          "name": "usuarios_plantel_id_not_null",
+          "type": "n",
+          "def": "NOT NULL plantel_id",
+          "table": "public.usuarios",
+          "referenced_table": "",
+          "columns": [
+            "plantel_id"
+          ]
+        },
+        {
           "name": "usuarios_rol_id_not_null",
           "type": "n",
           "def": "NOT NULL rol_id",
@@ -887,6 +1187,16 @@
           "referenced_table": "",
           "columns": [
             "rol_id"
+          ]
+        },
+        {
+          "name": "usuarios_updated_at_not_null",
+          "type": "n",
+          "def": "NOT NULL updated_at",
+          "table": "public.usuarios",
+          "referenced_table": "",
+          "columns": [
+            "updated_at"
           ]
         },
         {
@@ -970,19 +1280,19 @@
         {
           "name": "is_active",
           "type": "boolean",
-          "nullable": true,
+          "nullable": false,
           "default": "true"
         },
         {
           "name": "created_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         },
         {
           "name": "updated_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         }
       ],
@@ -1032,6 +1342,16 @@
           ]
         },
         {
+          "name": "grupos_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.grupos",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
+          ]
+        },
+        {
           "name": "grupos_id_not_null",
           "type": "n",
           "def": "NOT NULL id",
@@ -1039,6 +1359,16 @@
           "referenced_table": "",
           "columns": [
             "id"
+          ]
+        },
+        {
+          "name": "grupos_is_active_not_null",
+          "type": "n",
+          "def": "NOT NULL is_active",
+          "table": "public.grupos",
+          "referenced_table": "",
+          "columns": [
+            "is_active"
           ]
         },
         {
@@ -1069,6 +1399,16 @@
           "referenced_table": "",
           "columns": [
             "plantel_id"
+          ]
+        },
+        {
+          "name": "grupos_updated_at_not_null",
+          "type": "n",
+          "def": "NOT NULL updated_at",
+          "table": "public.grupos",
+          "referenced_table": "",
+          "columns": [
+            "updated_at"
           ]
         },
         {
@@ -1141,13 +1481,13 @@
         {
           "name": "is_active",
           "type": "boolean",
-          "nullable": true,
+          "nullable": false,
           "default": "true"
         },
         {
           "name": "created_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         }
       ],
@@ -1198,6 +1538,16 @@
           ]
         },
         {
+          "name": "alumnos_grupos_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.alumnos_grupos",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
+          ]
+        },
+        {
           "name": "alumnos_grupos_grupo_id_not_null",
           "type": "n",
           "def": "NOT NULL grupo_id",
@@ -1215,6 +1565,16 @@
           "referenced_table": "",
           "columns": [
             "id"
+          ]
+        },
+        {
+          "name": "alumnos_grupos_is_active_not_null",
+          "type": "n",
+          "def": "NOT NULL is_active",
+          "table": "public.alumnos_grupos",
+          "referenced_table": "",
+          "columns": [
+            "is_active"
           ]
         },
         {
@@ -1293,13 +1653,13 @@
         {
           "name": "is_active",
           "type": "boolean",
-          "nullable": true,
+          "nullable": false,
           "default": "true"
         },
         {
           "name": "created_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         }
       ],
@@ -1349,6 +1709,16 @@
       ],
       "constraints": [
         {
+          "name": "profesores_grupos_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.profesores_grupos",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
+          ]
+        },
+        {
           "name": "profesores_grupos_grupo_id_not_null",
           "type": "n",
           "def": "NOT NULL grupo_id",
@@ -1366,6 +1736,16 @@
           "referenced_table": "",
           "columns": [
             "id"
+          ]
+        },
+        {
+          "name": "profesores_grupos_is_active_not_null",
+          "type": "n",
+          "def": "NOT NULL is_active",
+          "table": "public.profesores_grupos",
+          "referenced_table": "",
+          "columns": [
+            "is_active"
           ]
         },
         {
@@ -1483,24 +1863,24 @@
         {
           "name": "registrado_por",
           "type": "integer",
-          "nullable": true
+          "nullable": false
         },
         {
           "name": "is_active",
           "type": "boolean",
-          "nullable": true,
+          "nullable": false,
           "default": "true"
         },
         {
           "name": "created_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         },
         {
           "name": "updated_at",
           "type": "timestamp with time zone",
-          "nullable": true,
+          "nullable": false,
           "default": "CURRENT_TIMESTAMP"
         }
       ],
@@ -1570,6 +1950,16 @@
           ]
         },
         {
+          "name": "calificaciones_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.calificaciones",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
+          ]
+        },
+        {
           "name": "calificaciones_grupo_id_not_null",
           "type": "n",
           "def": "NOT NULL grupo_id",
@@ -1590,6 +1980,16 @@
           ]
         },
         {
+          "name": "calificaciones_is_active_not_null",
+          "type": "n",
+          "def": "NOT NULL is_active",
+          "table": "public.calificaciones",
+          "referenced_table": "",
+          "columns": [
+            "is_active"
+          ]
+        },
+        {
           "name": "calificaciones_materia_id_not_null",
           "type": "n",
           "def": "NOT NULL materia_id",
@@ -1597,6 +1997,26 @@
           "referenced_table": "",
           "columns": [
             "materia_id"
+          ]
+        },
+        {
+          "name": "calificaciones_registrado_por_not_null",
+          "type": "n",
+          "def": "NOT NULL registrado_por",
+          "table": "public.calificaciones",
+          "referenced_table": "",
+          "columns": [
+            "registrado_por"
+          ]
+        },
+        {
+          "name": "calificaciones_updated_at_not_null",
+          "type": "n",
+          "def": "NOT NULL updated_at",
+          "table": "public.calificaciones",
+          "referenced_table": "",
+          "columns": [
+            "updated_at"
           ]
         },
         {
@@ -1710,7 +2130,7 @@
       "parent_columns": [
         "id"
       ],
-      "parent_cardinality": "zero_or_one",
+      "parent_cardinality": "exactly_one",
       "def": "FOREIGN KEY (plantel_id) REFERENCES planteles(id) ON UPDATE CASCADE ON DELETE RESTRICT"
     },
     {
@@ -1853,7 +2273,7 @@
       "parent_columns": [
         "id"
       ],
-      "parent_cardinality": "zero_or_one",
+      "parent_cardinality": "exactly_one",
       "def": "FOREIGN KEY (registrado_por) REFERENCES usuarios(id) ON UPDATE CASCADE ON DELETE SET NULL"
     },
     {

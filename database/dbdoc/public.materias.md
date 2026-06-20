@@ -6,21 +6,27 @@
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
 | id | integer |  | false | [public.profesores_grupos](public.profesores_grupos.md) [public.calificaciones](public.calificaciones.md) |  |  |
 | nombre | varchar(120) |  | false |  |  |  |
-| clave | varchar(20) |  | true |  |  |  |
-| creditos | numeric(5,2) |  | true |  |  |  |
-| cuatrimestre | integer |  | true |  |  |  |
+| clave | varchar(20) |  | false |  |  |  |
+| creditos | numeric(5,2) |  | false |  |  |  |
+| cuatrimestre | integer |  | false |  |  |  |
 | plan_estudio_id | integer |  | false |  | [public.planes_estudio](public.planes_estudio.md) |  |
-| is_active | boolean | true | true |  |  |  |
-| created_at | timestamp with time zone | CURRENT_TIMESTAMP | true |  |  |  |
-| updated_at | timestamp with time zone | CURRENT_TIMESTAMP | true |  |  |  |
+| is_active | boolean | true | false |  |  |  |
+| created_at | timestamp with time zone | CURRENT_TIMESTAMP | false |  |  |  |
+| updated_at | timestamp with time zone | CURRENT_TIMESTAMP | false |  |  |  |
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
+| materias_clave_not_null | n | NOT NULL clave |
+| materias_created_at_not_null | n | NOT NULL created_at |
+| materias_creditos_not_null | n | NOT NULL creditos |
+| materias_cuatrimestre_not_null | n | NOT NULL cuatrimestre |
 | materias_id_not_null | n | NOT NULL id |
+| materias_is_active_not_null | n | NOT NULL is_active |
 | materias_nombre_not_null | n | NOT NULL nombre |
 | materias_plan_estudio_id_not_null | n | NOT NULL plan_estudio_id |
+| materias_updated_at_not_null | n | NOT NULL updated_at |
 | fk_materias_plan_estudio | FOREIGN KEY | FOREIGN KEY (plan_estudio_id) REFERENCES planes_estudio(id) ON UPDATE CASCADE ON DELETE CASCADE |
 | materias_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 

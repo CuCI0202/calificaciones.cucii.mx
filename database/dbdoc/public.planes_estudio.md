@@ -11,20 +11,22 @@
 | fecha_rvoe | date |  | false |  |  |  |
 | duracion_cuatrimestres | integer |  | false |  |  |  |
 | is_active | boolean | true | true |  |  |  |
-| created_at | timestamp with time zone | CURRENT_TIMESTAMP | true |  |  |  |
-| updated_at | timestamp with time zone | CURRENT_TIMESTAMP | true |  |  |  |
+| created_at | timestamp with time zone | CURRENT_TIMESTAMP | false |  |  |  |
+| updated_at | timestamp with time zone | CURRENT_TIMESTAMP | false |  |  |  |
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
 | chk_grado | CHECK | CHECK (((grado)::text = ANY ((ARRAY['Licenciatura'::character varying, 'Maestría'::character varying, 'Doctorado'::character varying])::text[]))) |
+| planes_estudio_created_at_not_null | n | NOT NULL created_at |
 | planes_estudio_duracion_cuatrimestres_not_null | n | NOT NULL duracion_cuatrimestres |
 | planes_estudio_fecha_rvoe_not_null | n | NOT NULL fecha_rvoe |
 | planes_estudio_grado_not_null | n | NOT NULL grado |
 | planes_estudio_id_not_null | n | NOT NULL id |
 | planes_estudio_nombre_not_null | n | NOT NULL nombre |
 | planes_estudio_numero_rvoe_not_null | n | NOT NULL numero_rvoe |
+| planes_estudio_updated_at_not_null | n | NOT NULL updated_at |
 | planes_estudio_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 | planes_estudio_numero_rvoe_key | UNIQUE | UNIQUE (numero_rvoe) |
 
