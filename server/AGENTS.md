@@ -276,7 +276,7 @@ public class EntidadJdbcRepository {
 - Puerto 5432, usuario `ssant0`, DB `ss-platform`, password `2004`
 - Esquema completo: `../database/db_structure.sql`
 - Seed data con passwords bcrypt en `application.properties`. **La contraseña de prueba es `Test1234!`** (no `1234` como aparece en los mocks del frontend).
-- Email del admin: `admin@cuci.edu.mx`
+- Email del admin: `admin@cucii.edu.mx`
 
 ## Config (`src/main/resources/application.properties`)
 

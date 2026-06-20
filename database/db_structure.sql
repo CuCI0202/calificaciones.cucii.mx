@@ -4,24 +4,25 @@ create table planteles
 (
     id                   integer generated always as identity primary key,
     nombre_oficial       varchar(150) not null,
-    nombre_corto         varchar(50),
-    direccion_calle      varchar(100),
-    direccion_numero_ext varchar(20),
-    direccion_numero_int varchar(20),
-    colonia              varchar(100),
-    codigo_postal        varchar(10),
-    ciudad_municipio     varchar(100) not null,
-    estado               varchar(100) not null,
-    pais                 varchar(50)              default 'México',
+    nombre_corto         varchar(50)  not null          default '',
+    direccion_calle      varchar(100) not null          default '',
+    direccion_numero_ext varchar(20)  not null          default '',
+    direccion_numero_int varchar(20)                    default '',
+    colonia              varchar(100) not null          default '',
+    codigo_postal        varchar(10)  not null          default '',
+    ciudad_municipio     varchar(100) not null          default '',
+    estado               varchar(100) not null          default '',
+    pais                 varchar(50)  not null          default 'México',
     latitud              numeric(10, 8),
     longitud             numeric(11, 8),
-    director_nombre      varchar(150),
-    is_active            boolean                  default true,
-    created_at           timestamp with time zone default current_timestamp,
-    updated_at           timestamp with time zone default current_timestamp
+    director_nombre      varchar(150) not null          default '',
+    is_active            boolean      not null          default true,
+    created_at           timestamp with time zone       default current_timestamp not null,
+    updated_at           timestamp with time zone       default current_timestamp not null
 );
 
-alter table planteles owner to ssant0;
+alter table planteles
+    owner to ssant0;
 
 create index idx_planteles_ciudad on planteles (ciudad_municipio);
 create index idx_planteles_estado on planteles (estado);
@@ -31,33 +32,34 @@ create index idx_planteles_estado on planteles (estado);
 create table planes_estudio
 (
     id                     integer generated always as identity primary key,
-    nombre                 varchar(120) not null,
-    grado                  varchar(20)  not null,
-    numero_rvoe            varchar(50)  not null unique,
-    fecha_rvoe             date         not null,
-    duracion_cuatrimestres integer      not null,
+    nombre                 varchar(120)                                       not null,
+    grado                  varchar(20)                                        not null,
+    numero_rvoe            varchar(50)                                        not null unique,
+    fecha_rvoe             date                                               not null,
+    duracion_cuatrimestres integer                                            not null,
     is_active              boolean                  default true,
-    created_at             timestamp with time zone default current_timestamp,
-    updated_at             timestamp with time zone default current_timestamp,
+    created_at             timestamp with time zone default current_timestamp not null,
+    updated_at             timestamp with time zone default current_timestamp not null,
 
     constraint chk_grado check (grado in ('Licenciatura', 'Maestría', 'Doctorado'))
 );
 
-alter table planes_estudio owner to ssant0;
+alter table planes_estudio
+    owner to ssant0;
 
 -- ─── materias ────────────────────────────────────────────────────────────────
 
 create table materias
 (
     id              integer generated always as identity primary key,
-    nombre          varchar(120) not null,
-    clave           varchar(20),
-    creditos        numeric(5, 2),
-    cuatrimestre    integer,
-    plan_estudio_id integer      not null,
-    is_active       boolean                  default true,
-    created_at      timestamp with time zone default current_timestamp,
-    updated_at      timestamp with time zone default current_timestamp,
+    nombre          varchar(120)                                       not null,
+    clave           varchar(20)                                        not null,
+    creditos        numeric(5, 2)                                      not null,
+    cuatrimestre    integer                                            not null,
+    plan_estudio_id integer                                            not null,
+    is_active       boolean                                            not null default true,
+    created_at      timestamp with time zone default current_timestamp not null,
+    updated_at      timestamp with time zone default current_timestamp not null,
 
     constraint fk_materias_plan_estudio
         foreign key (plan_estudio_id)
@@ -65,7 +67,8 @@ create table materias
             on update cascade on delete cascade
 );
 
-alter table materias owner to ssant0;
+alter table materias
+    owner to ssant0;
 
 create index idx_materias_plan_estudio on materias (plan_estudio_id);
 
@@ -74,14 +77,14 @@ create index idx_materias_plan_estudio on materias (plan_estudio_id);
 create table alumnos
 (
     id                   integer generated always as identity primary key,
-    nombres              varchar(80)  not null,
-    primer_apellido      varchar(80)  not null,
-    segundo_apellido     varchar(80),
-    curp                 char(18)     not null unique,
-    correo_institucional varchar(120) unique,
-    is_active            boolean                  default true,
-    created_at           timestamp with time zone default current_timestamp,
-    updated_at           timestamp with time zone default current_timestamp,
+    nombres              varchar(80)                                        not null,
+    primer_apellido      varchar(80)                                        not null,
+    segundo_apellido     varchar(80)              default '',
+    curp                 char(18)                                           not null unique,
+    correo_institucional varchar(120)                                       not null unique,
+    is_active            boolean                                            not null default true,
+    created_at           timestamp with time zone default current_timestamp not null,
+    updated_at           timestamp with time zone default current_timestamp not null,
 
     constraint chk_curp_length check (char_length(curp) = 18),
     constraint chk_curp_format check (
@@ -89,7 +92,8 @@ create table alumnos
     )
 );
 
-alter table alumnos owner to ssant0;
+alter table alumnos
+    owner to ssant0;
 
 create index idx_alumnos_correo on alumnos (correo_institucional);
 
@@ -99,34 +103,35 @@ create table roles
 (
     id          integer generated always as identity primary key,
     nombre      varchar(50)  not null unique,
-    descripcion varchar(200),
-    is_active   boolean                  default true,
-    created_at  timestamp with time zone default current_timestamp
+    descripcion varchar(200) not null,
+    is_active   boolean      not null    default true,
+    created_at  timestamp with time zone default current_timestamp not null
 );
 
-alter table roles owner to ssant0;
+alter table roles
+    owner to ssant0;
 
-insert into roles (nombre, descripcion) values
-    ('admin',               'Administrador del sistema con acceso total'),
-    ('rector',              'Rector del plantel'),
-    ('docente',             'Docente / profesor'),
-    ('servicios_escolares', 'Responsable de servicios escolares'),
-    ('coordinador', 'Responsable de coordinar grupos y gestión de alumnos');
+insert into roles (nombre, descripcion)
+values ('admin', 'Administrador del sistema con acceso total'),
+       ('rector', 'Rector del plantel'),
+       ('docente', 'Docente / profesor'),
+       ('servicios_escolares', 'Responsable de servicios escolares'),
+       ('coordinador', 'Responsable de coordinar grupos y gestión de alumnos');
 
 -- ─── usuarios ────────────────────────────────────────────────────────────────
 
 create table usuarios
 (
     id            integer generated always as identity primary key,
-    nombre        varchar(100) not null,
-    apellido      varchar(100),
-    email         varchar(150) not null unique,
-    password_hash varchar(255) not null,
-    rol_id        integer      not null,
-    plantel_id    integer,
-    is_active     boolean                  default true,
-    created_at    timestamp with time zone default current_timestamp,
-    updated_at    timestamp with time zone default current_timestamp,
+    nombre        varchar(100)                                       not null,
+    apellido      varchar(100)                                       not null,
+    email         varchar(150)                                       not null unique,
+    password_hash varchar(255)                                       not null,
+    rol_id        integer                                            not null,
+    plantel_id    integer                                            not null,
+    is_active     boolean                                            not null default true,
+    created_at    timestamp with time zone default current_timestamp not null,
+    updated_at    timestamp with time zone default current_timestamp not null,
 
     constraint fk_usuarios_rol
         foreign key (rol_id)
@@ -139,10 +144,11 @@ create table usuarios
             on update cascade on delete restrict
 );
 
-alter table usuarios owner to ssant0;
+alter table usuarios
+    owner to ssant0;
 
-create index idx_usuarios_email   on usuarios (email);
-create index idx_usuarios_rol     on usuarios (rol_id);
+create index idx_usuarios_email on usuarios (email);
+create index idx_usuarios_rol on usuarios (rol_id);
 create index idx_usuarios_plantel on usuarios (plantel_id);
 
 -- ─── grupos ──────────────────────────────────────────────────────────────────
@@ -152,14 +158,13 @@ create sequence grupos_numero_seq start 1;
 create table grupos
 (
     id              integer generated always as identity primary key,
-    clave           varchar(20)  not null unique
-        default ('CG-' || nextval('grupos_numero_seq')::text),
+    clave           varchar(20)  not null unique      default ('CG-' || nextval('grupos_numero_seq')::text),
     nombre          varchar(120) not null,
     plan_estudio_id integer      not null,
     plantel_id      integer      not null,
-    is_active       boolean                  default true,
-    created_at      timestamp with time zone default current_timestamp,
-    updated_at      timestamp with time zone default current_timestamp,
+    is_active       boolean      not null    default true,
+    created_at      timestamp with time zone default current_timestamp not null,
+    updated_at      timestamp with time zone default current_timestamp not null,
 
     constraint fk_grupos_plan_estudio
         foreign key (plan_estudio_id)
@@ -172,10 +177,11 @@ create table grupos
             on update cascade on delete restrict
 );
 
-alter table grupos owner to ssant0;
+alter table grupos
+    owner to ssant0;
 
 create index idx_grupos_plan_estudio on grupos (plan_estudio_id);
-create index idx_grupos_plantel      on grupos (plantel_id);
+create index idx_grupos_plantel on grupos (plantel_id);
 
 -- ─── alumnos_grupos ──────────────────────────────────────────────────────────
 
@@ -184,8 +190,8 @@ create table alumnos_grupos
     id         integer generated always as identity primary key,
     alumno_id  integer not null,
     grupo_id   integer not null,
-    is_active  boolean                  default true,
-    created_at timestamp with time zone default current_timestamp,
+    is_active  boolean not null         default true,
+    created_at timestamp with time zone default current_timestamp not null,
 
     constraint uq_alumno_grupo unique (alumno_id, grupo_id),
 
@@ -200,10 +206,11 @@ create table alumnos_grupos
             on update cascade on delete restrict
 );
 
-alter table alumnos_grupos owner to ssant0;
+alter table alumnos_grupos
+    owner to ssant0;
 
 create index idx_alumnos_grupos_alumno on alumnos_grupos (alumno_id);
-create index idx_alumnos_grupos_grupo  on alumnos_grupos (grupo_id);
+create index idx_alumnos_grupos_grupo on alumnos_grupos (grupo_id);
 
 -- ─── profesores_grupos ────────────────────────────────────────────────────────
 
@@ -213,8 +220,8 @@ create table profesores_grupos
     usuario_id integer not null,
     grupo_id   integer not null,
     materia_id integer not null,
-    is_active  boolean                  default true,
-    created_at timestamp with time zone default current_timestamp,
+    is_active  boolean not null         default true,
+    created_at timestamp with time zone default current_timestamp not null,
 
     constraint uq_profesor_grupo_materia unique (usuario_id, grupo_id, materia_id),
 
@@ -234,10 +241,11 @@ create table profesores_grupos
             on update cascade on delete restrict
 );
 
-alter table profesores_grupos owner to ssant0;
+alter table profesores_grupos
+    owner to ssant0;
 
 create index idx_profesores_grupos_usuario on profesores_grupos (usuario_id);
-create index idx_profesores_grupos_grupo   on profesores_grupos (grupo_id);
+create index idx_profesores_grupos_grupo on profesores_grupos (grupo_id);
 create index idx_profesores_grupos_materia on profesores_grupos (materia_id);
 
 -- ─── calificaciones ──────────────────────────────────────────────────────────
@@ -245,14 +253,14 @@ create index idx_profesores_grupos_materia on profesores_grupos (materia_id);
 create table calificaciones
 (
     id             integer generated always as identity primary key,
-    alumno_id      integer       not null,
-    grupo_id       integer       not null,
-    materia_id     integer       not null,
-    calificacion   numeric(5, 2) not null,
-    registrado_por integer,
-    is_active      boolean                  default true,
-    created_at     timestamp with time zone default current_timestamp,
-    updated_at     timestamp with time zone default current_timestamp,
+    alumno_id      integer                                            not null,
+    grupo_id       integer                                            not null,
+    materia_id     integer                                            not null,
+    calificacion   numeric(5, 2)                                      not null,
+    registrado_por integer                                            not null,
+    is_active      boolean                                            not null default true,
+    created_at     timestamp with time zone default current_timestamp not null,
+    updated_at     timestamp with time zone default current_timestamp not null,
 
     constraint chk_calificacion check (calificacion >= 0 and calificacion <= 100),
 
@@ -279,11 +287,12 @@ create table calificaciones
             on update cascade on delete set null
 );
 
-alter table calificaciones owner to ssant0;
+alter table calificaciones
+    owner to ssant0;
 
-create index idx_calificaciones_alumno   on calificaciones (alumno_id);
-create index idx_calificaciones_grupo    on calificaciones (grupo_id);
-create index idx_calificaciones_materia  on calificaciones (materia_id);
+create index idx_calificaciones_alumno on calificaciones (alumno_id);
+create index idx_calificaciones_grupo on calificaciones (grupo_id);
+create index idx_calificaciones_materia on calificaciones (materia_id);
 
 -- =============================================================================
 -- DATOS DE PRUEBA
@@ -293,66 +302,58 @@ create index idx_calificaciones_materia  on calificaciones (materia_id);
 
 -- ─── planteles (id: 1, 2) ────────────────────────────────────────────────────
 insert into planteles (nombre_oficial, nombre_corto, direccion_calle, direccion_numero_ext, colonia, codigo_postal, ciudad_municipio, estado, latitud, longitud, director_nombre)
-values
-    ('Centro Universitario de Ciencias de la Información', 'CUCI Norte', 'Av. Revolución',      '1234', 'Centro',         '44100', 'Guadalajara', 'Jalisco', 20.65769900, -103.34940000, 'Dr. Arturo Vega Ramírez'),
-    ('Centro Universitario de Ciencias de la Información', 'CUCI Sur',   'Calle Independencia', '567',  'Zona Industrial', '45150', 'Tlaquepaque', 'Jalisco', 20.63250000, -103.31870000, 'Mtra. Sofía Delgado Fuentes');
+values ('Centro Universitario de Ciencias de la Información', 'CUCII Norte', 'Av. Revolución', '1234', 'Centro', '44100', 'Guadalajara', 'Jalisco', 20.65769900, -103.34940000, 'Dr. Arturo Vega Ramírez'),
+       ('Centro Universitario de Ciencias de la Información', 'CUCII Sur', 'Calle Independencia', '567', 'Zona Industrial', '45150', 'Tlaquepaque', 'Jalisco', 20.63250000, -103.31870000, 'Mtra. Sofía Delgado Fuentes');
 
 -- ─── planes_estudio (id: 1, 2) ───────────────────────────────────────────────
 insert into planes_estudio (nombre, grado, numero_rvoe, fecha_rvoe, duracion_cuatrimestres)
-values
-    ('Ingeniería en Desarrollo de Software',       'Licenciatura', 'RVOE-2021-001', '2021-06-15', 12),
-    ('Licenciatura en Administración de Empresas', 'Licenciatura', 'RVOE-2022-004', '2022-03-10', 12);
+values ('Ingeniería en Desarrollo de Software', 'Licenciatura', 'RVOE-2021-001', '2021-06-15', 12),
+       ('Licenciatura en Administración de Empresas', 'Licenciatura', 'RVOE-2022-004', '2022-03-10', 12);
 
 -- ─── materias (plan 1 → ids 1-4 | plan 2 → ids 5-8) ─────────────────────────
 insert into materias (nombre, clave, creditos, cuatrimestre, plan_estudio_id)
-values
-    ('Fundamentos de Programación', 'FP-101', 8, 1, 1),
-    ('Matemáticas Discretas',       'MD-101', 6, 1, 1),
-    ('Bases de Datos I',            'BD-201', 8, 2, 1),
-    ('Ingeniería de Software',      'IS-301', 8, 3, 1),
-    ('Fundamentos de Administración','FA-101',8, 1, 2),
-    ('Contabilidad General',        'CG-101', 6, 1, 2),
-    ('Mercadotecnia',               'MK-201', 8, 2, 2),
-    ('Gestión de Proyectos',        'GP-301', 8, 3, 2);
+values ('Fundamentos de Programación', 'FP-101', 8, 1, 1),
+       ('Matemáticas Discretas', 'MD-101', 6, 1, 1),
+       ('Bases de Datos I', 'BD-201', 8, 2, 1),
+       ('Ingeniería de Software', 'IS-301', 8, 3, 1),
+       ('Fundamentos de Administración', 'FA-101', 8, 1, 2),
+       ('Contabilidad General', 'CG-101', 6, 1, 2),
+       ('Mercadotecnia', 'MK-201', 8, 2, 2),
+       ('Gestión de Proyectos', 'GP-301', 8, 3, 2);
 
 -- ─── usuarios (id: 1 admin | 2 rector | 3-4 docentes | 5 servicios) ──────────
 -- roles: 1=admin 2=rector 3=docente 4=school services manager
 insert into usuarios (nombre, apellido, email, password_hash, rol_id, plantel_id)
-values
-    ('Admin',   'Sistema',  'admin@cuci.edu.mx',    '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 1, null),
-    ('Marco',   'Herrera',  'mherrera@cuci.edu.mx', '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 2, 1),
-    ('Ana',     'Torres',   'atorres@cuci.edu.mx',  '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 3, 1),
-    ('Luis',    'Pérez',    'lperez@cuci.edu.mx',   '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 3, 1),
-    ('Carmen',  'Salinas',  'csalinas@cuci.edu.mx', '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 4, 1);
+values ('Admin', 'Sistema', 'admin@cucii.edu.mx', '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 1, null),
+       ('Marco', 'Herrera', 'mherrera@cucii.edu.mx', '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 2, 1),
+       ('Ana', 'Torres', 'atorres@cucii.edu.mx', '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 3, 1),
+       ('Luis', 'Pérez', 'lperez@cucii.edu.mx', '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 3, 1),
+       ('Carmen', 'Salinas', 'csalinas@cucii.edu.mx', '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 4, 1);
 
 -- ─── grupos (clave generada por secuencia: CG-1, CG-2, CG-3) ───────────────
 insert into grupos (nombre, plan_estudio_id, plantel_id)
-values
-    ('IDS-2024A — Primer Cuatrimestre',   1, 1),
-    ('IDS-2024B — Segundo Cuatrimestre',  1, 1),
-    ('LAE-2024A — Primer Cuatrimestre',   2, 2);
+values ('IDS-2024A — Primer Cuatrimestre', 1, 1),
+       ('IDS-2024B — Segundo Cuatrimestre', 1, 1),
+       ('LAE-2024A — Primer Cuatrimestre', 2, 2);
 
 -- ─── alumnos (id: 1-3) ───────────────────────────────────────────────────────
 insert into alumnos (nombres, primer_apellido, segundo_apellido, curp, correo_institucional)
-values
-    ('Juan',   'García',    'López',     'GALJ950320HJCRPNA5', 'jgarcia@alumnos.cuci.edu.mx'),
-    ('María',  'Rodríguez', 'Hernández', 'ROHM980705MJCDRRB2', 'mrodriguez@alumnos.cuci.edu.mx'),
-    ('Carlos', 'Mendoza',   'Torres',    'METC001128HJCNRRC4', 'cmendoza@alumnos.cuci.edu.mx');
+values ('Juan', 'García', 'López', 'GALJ950320HJCRPNA5', 'jgarcia@alumnos.cucii.edu.mx'),
+       ('María', 'Rodríguez', 'Hernández', 'ROHM980705MJCDRRB2', 'mrodriguez@alumnos.cucii.edu.mx'),
+       ('Carlos', 'Mendoza', 'Torres', 'METC001128HJCNRRC4', 'cmendoza@alumnos.cucii.edu.mx');
 
 -- ─── alumnos_grupos ──────────────────────────────────────────────────────────
 -- Juan y María en grupo 1 (IDS Primer Cuatrimestre)
 -- Carlos en grupo 2 (IDS Segundo Cuatrimestre)
 insert into alumnos_grupos (alumno_id, grupo_id)
-values
-    (1, 1),
-    (2, 1),
-    (3, 2);
+values (1, 1),
+       (2, 1),
+       (3, 2);
 
 -- ─── profesores_grupos ───────────────────────────────────────────────────────
 -- Ana Torres (usuario 3): FP-101 en grupo 1, BD-201 en grupo 2
 -- Luis Pérez (usuario 4): MD-101 en grupo 1
 insert into profesores_grupos (usuario_id, grupo_id, materia_id)
-values
-    (3, 1, 1),
-    (3, 2, 3),
-    (4, 1, 2);
+values (3, 1, 1),
+       (3, 2, 3),
+       (4, 1, 2);

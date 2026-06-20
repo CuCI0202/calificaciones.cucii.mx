@@ -86,7 +86,7 @@ cd database && docker compose up -d
 # 3. Probar autenticación
 curl -X POST http://localhost:8080/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@cuci.edu.mx","password":"Test1234!"}'
+  -d '{"email":"admin@cucii.edu.mx","password":"Test1234!"}'
 ```
 
 ### Base de datos
@@ -115,10 +115,10 @@ Base URL: `http://localhost:8080`
 POST /auth/login
 Content-Type: application/json
 
-{"email": "admin@cuci.edu.mx", "password": "Test1234!"}
+{"email": "admin@cucii.edu.mx", "password": "Test1234!"}
 
 # Response: 200
-# { "token": "eyJ...", "nombre": "Admin", "email": "admin@cuci.edu.mx", "rol": "admin" }
+# { "token": "eyJ...", "nombre": "Admin", "email": "admin@cucii.edu.mx", "rol": "admin" }
 ```
 
 ### Catálogos

@@ -174,7 +174,7 @@ tbls doc                          # Regenerar documentación de BD
 ### Credenciales de prueba
 
 ```
-Email:    admin@cuci.edu.mx
+Email:    admin@cucii.edu.mx
 Password: Test1234!
 ```
 
@@ -190,10 +190,10 @@ Base URL: `http://localhost:8080`
 POST /auth/login
 Content-Type: application/json
 
-{"email": "admin@cuci.edu.mx", "password": "Test1234!"}
+{"email": "admin@cucii.edu.mx", "password": "Test1234!"}
 
 # Response: 200
-# { "token": "eyJ...", "nombre": "Admin", "email": "admin@cuci.edu.mx", "rol": "admin" }
+# { "token": "eyJ...", "nombre": "Admin", "email": "admin@cucii.edu.mx", "rol": "admin" }
 ```
 
 > [!IMPORTANT]
