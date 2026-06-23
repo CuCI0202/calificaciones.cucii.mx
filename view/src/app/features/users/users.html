@@ -145,22 +145,22 @@
           <tbody class="divide-y divide-gray-100">
             @for (user of filtered(); track user.id) {
               @if (editingId() === user.id) {
-                <tr class="bg-blue-50">
+                <tr class="bg-blue-50" [formGroup]="editForm">
                   <td class="px-4 py-2">
-                    <input [formControl]="editForm.controls.firstName" placeholder="Nombre"
+                    <input formControlName="firstName" placeholder="Nombre"
                       class="w-full border rounded px-2 py-1 text-xs" />
                   </td>
                   <td class="px-4 py-2">
-                    <input [formControl]="editForm.controls.lastName" placeholder="Apellido"
+                    <input formControlName="lastName" placeholder="Apellido"
                       class="w-full border rounded px-2 py-1 text-xs" />
                   </td>
                   <td class="px-4 py-2">
-                    <input [formControl]="editForm.controls.email" type="email" placeholder="correo@cucii.edu.mx"
+                    <input formControlName="email" type="email" placeholder="correo@cucii.edu.mx"
                       class="w-full border rounded px-2 py-1 text-xs" />
                   </td>
                   <td class="px-4 py-2">
                     <div class="relative">
-                      <input [formControl]="editForm.controls.password"
+                      <input formControlName="password"
                         [type]="showEditPassword() ? 'text' : 'password'"
                         placeholder="Dejar vac&iacute;o para no cambiar"
                         class="w-full border rounded px-2 py-1 pr-7 text-xs" />
@@ -180,7 +180,7 @@
                     </div>
                   </td>
                   <td class="px-4 py-2">
-                    <select [formControl]="editForm.controls.rolId"
+                    <select formControlName="rolId"
                       class="w-full border rounded px-2 py-1 text-xs">
                       @for (role of roles; track role.id) {
                         <option [value]="role.id">{{ role.label }}</option>

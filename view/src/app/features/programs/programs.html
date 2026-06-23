@@ -112,13 +112,13 @@
           <tbody class="divide-y divide-gray-100">
             @for (program of filtered(); track program.id) {
               @if (editingId() === program.id) {
-                <tr class="bg-blue-50">
+                <tr class="bg-blue-50" [formGroup]="editForm">
                   <td class="px-4 py-2">
-                    <input [formControl]="editForm.controls.name" placeholder="Nombre"
+                    <input formControlName="name" placeholder="Nombre"
                       class="w-full border rounded px-2 py-1 text-xs" />
                   </td>
                   <td class="px-4 py-2">
-                    <select [formControl]="editForm.controls.degree"
+                    <select formControlName="degree"
                       class="w-full border rounded px-2 py-1 text-xs">
                       @for (d of degrees; track d) {
                         <option [value]="d">{{ d }}</option>
@@ -126,15 +126,15 @@
                     </select>
                   </td>
                   <td class="px-4 py-2">
-                    <input [formControl]="editForm.controls.rvoe" placeholder="RVOE"
+                    <input formControlName="rvoe" placeholder="RVOE"
                       class="w-full border rounded px-2 py-1 text-xs" />
                   </td>
                   <td class="px-4 py-2">
-                    <input [formControl]="editForm.controls.rvoeDate" type="date"
+                    <input formControlName="rvoeDate" type="date"
                       class="w-full border rounded px-2 py-1 text-xs" />
                   </td>
                   <td class="px-4 py-2">
-                    <input [formControl]="editForm.controls.terms" type="number" min="1"
+                    <input formControlName="terms" type="number" min="1"
                       class="w-full border rounded px-2 py-1 text-xs" />
                   </td>
                   <td class="px-4 py-2 text-center text-gray-400 text-xs">—</td>
