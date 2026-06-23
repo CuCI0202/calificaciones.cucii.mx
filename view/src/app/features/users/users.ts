@@ -2,7 +2,9 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { UsersService } from '../../core/services/users.service';
-import { Teacher, UserRole } from '../../core/models/teacher.model';
+import { CampusesService } from '../../core/services/campuses.service';
+import { User, getRoleLabel } from '../../core/models/user.model';
+import { UserRole } from '../../core/models/auth.model';
 
 @Component({
   selector: 'app-users',
@@ -11,10 +13,12 @@ import { Teacher, UserRole } from '../../core/models/teacher.model';
 })
 export class Users {
   private readonly usersService = inject(UsersService);
+  private readonly campusesService = inject(CampusesService);
   private readonly fb = inject(FormBuilder);
   private readonly confirm = inject(ConfirmService);
 
   readonly users = this.usersService.users;
+  readonly campuses = this.campusesService.campuses;
   readonly filterDraft = signal('');
   readonly filterQ = signal('');
   readonly editingId = signal<number | null>(null);
@@ -28,26 +32,36 @@ export class Users {
     return this.users().filter(
       (u) =>
         u.email.toUpperCase().includes(q) ||
-        u.name.toUpperCase().includes(q) ||
+        u.firstName.toUpperCase().includes(q) ||
         u.lastName.toUpperCase().includes(q)
     );
   });
 
   readonly addForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    name: ['', Validators.required],
+    firstName: ['', Validators.required],
     lastName: ['', Validators.required],
     password: ['', Validators.required],
-    role: ['teacher' as UserRole, Validators.required],
+    rolId: [3 as number, Validators.required],
+    campusId: [1 as number, Validators.required],
   });
 
   readonly editForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    name: ['', Validators.required],
+    firstName: ['', Validators.required],
     lastName: ['', Validators.required],
     password: [''],
-    role: ['teacher' as UserRole, Validators.required],
+    rolId: [3 as number, Validators.required],
+    campusId: [1 as number, Validators.required],
   });
+
+  readonly roles: { id: number; label: string }[] = [
+    { id: 1, label: 'Administrador' },
+    { id: 2, label: 'Rector' },
+    { id: 3, label: 'Docente' },
+    { id: 4, label: 'Servicios Escolares' },
+    { id: 5, label: 'Coordinador' },
+  ];
 
   search(): void {
     this.filterQ.set(this.filterDraft());
@@ -58,15 +72,11 @@ export class Users {
     this.filterQ.set('');
   }
 
-  getRoleLabel(role: UserRole): string {
-    return role === 'admin' ? 'Administrador' : 'Profesor';
-  }
-
   toggleAddForm(): void {
     this.showAddForm.update((v) => !v);
     this.editingId.set(null);
     this.showAddPassword.set(false);
-    if (!this.showAddForm()) this.addForm.reset({ role: 'teacher' });
+    if (!this.showAddForm()) this.addForm.reset({ rolId: 3, campusId: 1 });
   }
 
   submitAdd(): void {
@@ -76,35 +86,36 @@ export class Users {
     }
     const v = this.addForm.getRawValue();
     this.usersService.add(v).subscribe();
-    this.addForm.reset({ role: 'teacher' });
+    this.addForm.reset({ rolId: 3, campusId: 1 });
     this.showAddForm.set(false);
     this.showAddPassword.set(false);
   }
 
-  startEdit(user: Teacher): void {
+  startEdit(user: User): void {
     this.editingId.set(user.id);
     this.showAddForm.set(false);
     this.showEditPassword.set(false);
     this.editForm.setValue({
       email: user.email,
-      name: user.name,
+      firstName: user.firstName,
       lastName: user.lastName,
       password: '',
-      role: user.role,
+      rolId: user.rolId,
+      campusId: user.campusId,
     });
   }
 
   saveEdit(id: number): void {
     if (this.editForm.invalid) return;
     const v = this.editForm.getRawValue();
-    const changes: Partial<Omit<Teacher, 'id'>> = {
-      email: v.email,
-      name: v.name,
+    this.usersService.update(id, {
+      firstName: v.firstName,
       lastName: v.lastName,
-      role: v.role,
-    };
-    if (v.password.trim()) changes.password = v.password.trim();
-    this.usersService.update(id, changes).subscribe();
+      email: v.email,
+      rolId: v.rolId,
+      campusId: v.campusId,
+      password: v.password.trim() || undefined,
+    }).subscribe();
     this.editingId.set(null);
     this.showEditPassword.set(false);
   }
@@ -119,4 +130,6 @@ export class Users {
       if (ok) this.usersService.delete(id).subscribe();
     });
   }
+
+  protected readonly getRoleLabel = getRoleLabel;
 }

@@ -20,7 +20,7 @@ export class Profesores {
   private readonly confirm = inject(ConfirmService);
 
   readonly assignments = this.assignmentsService.assignments;
-  readonly teachers = computed(() => this.usersService.users().filter((u) => u.role === 'teacher'));
+  readonly teachers = computed(() => this.usersService.users().filter((u) => u.rolId === 3));
   readonly groups = this.groupsService.groups;
   readonly programs = this.programsService.programs;
 
@@ -103,7 +103,7 @@ export class Profesores {
 
   getTeacherName(userId: number): string {
     const t = this.usersService.users().find((u) => u.id === userId);
-    return t ? `${t.name} ${t.lastName}` : String(userId);
+    return t ? `${t.firstName} ${t.lastName}` : String(userId);
   }
 
   getGroupName(groupId: number): string {

@@ -1,45 +1,79 @@
-import { Injectable, signal } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { Teacher } from '../models/teacher.model';
-
-const MOCK_USERS: Teacher[] = [
-  { id: 1, name: 'Admin', lastName: 'Servicios Escolares', email: 'admin@cucii.edu.mx', password: '1234', role: 'admin' },
-  { id: 2, name: 'Juan', lastName: 'García', email: 'juan@cucii.edu.mx', password: '1234', role: 'teacher' },
-  { id: 3, name: 'María', lastName: 'López', email: 'maria@cucii.edu.mx', password: '1234', role: 'teacher' },
-  { id: 4, name: 'Carlos', lastName: 'Ruiz', email: 'carlos@cucii.edu.mx', password: '1234', role: 'teacher' },
-];
+import { Injectable, signal, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap, map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { User, UserResponse, UserRequest, toUser, toUserRequest } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
-  private readonly _users = signal<Teacher[]>(MOCK_USERS);
+  private readonly http = inject(HttpClient);
+
+  private readonly _users = signal<User[]>([]);
   readonly users = this._users.asReadonly();
 
-  add(user: Omit<Teacher, 'id'>): Observable<Teacher> {
-    const created: Teacher = { ...user, id: Date.now() };
-    this._users.update((list) => [...list, created]);
-    return of(created);
+  constructor() {
+    this.loadAll();
   }
 
-  update(id: number, changes: Partial<Omit<Teacher, 'id'>>): Observable<Teacher | null> {
-    let updated: Teacher | null = null;
-    this._users.update((list) =>
-      list.map((u) => {
-        if (u.id === id) {
-          updated = { ...u, ...changes };
-          return updated;
-        }
-        return u;
-      })
+  private loadAll(): void {
+    this.http.get<UserResponse[]>(`${environment.apiUrl}/usuarios`).subscribe({
+      next: (res) => this._users.set(res.map(toUser)),
+    });
+  }
+
+  add(data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    rolId: number;
+    campusId: number;
+  }): Observable<User> {
+    return this.http.post<UserResponse>(`${environment.apiUrl}/usuarios`, toUserRequest(data)).pipe(
+      tap((res) => this._users.update((list) => [...list, toUser(res)])),
+      map(toUser),
     );
-    return of(updated);
+  }
+
+  update(id: number, data: Partial<{
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    rolId: number;
+    campusId: number;
+  }>): Observable<User> {
+    const existing = this._users().find((u) => u.id === id);
+    const body: UserRequest = toUserRequest({
+      firstName: data.firstName ?? existing!.firstName,
+      lastName: data.lastName ?? existing!.lastName,
+      email: data.email ?? existing!.email,
+      password: data.password ?? '',
+      rolId: data.rolId ?? existing!.rolId,
+      campusId: data.campusId ?? existing!.campusId,
+    });
+
+    return this.http.put<UserResponse>(`${environment.apiUrl}/usuarios/${id}`, body).pipe(
+      tap((res) => {
+        const updated = toUser(res);
+        this._users.update((list) => list.map((u) => (u.id === id ? updated : u)));
+      }),
+      map(toUser),
+    );
   }
 
   delete(id: number): Observable<void> {
-    this._users.update((list) => list.filter((u) => u.id !== id));
-    return of(void 0);
+    return this.http.delete<void>(`${environment.apiUrl}/usuarios/${id}`, {
+      params: { deactivate: true },
+    }).pipe(
+      tap(() => this._users.update((list) => list.filter((u) => u.id !== id))),
+    );
   }
 
-  getById(id: number): Observable<Teacher | undefined> {
-    return of(this._users().find((u) => u.id === id));
+  getById(id: number): Observable<User> {
+    return this.http.get<UserResponse>(`${environment.apiUrl}/usuarios/${id}`).pipe(
+      map(toUser),
+    );
   }
 }

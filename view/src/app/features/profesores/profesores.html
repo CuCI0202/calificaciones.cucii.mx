@@ -36,7 +36,7 @@
               [class.border-red-400]="addForm.controls.userId.invalid && addForm.controls.userId.touched">
               <option value="" disabled>Selecciona...</option>
               @for (t of teachers(); track t.id) {
-                <option [value]="t.id">{{ t.name }} {{ t.lastName }}</option>
+                <option [value]="t.id">{{ t.firstName }} {{ t.lastName }}</option>
               }
             </select>
             <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.userId.touched && addForm.controls.userId.errors?.['required'])">El profesor es obligatorio.</p>
