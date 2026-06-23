@@ -20,7 +20,7 @@ public class JwtService {
     @Value("${security.jwt.expiration}")
     private long expiration;
 
-    public String generateToken(String email, String rol) {
+    public String generateToken(String email, Integer rol) {
         return Jwts.builder()
                 .subject(email)
                 .claim("rol", rol)
