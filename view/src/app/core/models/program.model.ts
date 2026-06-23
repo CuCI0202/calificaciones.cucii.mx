@@ -18,7 +18,7 @@ interface PlanEstudioResponse {
   id: number;
   nombre: string;
   grado: string;
-  numeroRvoe: string;
+  numRvoe: string;
   fechaRvoe: string;
   duracionCuatrimestres: number;
 }
@@ -30,7 +30,7 @@ interface PlanEstudioConMateriasResponse extends PlanEstudioResponse {
 export interface PlanEstudioRequest {
   nombre: string;
   grado: string;
-  numeroRvoe: string;
+  numRvoe: string;
   fechaRvoe: string;
   duracionCuatrimestres: number;
 }
@@ -58,7 +58,7 @@ export function toProgram(res: PlanEstudioResponse): Program {
     id: res.id,
     name: res.nombre,
     degree: res.grado as Degree,
-    rvoe: res.numeroRvoe,
+    rvoe: res.numRvoe,
     rvoeDate: res.fechaRvoe,
     terms: res.duracionCuatrimestres,
     subjects: [],
@@ -76,7 +76,7 @@ export function toProgramRequest(program: Omit<Program, 'id' | 'subjects'>): Pla
   return {
     nombre: program.name,
     grado: program.degree,
-    numeroRvoe: program.rvoe,
+    numRvoe: program.rvoe,
     fechaRvoe: program.rvoeDate,
     duracionCuatrimestres: program.terms,
   };

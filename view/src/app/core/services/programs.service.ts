@@ -64,7 +64,14 @@ export class ProgramsService {
   }
 
   update(id: number, changes: Partial<Omit<Program, 'id' | 'subjects'>>): Observable<Program> {
-    return this.http.put<unknown>(`${environment.apiUrl}/planes-estudio/${id}`, changes).pipe(
+    const body: any = {};
+    if (changes.name !== undefined) body.nombre = changes.name;
+    if (changes.degree !== undefined) body.grado = changes.degree;
+    if (changes.rvoe !== undefined) body.numRvoe = changes.rvoe;
+    if (changes.rvoeDate !== undefined) body.fechaRvoe = changes.rvoeDate;
+    if (changes.terms !== undefined) body.duracionCuatrimestres = changes.terms;
+
+    return this.http.put<unknown>(`${environment.apiUrl}/planes-estudio/${id}`, body).pipe(
       tap((res: any) => {
         const updated = toProgramWithSubjects({ ...res, materias: [] });
         this._programs.update((list) => list.map((p) => (p.id === id ? updated : p)));
