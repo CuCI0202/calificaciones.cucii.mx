@@ -58,12 +58,13 @@ export class Programs {
   startEdit(program: Program): void {
     this.editingId.set(program.id);
     this.showAddForm.set(false);
+    const p = program as any;
     this.editForm.setValue({
-      nombre: program.nombre,
-      grado: program.grado,
-      numRvoe: program.numRvoe,
-      fechaRvoe: program.fechaRvoe,
-      duracionCuatrimestres: program.duracionCuatrimestres,
+      nombre: p.nombre ?? '',
+      grado: p.grado ?? 'Licenciatura',
+      numRvoe: p.numRvoe ?? p.numeroRvoe ?? '',
+      fechaRvoe: p.fechaRvoe ?? '',
+      duracionCuatrimestres: p.duracionCuatrimestres ?? p.terms ?? 1,
     });
   }
 
