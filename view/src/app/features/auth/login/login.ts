@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -15,7 +16,7 @@ export class Login {
 
   constructor() {
     if (this.auth.isAuthenticated()) {
-      this.router.navigate(['/consultar']);
+      this.router.navigate(['/browse']);
     }
   }
 
@@ -39,11 +40,17 @@ export class Login {
     this.auth.login(email, password).subscribe({
       next: () => {
         this.loading.set(false);
-        this.router.navigate(['/consultar']);
+        this.router.navigate(['/browse']);
       },
-      error: (err: Error) => {
+      error: (err: HttpErrorResponse) => {
         this.loading.set(false);
-        this.error.set(err.message);
+        if (err.status === 401) {
+          this.error.set('Credenciales incorrectas');
+        } else if (err.error?.message) {
+          this.error.set(err.error.message);
+        } else {
+          this.error.set('Error al conectar con el servidor');
+        }
       },
     });
   }

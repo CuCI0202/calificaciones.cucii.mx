@@ -1,42 +1,87 @@
-import { Injectable, signal } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { Teacher, UserRole } from '../models/teacher.model';
-
-const MOCK_TEACHERS: Teacher[] = [
-  { id: 1, name: 'Admin', lastName: 'Servicios Escolares', email: 'admin@cucii.edu.mx', password: '1234', role: 'admin' },
-  { id: 2, name: 'Juan', lastName: 'García', email: 'juan@cucii.edu.mx', password: '1234', role: 'teacher' },
-  { id: 3, name: 'María', lastName: 'López', email: 'maria@cucii.edu.mx', password: '1234', role: 'teacher' },
-  { id: 4, name: 'Carlos', lastName: 'Ruiz', email: 'carlos@cucii.edu.mx', password: '1234', role: 'teacher' },
-];
+import { Injectable, signal, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import {
+  LoginRequest,
+  LoginResponse,
+  MeResponse,
+  AuthUser,
+  mapRolId,
+} from '../models/auth.model';
+import { setTokenCookie, getTokenCookie, removeTokenCookie } from './cookie-utils';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  readonly currentUser = signal<Teacher | null>(null);
+  private readonly http = inject(HttpClient);
 
-  login(email: string, password: string): Observable<Teacher> {
-    const teacher = MOCK_TEACHERS.find(
-      (t) => t.email === email && t.password === password
-    );
-    if (teacher) {
-      this.currentUser.set(teacher);
-      return of(teacher);
+  readonly currentUser = signal<AuthUser | null>(null);
+  private readonly _token = signal<string | null>(null);
+
+  constructor() {
+    const token = getTokenCookie();
+    if (token) {
+      this._token.set(token);
+      setTimeout(() => this.validateSession(), 0);
     }
-    return throwError(() => new Error('Credenciales incorrectas'));
+  }
+
+  private validateSession(): void {
+    this.http.get<MeResponse>(`${environment.apiUrl}/auth/me`).subscribe({
+      next: (me) => {
+        this.currentUser.set({
+          id: me.id,
+          nombre: me.nombre,
+          apellido: me.apellido,
+          email: me.email,
+          rolId: me.rolId,
+          rol: mapRolId(me.rolId),
+        });
+      },
+      error: () => this.logout(),
+    });
+  }
+
+  login(email: string, password: string): Observable<LoginResponse> {
+    const body: LoginRequest = { email, password };
+
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, body).pipe(
+      tap((res) => {
+        this._token.set(res.token);
+        setTokenCookie(res.token);
+        this.currentUser.set({
+          id: res.id,
+          nombre: res.nombre,
+          apellido: res.apellido,
+          email: res.email,
+          rolId: res.rolId,
+          rol: mapRolId(res.rolId),
+        });
+      })
+    );
   }
 
   logout(): void {
+    this._token.set(null);
     this.currentUser.set(null);
+    removeTokenCookie();
+  }
+
+  getToken(): string | null {
+    return this._token();
   }
 
   isAuthenticated(): boolean {
-    return this.currentUser() !== null;
+    return this._token() !== null;
   }
 
-  getRole(): UserRole | null {
-    return this.currentUser()?.role ?? null;
+  getRole(): string | null {
+    return this.currentUser()?.rol ?? null;
   }
 
   isAdmin(): boolean {
-    return this.currentUser()?.role === 'admin';
+    const role = this.currentUser()?.rol
+    return role === 'admin' || role === 'rector';
   }
 }
