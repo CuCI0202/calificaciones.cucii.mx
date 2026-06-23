@@ -35,7 +35,7 @@ export class Profesores {
     if (!gId) return [];
     const group = this.groups().find((g) => g.id === gId);
     if (!group) return [];
-    return this.programs().find((p) => p.id === group.programId)?.subjects ?? [];
+    return this.programs().find((p) => p.id === group.planEstudioId)?.materias ?? [];
   });
 
   readonly filtered = computed(() => {
@@ -103,17 +103,17 @@ export class Profesores {
 
   getTeacherName(userId: number): string {
     const t = this.usersService.users().find((u) => u.id === userId);
-    return t ? `${t.firstName} ${t.lastName}` : String(userId);
+    return t ? `${t.nombre} ${t.apellido}` : String(userId);
   }
 
   getGroupName(groupId: number): string {
-    return this.groups().find((g) => g.id === groupId)?.name ?? String(groupId);
+    return this.groups().find((g) => g.id === groupId)?.nombre ?? String(groupId);
   }
 
   getSubjectName(subjectId: number): string {
     for (const program of this.programs()) {
-      const subject = program.subjects.find((s) => s.id === subjectId);
-      if (subject) return `${subject.code} – ${subject.name}`;
+      const subject = program.materias.find((s) => s.id === subjectId);
+      if (subject) return `${subject.clave} – ${subject.nombre}`;
     }
     return String(subjectId);
   }

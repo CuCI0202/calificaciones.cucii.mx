@@ -25,25 +25,25 @@ export class Campuses {
     if (!q) return this.campuses();
     return this.campuses().filter(
       (c) =>
-        c.name.toUpperCase().includes(q) ||
-        (c.shortName?.toUpperCase().includes(q) ?? false) ||
-        c.city.toUpperCase().includes(q) ||
-        c.state.toUpperCase().includes(q)
+        c.nombreOficial.toUpperCase().includes(q) ||
+        (c.nombreCorto?.toUpperCase().includes(q) ?? false) ||
+        c.ciudadMunicipio.toUpperCase().includes(q) ||
+        c.estado.toUpperCase().includes(q)
     );
   });
 
   private readonly formFields = {
-    name: ['', Validators.required],
-    shortName: [''],
-    street: [''],
-    extNumber: [''],
-    intNumber: [''],
-    neighborhood: [''],
-    zipCode: ['', Validators.pattern(/^\d{5}$/)],
-    city: ['', Validators.required],
-    state: ['', Validators.required],
-    country: ['México'],
-    directorName: [''],
+    nombreOficial: ['', Validators.required],
+    nombreCorto: [''],
+    direccionCalle: [''],
+    direccionNumeroExt: [''],
+    direccionNumeroInt: [''],
+    colonia: [''],
+    codigoPostal: ['', Validators.pattern(/^\d{5}$/)],
+    ciudadMunicipio: ['', Validators.required],
+    estado: ['', Validators.required],
+    pais: ['México'],
+    directorNombre: [''],
   };
 
   readonly editForm = this.fb.nonNullable.group({ ...this.formFields });
@@ -62,17 +62,17 @@ export class Campuses {
     this.editingId.set(campus.id);
     this.showAddForm.set(false);
     this.editForm.setValue({
-      name: campus.name,
-      shortName: campus.shortName ?? '',
-      street: campus.street ?? '',
-      extNumber: campus.extNumber ?? '',
-      intNumber: campus.intNumber ?? '',
-      neighborhood: campus.neighborhood ?? '',
-      zipCode: campus.zipCode ?? '',
-      city: campus.city,
-      state: campus.state,
-      country: campus.country ?? 'México',
-      directorName: campus.directorName ?? '',
+      nombreOficial: campus.nombreOficial,
+      nombreCorto: campus.nombreCorto ?? '',
+      direccionCalle: campus.direccionCalle ?? '',
+      direccionNumeroExt: campus.direccionNumeroExt ?? '',
+      direccionNumeroInt: campus.direccionNumeroInt ?? '',
+      colonia: campus.colonia ?? '',
+      codigoPostal: campus.codigoPostal ?? '',
+      ciudadMunicipio: campus.ciudadMunicipio,
+      estado: campus.estado,
+      pais: campus.pais ?? 'México',
+      directorNombre: campus.directorNombre ?? '',
     });
   }
 
@@ -80,17 +80,17 @@ export class Campuses {
     if (this.editForm.invalid) return;
     const v = this.editForm.getRawValue();
     this.campusesService.update(id, {
-      name: v.name,
-      shortName: v.shortName || undefined,
-      street: v.street || undefined,
-      extNumber: v.extNumber || undefined,
-      intNumber: v.intNumber || undefined,
-      neighborhood: v.neighborhood || undefined,
-      zipCode: v.zipCode || undefined,
-      city: v.city,
-      state: v.state,
-      country: v.country || undefined,
-      directorName: v.directorName || undefined,
+      nombreOficial: v.nombreOficial,
+      nombreCorto: v.nombreCorto || undefined,
+      direccionCalle: v.direccionCalle || undefined,
+      direccionNumeroExt: v.direccionNumeroExt || undefined,
+      direccionNumeroInt: v.direccionNumeroInt || undefined,
+      colonia: v.colonia || undefined,
+      codigoPostal: v.codigoPostal || undefined,
+      ciudadMunicipio: v.ciudadMunicipio,
+      estado: v.estado,
+      pais: v.pais || undefined,
+      directorNombre: v.directorNombre || undefined,
     }).subscribe();
     this.editingId.set(null);
   }
@@ -106,19 +106,19 @@ export class Campuses {
     }
     const v = this.addForm.getRawValue();
     this.campusesService.add({
-      name: v.name,
-      shortName: v.shortName || undefined,
-      street: v.street || undefined,
-      extNumber: v.extNumber || undefined,
-      intNumber: v.intNumber || undefined,
-      neighborhood: v.neighborhood || undefined,
-      zipCode: v.zipCode || undefined,
-      city: v.city,
-      state: v.state,
-      country: v.country || undefined,
-      directorName: v.directorName || undefined,
+      nombreOficial: v.nombreOficial,
+      nombreCorto: v.nombreCorto || undefined,
+      direccionCalle: v.direccionCalle || undefined,
+      direccionNumeroExt: v.direccionNumeroExt || undefined,
+      direccionNumeroInt: v.direccionNumeroInt || undefined,
+      colonia: v.colonia || undefined,
+      codigoPostal: v.codigoPostal || undefined,
+      ciudadMunicipio: v.ciudadMunicipio,
+      estado: v.estado,
+      pais: v.pais || undefined,
+      directorNombre: v.directorNombre || undefined,
     }).subscribe();
-    this.addForm.reset({ country: 'México' });
+    this.addForm.reset({ pais: 'México' });
     this.showAddForm.set(false);
   }
 
@@ -131,6 +131,6 @@ export class Campuses {
   toggleAddForm(): void {
     this.showAddForm.update((v) => !v);
     this.editingId.set(null);
-    if (!this.showAddForm()) this.addForm.reset({ country: 'México' });
+    if (!this.showAddForm()) this.addForm.reset({ pais: 'México' });
   }
 }

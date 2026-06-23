@@ -1,14 +1,14 @@
 export interface Campus {
   id: number;
-  name: string;
-  shortName?: string;
-  street?: string;
-  extNumber?: string;
-  intNumber?: string;
-  neighborhood?: string;
-  zipCode?: string;
-  city: string;
-  state: string;
-  country?: string;
-  directorName?: string;
+  nombreOficial: string;
+  nombreCorto?: string;
+  direccionCalle?: string;
+  direccionNumeroExt?: string;
+  direccionNumeroInt?: string;
+  colonia?: string;
+  codigoPostal?: string;
+  ciudadMunicipio: string;
+  estado: string;
+  pais?: string;
+  directorNombre?: string;
 }

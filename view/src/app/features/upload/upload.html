@@ -125,7 +125,7 @@
                   @if (!foundStudent()) { Busca un alumno primero } @else { Selecciona un grupo }
                 </option>
                 @for (g of studentGroups(); track g.id) {
-                  <option [value]="g.id">{{ g.name }}</option>
+                  <option [value]="g.id">{{ g.nombre }}</option>
                 }
               </select>
               <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.groupId.touched && form.controls.groupId.errors?.['required'])">Selecciona un grupo.</p>
@@ -157,7 +157,7 @@
                   @if (!foundStudent()) { Busca un alumno primero } @else { Sin materias disponibles (pendiente de inscripción) }
                 </option>
                 @for (s of studentSubjects(); track s.id) {
-                  <option [value]="s.id">{{ s.name }}</option>
+                  <option [value]="s.id">{{ s.nombre }}</option>
                 }
               </select>
               <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.subjectId.touched && form.controls.subjectId.errors?.['required'])">Selecciona una materia.</p>

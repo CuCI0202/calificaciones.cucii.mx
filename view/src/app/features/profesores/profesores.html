@@ -36,7 +36,7 @@
               [class.border-red-400]="addForm.controls.userId.invalid && addForm.controls.userId.touched">
               <option value="" disabled>Selecciona...</option>
               @for (t of teachers(); track t.id) {
-                <option [value]="t.id">{{ t.firstName }} {{ t.lastName }}</option>
+                <option [value]="t.id">{{ t.nombre }} {{ t.apellido }}</option>
               }
             </select>
             <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.userId.touched && addForm.controls.userId.errors?.['required'])">El profesor es obligatorio.</p>
@@ -49,7 +49,7 @@
               (change)="onGroupChange($any($event.target).value)">
               <option value="" disabled>Selecciona...</option>
               @for (g of groups(); track g.id) {
-                <option [value]="g.id">{{ g.name }}</option>
+                <option [value]="g.id">{{ g.nombre }}</option>
               }
             </select>
             <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.groupId.touched && addForm.controls.groupId.errors?.['required'])">El grupo es obligatorio.</p>
@@ -62,7 +62,7 @@
               [attr.disabled]="!selectedGroupId() ? '' : null">
               <option value="" disabled>{{ selectedGroupId() ? 'Selecciona...' : 'Selecciona un grupo primero' }}</option>
               @for (s of availableSubjects(); track s.id) {
-                <option [value]="s.id">{{ s.code }} – {{ s.name }}</option>
+                <option [value]="s.id">{{ s.clave }} – {{ s.nombre }}</option>
               }
             </select>
             <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.subjectId.touched && addForm.controls.subjectId.errors?.['required'])">La materia es obligatoria.</p>

@@ -1,7 +1,7 @@
 export interface Subject {
   id: number;
-  code: string;
-  name: string;
-  term: number;
-  credits: number | null;
+  clave: string;
+  nombre: string;
+  cuatrimestre: number;
+  creditos: number | null;
 }

@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { ProgramsService } from '../../core/services/programs.service';
-import { Subject } from '../../core/models/subject.model';
+import { Subject } from '../../core/models/program.model';
 
 @Component({
   selector: 'app-subjects',
@@ -15,56 +15,44 @@ export class Subjects {
   private readonly confirm = inject(ConfirmService);
 
   readonly programs = this.programsService.programs;
-  readonly selectedProgramId = signal<number | null>(null);
+  readonly selectedProgramId = signal<number>(1);
   readonly editingId = signal<number | null>(null);
+  readonly showAddForm = signal(false);
 
-  readonly programSubjects = computed<Subject[]>(() => {
+  readonly subjects = computed(() => {
     const id = this.selectedProgramId();
-    if (id === null) return [];
-    return this.programs().find((p) => p.id === id)?.subjects ?? [];
+    return this.programs().find((p) => p.id === id)?.materias ?? [];
   });
 
-  readonly termOptions = computed<number[]>(() => {
+  readonly availableTerms = computed(() => {
     const id = this.selectedProgramId();
-    if (id === null) return [];
     const program = this.programs().find((p) => p.id === id);
     if (!program) return [];
-    return Array.from({ length: program.terms }, (_, i) => i + 1);
+    return Array.from({ length: program.duracionCuatrimestres }, (_, i) => i + 1);
   });
 
   readonly addForm = this.fb.nonNullable.group({
-    code: ['', Validators.required],
-    name: ['', Validators.required],
-    term: [1, [Validators.required, Validators.min(1)]],
-    credits: this.fb.control<number | null>(null, Validators.min(0)),
+    clave: ['', Validators.required],
+    nombre: ['', Validators.required],
+    cuatrimestre: [1, [Validators.required, Validators.min(1)]],
+    creditos: [0, [Validators.required, Validators.min(0)]],
   });
 
   readonly editForm = this.fb.nonNullable.group({
-    code: ['', Validators.required],
-    name: ['', Validators.required],
-    term: [1, [Validators.required, Validators.min(1)]],
-    credits: this.fb.control<number | null>(null, Validators.min(0)),
+    clave: ['', Validators.required],
+    nombre: ['', Validators.required],
+    cuatrimestre: [1, [Validators.required, Validators.min(1)]],
+    creditos: [0, [Validators.required, Validators.min(0)]],
   });
 
   onProgramChange(value: string): void {
-    this.selectedProgramId.set(value ? +value : null);
+    this.selectedProgramId.set(+value);
     this.editingId.set(null);
+    this.showAddForm.set(false);
   }
 
-  startEdit(subject: Subject): void {
-    this.editingId.set(subject.id);
-    this.editForm.setValue({ code: subject.code, name: subject.name, term: subject.term, credits: subject.credits });
-  }
-
-  saveEdit(subjectId: number): void {
-    if (this.editForm.invalid) return;
-    const programId = this.selectedProgramId();
-    if (programId === null) return;
-    this.programsService.updateSubject(programId, subjectId, this.editForm.getRawValue()).subscribe();
-    this.editingId.set(null);
-  }
-
-  cancelEdit(): void {
+  toggleAddForm(): void {
+    this.showAddForm.update((v) => !v);
     this.editingId.set(null);
   }
 
@@ -73,18 +61,37 @@ export class Subjects {
       this.addForm.markAllAsTouched();
       return;
     }
-    const programId = this.selectedProgramId();
-    if (programId === null) return;
-    this.programsService.addSubject(programId, this.addForm.getRawValue()).subscribe();
-    this.addForm.reset();
+    const v = this.addForm.getRawValue();
+    this.programsService.addSubject(this.selectedProgramId(), v).subscribe();
+    this.addForm.reset({ creditos: 0 });
+    this.showAddForm.set(false);
+  }
+
+  startEdit(subject: Subject): void {
+    this.editingId.set(subject.id);
+    this.showAddForm.set(false);
+    this.editForm.setValue({
+      clave: subject.clave,
+      nombre: subject.nombre,
+      cuatrimestre: subject.cuatrimestre,
+      creditos: subject.creditos ?? 0,
+    });
+  }
+
+  saveEdit(subjectId: number): void {
+    if (this.editForm.invalid) return;
+    const v = this.editForm.getRawValue();
+    this.programsService.updateSubject(this.selectedProgramId(), subjectId, v).subscribe();
+    this.editingId.set(null);
+  }
+
+  cancelEdit(): void {
+    this.editingId.set(null);
   }
 
   delete(subjectId: number): void {
     this.confirm.confirm('¿Eliminar esta materia?').subscribe((ok) => {
-      if (!ok) return;
-      const programId = this.selectedProgramId();
-      if (programId === null) return;
-      this.programsService.deleteSubject(programId, subjectId).subscribe();
+      if (ok) this.programsService.deleteSubject(this.selectedProgramId(), subjectId).subscribe();
     });
   }
 }

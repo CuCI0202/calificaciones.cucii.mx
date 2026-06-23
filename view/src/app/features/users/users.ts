@@ -3,8 +3,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { UsersService } from '../../core/services/users.service';
 import { CampusesService } from '../../core/services/campuses.service';
-import { User, getRoleLabel } from '../../core/models/user.model';
-import { UserRole } from '../../core/models/auth.model';
+import { User } from '../../core/models/user.model';
+import { UserRole, mapRolId } from '../../core/models/auth.model';
 
 @Component({
   selector: 'app-users',
@@ -32,27 +32,27 @@ export class Users {
     return this.users().filter(
       (u) =>
         u.email.toUpperCase().includes(q) ||
-        u.firstName.toUpperCase().includes(q) ||
-        u.lastName.toUpperCase().includes(q)
+        u.nombre.toUpperCase().includes(q) ||
+        u.apellido.toUpperCase().includes(q)
     );
   });
 
   readonly addForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    firstName: ['', Validators.required],
-    lastName: ['', Validators.required],
+    nombre: ['', Validators.required],
+    apellido: ['', Validators.required],
     password: ['', Validators.required],
     rolId: [3 as number, Validators.required],
-    campusId: [1 as number, Validators.required],
+    plantelId: [1 as number, Validators.required],
   });
 
   readonly editForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    firstName: ['', Validators.required],
-    lastName: ['', Validators.required],
+    nombre: ['', Validators.required],
+    apellido: ['', Validators.required],
     password: [''],
     rolId: [3 as number, Validators.required],
-    campusId: [1 as number, Validators.required],
+    plantelId: [1 as number, Validators.required],
   });
 
   readonly roles: { id: number; label: string }[] = [
@@ -76,7 +76,7 @@ export class Users {
     this.showAddForm.update((v) => !v);
     this.editingId.set(null);
     this.showAddPassword.set(false);
-    if (!this.showAddForm()) this.addForm.reset({ rolId: 3, campusId: 1 });
+    if (!this.showAddForm()) this.addForm.reset({ rolId: 3, plantelId: 1 });
   }
 
   submitAdd(): void {
@@ -86,7 +86,7 @@ export class Users {
     }
     const v = this.addForm.getRawValue();
     this.usersService.add(v).subscribe();
-    this.addForm.reset({ rolId: 3, campusId: 1 });
+    this.addForm.reset({ rolId: 3, plantelId: 1 });
     this.showAddForm.set(false);
     this.showAddPassword.set(false);
   }
@@ -97,11 +97,11 @@ export class Users {
     this.showEditPassword.set(false);
     this.editForm.setValue({
       email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      nombre: user.nombre,
+      apellido: user.apellido,
       password: '',
       rolId: user.rolId,
-      campusId: user.campusId,
+      plantelId: user.plantelId,
     });
   }
 
@@ -109,11 +109,11 @@ export class Users {
     if (this.editForm.invalid) return;
     const v = this.editForm.getRawValue();
     this.usersService.update(id, {
-      firstName: v.firstName,
-      lastName: v.lastName,
+      nombre: v.nombre,
+      apellido: v.apellido,
       email: v.email,
       rolId: v.rolId,
-      campusId: v.campusId,
+      plantelId: v.plantelId,
       password: v.password.trim() || undefined,
     }).subscribe();
     this.editingId.set(null);
@@ -131,5 +131,14 @@ export class Users {
     });
   }
 
-  protected readonly getRoleLabel = getRoleLabel;
+  getRoleLabel(rolId: number): string {
+    const labels: Record<UserRole, string> = {
+      admin: 'Administrador',
+      rector: 'Rector',
+      docente: 'Docente',
+      servicios_escolares: 'Servicios Escolares',
+      coordinador: 'Coordinador',
+    };
+    return labels[mapRolId(rolId)] ?? 'Desconocido';
+  }
 }

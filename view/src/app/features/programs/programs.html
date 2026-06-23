@@ -26,14 +26,14 @@
         <form [formGroup]="addForm" (ngSubmit)="submitAdd()" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div class="sm:col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-            <input formControlName="name" type="text" placeholder="Ingeniería en Sistemas"
+            <input formControlName="nombre" type="text" placeholder="Ingeniería en Sistemas"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.name.invalid && addForm.controls.name.touched" />
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.name.touched && addForm.controls.name.errors?.['required'])">El nombre es obligatorio.</p>
+              [class.border-red-400]="addForm.controls.nombre.invalid && addForm.controls.nombre.touched" />
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.nombre.touched && addForm.controls.nombre.errors?.['required'])">El nombre es obligatorio.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Grado</label>
-            <select formControlName="degree"
+            <select formControlName="grado"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
               @for (d of degrees; track d) {
                 <option [value]="d">{{ d }}</option>
@@ -43,24 +43,24 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">RVOE</label>
-            <input formControlName="rvoe" type="text" placeholder="RVOE-2024-001"
+            <input formControlName="numRvoe" type="text" placeholder="RVOE-2024-001"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.rvoe.invalid && addForm.controls.rvoe.touched" />
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.rvoe.touched && addForm.controls.rvoe.errors?.['required'])">El RVOE es obligatorio.</p>
+              [class.border-red-400]="addForm.controls.numRvoe.invalid && addForm.controls.numRvoe.touched" />
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.numRvoe.touched && addForm.controls.numRvoe.errors?.['required'])">El RVOE es obligatorio.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Fecha RVOE</label>
-            <input formControlName="rvoeDate" type="date"
+            <input formControlName="fechaRvoe" type="date"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.rvoeDate.invalid && addForm.controls.rvoeDate.touched" />
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.rvoeDate.touched && addForm.controls.rvoeDate.errors?.['required'])">La fecha es obligatoria.</p>
+              [class.border-red-400]="addForm.controls.fechaRvoe.invalid && addForm.controls.fechaRvoe.touched" />
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.fechaRvoe.touched && addForm.controls.fechaRvoe.errors?.['required'])">La fecha es obligatoria.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Cuatrimestres</label>
-            <input formControlName="terms" type="number" min="1" placeholder="10"
+            <input formControlName="duracionCuatrimestres" type="number" min="1" placeholder="10"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.terms.invalid && addForm.controls.terms.touched" />
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.terms.touched && addForm.controls.terms.invalid)">Ingresa un número válido (mínimo 1).</p>
+              [class.border-red-400]="addForm.controls.duracionCuatrimestres.invalid && addForm.controls.duracionCuatrimestres.touched" />
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.duracionCuatrimestres.touched && addForm.controls.duracionCuatrimestres.invalid)">Ingresa un número válido (mínimo 1).</p>
           </div>
           <div class="sm:col-span-3 flex justify-end">
             <button type="submit"
@@ -114,11 +114,11 @@
               @if (editingId() === program.id) {
                 <tr class="bg-blue-50" [formGroup]="editForm">
                   <td class="px-4 py-2">
-                    <input formControlName="name" placeholder="Nombre"
+                    <input formControlName="nombre" placeholder="Nombre"
                       class="w-full border rounded px-2 py-1 text-xs" />
                   </td>
                   <td class="px-4 py-2">
-                    <select formControlName="degree"
+                    <select formControlName="grado"
                       class="w-full border rounded px-2 py-1 text-xs">
                       @for (d of degrees; track d) {
                         <option [value]="d">{{ d }}</option>
@@ -126,15 +126,15 @@
                     </select>
                   </td>
                   <td class="px-4 py-2">
-                    <input formControlName="rvoe" placeholder="RVOE"
+                    <input formControlName="numRvoe" placeholder="RVOE"
                       class="w-full border rounded px-2 py-1 text-xs" />
                   </td>
                   <td class="px-4 py-2">
-                    <input formControlName="rvoeDate" type="date"
+                    <input formControlName="fechaRvoe" type="date"
                       class="w-full border rounded px-2 py-1 text-xs" />
                   </td>
                   <td class="px-4 py-2">
-                    <input formControlName="terms" type="number" min="1"
+                    <input formControlName="duracionCuatrimestres" type="number" min="1"
                       class="w-full border rounded px-2 py-1 text-xs" />
                   </td>
                   <td class="px-4 py-2 text-center text-gray-400 text-xs">—</td>
@@ -153,18 +153,18 @@
                 </tr>
               } @else {
                 <tr class="hover:bg-gray-50 transition-colors">
-                  <td class="px-4 py-3 font-medium text-gray-800">{{ program.name }}</td>
-                  <td class="px-4 py-3 text-gray-600 text-xs">{{ program.degree }}</td>
-                  <td class="px-4 py-3 text-gray-600 font-mono text-xs">{{ program.rvoe }}</td>
-                  <td class="px-4 py-3 text-gray-500">{{ program.rvoeDate }}</td>
+                  <td class="px-4 py-3 font-medium text-gray-800">{{ program.nombre }}</td>
+                  <td class="px-4 py-3 text-gray-600 text-xs">{{ program.grado }}</td>
+                  <td class="px-4 py-3 text-gray-600 font-mono text-xs">{{ program.numRvoe }}</td>
+                  <td class="px-4 py-3 text-gray-500">{{ program.fechaRvoe }}</td>
                   <td class="px-4 py-3 text-center">
                     <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">
-                      {{ program.terms }}
+                      {{ program.duracionCuatrimestres }}
                     </span>
                   </td>
                   <td class="px-4 py-3 text-center">
                     <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">
-                      {{ program.subjects.length }}
+                      {{ program.materias.length }}
                     </span>
                   </td>
                   <td class="px-4 py-3 text-center">

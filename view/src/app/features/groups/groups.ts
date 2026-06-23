@@ -32,22 +32,22 @@ export class Groups {
     const q = this.filterQ().trim().toUpperCase();
     if (!q) return this.groups();
     return this.groups().filter(
-      (g) => g.code.toUpperCase().includes(q) || g.name.toUpperCase().includes(q)
+      (g) => g.clave.toUpperCase().includes(q) || g.nombre.toUpperCase().includes(q)
     );
   });
 
   readonly editForm = this.fb.nonNullable.group({
-    code: ['', Validators.required],
-    name: ['', Validators.required],
-    programId: ['', Validators.required],
-    campusId: ['', Validators.required],
+    clave: ['', Validators.required],
+    nombre: ['', Validators.required],
+    planEstudioId: ['', Validators.required],
+    plantelId: ['', Validators.required],
   });
 
   readonly addForm = this.fb.nonNullable.group({
-    code: ['', Validators.required],
-    name: ['', Validators.required],
-    programId: ['', Validators.required],
-    campusId: ['', Validators.required],
+    clave: ['', Validators.required],
+    nombre: ['', Validators.required],
+    planEstudioId: ['', Validators.required],
+    plantelId: ['', Validators.required],
   });
 
   search(): void {
@@ -60,21 +60,21 @@ export class Groups {
   }
 
   getProgramName(id: number): string {
-    return this.programs().find((p) => p.id === id)?.name ?? String(id);
+    return this.programs().find((p) => p.id === id)?.nombre ?? String(id);
   }
 
   getCampusName(id: number): string {
-    return this.campuses().find((c) => c.id === id)?.name ?? String(id);
+    return this.campuses().find((c) => c.id === id)?.nombreOficial ?? String(id);
   }
 
   startEdit(group: Group): void {
     this.editingId.set(group.id);
     this.showAddForm.set(false);
     this.editForm.setValue({
-      code: group.code,
-      name: group.name,
-      programId: String(group.programId),
-      campusId: String(group.campusId),
+      clave: group.clave,
+      nombre: group.nombre,
+      planEstudioId: String(group.planEstudioId),
+      plantelId: String(group.plantelId),
     });
   }
 
@@ -82,10 +82,10 @@ export class Groups {
     if (this.editForm.invalid) return;
     const v = this.editForm.getRawValue();
     this.groupsService.update(id, {
-      code: v.code,
-      name: v.name,
-      programId: +v.programId,
-      campusId: +v.campusId,
+      clave: v.clave,
+      nombre: v.nombre,
+      planEstudioId: +v.planEstudioId,
+      plantelId: +v.plantelId,
     }).subscribe();
     this.editingId.set(null);
   }
@@ -101,10 +101,10 @@ export class Groups {
     }
     const v = this.addForm.getRawValue();
     this.groupsService.add({
-      code: v.code,
-      name: v.name,
-      programId: +v.programId,
-      campusId: +v.campusId,
+      clave: v.clave,
+      nombre: v.nombre,
+      planEstudioId: +v.planEstudioId,
+      plantelId: +v.plantelId,
     }).subscribe();
     this.addForm.reset();
     this.showAddForm.set(false);

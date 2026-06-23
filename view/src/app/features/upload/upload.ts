@@ -112,14 +112,14 @@ export class Upload {
     const subject = this.studentSubjects().find((s) => s.id === subjectIdNum)!;
 
     const newGrade: Omit<Grade, 'id'> = {
-      studentId: student.id,
-      studentName: fullName(student),
-      studentCurp: student.curp,
-      groupId: +v.groupId,
-      subjectId: subjectIdNum,
-      subjectName: subject?.name ?? String(subjectIdNum),
-      term: +v.term,
-      score: +v.score,
+      alumnoId: student.id,
+      alumnoNombre: fullName(student),
+      alumnoCurp: student.curp,
+      grupoId: +v.groupId,
+      materiaId: subjectIdNum,
+      materiaNombre: subject?.nombre ?? String(subjectIdNum),
+      cuatrimestre: +v.term,
+      calificacion: +v.score,
     };
 
     this.gradesService.addGrade(newGrade).subscribe(() => {
@@ -203,20 +203,20 @@ export class Upload {
     if (valid.length === 0) return;
 
     const students = this.studentsService.students();
-    const allSubjects = this.programsService.programs().flatMap((p) => p.subjects);
+    const allSubjects = this.programsService.programs().flatMap((p) => p.materias);
 
     const grades: Omit<Grade, 'id'>[] = valid.map((r) => {
       const student = students.find((s) => s.curp === r.studentCurp)!;
       const subject = allSubjects.find((s) => s.id === r.subjectId);
       return {
-        studentId: student.id,
-        studentName: fullName(student),
-        studentCurp: student.curp,
-        groupId: 0,
-        subjectId: r.subjectId,
-        subjectName: subject?.name ?? String(r.subjectId),
-        term: r.term,
-        score: r.score,
+        alumnoId: student.id,
+        alumnoNombre: fullName(student),
+        alumnoCurp: student.curp,
+        grupoId: 0,
+        materiaId: r.subjectId,
+        materiaNombre: subject?.nombre ?? String(r.subjectId),
+        cuatrimestre: r.term,
+        calificacion: r.score,
       };
     });
 

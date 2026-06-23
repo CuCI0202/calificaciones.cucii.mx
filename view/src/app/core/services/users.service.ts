@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { User, UserResponse, UserRequest, toUser, toUserRequest } from '../models/user.model';
+import { User, UsuarioResponse, UsuarioRequest } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
@@ -17,49 +17,32 @@ export class UsersService {
   }
 
   private loadAll(): void {
-    this.http.get<UserResponse[]>(`${environment.apiUrl}/usuarios`).subscribe({
-      next: (res) => this._users.set(res.map(toUser)),
+    this.http.get<UsuarioResponse[]>(`${environment.apiUrl}/usuarios`).subscribe({
+      next: (res) => this._users.set(res),
     });
   }
 
-  add(data: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    rolId: number;
-    campusId: number;
-  }): Observable<User> {
-    return this.http.post<UserResponse>(`${environment.apiUrl}/usuarios`, toUserRequest(data)).pipe(
-      tap((res) => this._users.update((list) => [...list, toUser(res)])),
-      map(toUser),
+  add(data: UsuarioRequest): Observable<User> {
+    return this.http.post<User>(`${environment.apiUrl}/usuarios`, data).pipe(
+      tap((res) => this._users.update((list) => [...list, res])),
     );
   }
 
-  update(id: number, data: Partial<{
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    rolId: number;
-    campusId: number;
-  }>): Observable<User> {
+  update(id: number, data: Partial<UsuarioRequest>): Observable<User> {
     const existing = this._users().find((u) => u.id === id);
-    const body: UserRequest = toUserRequest({
-      firstName: data.firstName ?? existing!.firstName,
-      lastName: data.lastName ?? existing!.lastName,
+    const body: UsuarioRequest = {
+      nombre: data.nombre ?? existing!.nombre,
+      apellido: data.apellido ?? existing!.apellido,
       email: data.email ?? existing!.email,
       password: data.password ?? '',
       rolId: data.rolId ?? existing!.rolId,
-      campusId: data.campusId ?? existing!.campusId,
-    });
+      plantelId: data.plantelId ?? existing!.plantelId,
+    };
 
-    return this.http.put<UserResponse>(`${environment.apiUrl}/usuarios/${id}`, body).pipe(
-      tap((res) => {
-        const updated = toUser(res);
-        this._users.update((list) => list.map((u) => (u.id === id ? updated : u)));
-      }),
-      map(toUser),
+    return this.http.put<User>(`${environment.apiUrl}/usuarios/${id}`, body).pipe(
+      tap((res) =>
+        this._users.update((list) => list.map((u) => (u.id === id ? res : u)))
+      ),
     );
   }
 
@@ -72,8 +55,6 @@ export class UsersService {
   }
 
   getById(id: number): Observable<User> {
-    return this.http.get<UserResponse>(`${environment.apiUrl}/usuarios/${id}`).pipe(
-      map(toUser),
-    );
+    return this.http.get<User>(`${environment.apiUrl}/usuarios/${id}`);
   }
 }

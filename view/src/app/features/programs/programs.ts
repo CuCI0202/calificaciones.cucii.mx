@@ -24,26 +24,26 @@ export class Programs {
     const q = this.filterQ().trim().toUpperCase();
     if (!q) return this.programs();
     return this.programs().filter(
-      (p) => p.name.toUpperCase().includes(q) || p.rvoe.toUpperCase().includes(q)
+      (p) => p.nombre.toUpperCase().includes(q) || p.numRvoe.toUpperCase().includes(q)
     );
   });
 
   readonly degrees: Degree[] = ['Licenciatura', 'Maestría', 'Doctorado'];
 
   readonly editForm = this.fb.nonNullable.group({
-    name: ['', Validators.required],
-    degree: ['Licenciatura' as Degree, Validators.required],
-    rvoe: ['', Validators.required],
-    rvoeDate: ['', Validators.required],
-    terms: [1, [Validators.required, Validators.min(1)]],
+    nombre: ['', Validators.required],
+    grado: ['Licenciatura' as Degree, Validators.required],
+    numRvoe: ['', Validators.required],
+    fechaRvoe: ['', Validators.required],
+    duracionCuatrimestres: [1, [Validators.required, Validators.min(1)]],
   });
 
   readonly addForm = this.fb.nonNullable.group({
-    name: ['', Validators.required],
-    degree: ['Licenciatura' as Degree, Validators.required],
-    rvoe: ['', Validators.required],
-    rvoeDate: ['', Validators.required],
-    terms: [1, [Validators.required, Validators.min(1)]],
+    nombre: ['', Validators.required],
+    grado: ['Licenciatura' as Degree, Validators.required],
+    numRvoe: ['', Validators.required],
+    fechaRvoe: ['', Validators.required],
+    duracionCuatrimestres: [1, [Validators.required, Validators.min(1)]],
   });
 
   search(): void {
@@ -59,11 +59,11 @@ export class Programs {
     this.editingId.set(program.id);
     this.showAddForm.set(false);
     this.editForm.setValue({
-      name: program.name,
-      degree: program.degree,
-      rvoe: program.rvoe,
-      rvoeDate: program.rvoeDate,
-      terms: program.terms,
+      nombre: program.nombre,
+      grado: program.grado,
+      numRvoe: program.numRvoe,
+      fechaRvoe: program.fechaRvoe,
+      duracionCuatrimestres: program.duracionCuatrimestres,
     });
   }
 
