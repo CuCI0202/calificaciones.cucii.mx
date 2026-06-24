@@ -5,6 +5,7 @@ import { GroupsService } from '../../core/services/groups.service';
 import { ProgramsService } from '../../core/services/programs.service';
 import { UsersService } from '../../core/services/users.service';
 import { TeacherAssignmentsService } from '../../core/services/teacher-assignments.service';
+import { Subject } from '../../core/models/program.model';
 
 @Component({
   selector: 'app-profesores',
@@ -30,13 +31,8 @@ export class Profesores {
   readonly filterQ = signal('');
   readonly duplicateError = signal(false);
 
-  readonly availableSubjects = computed(() => {
-    const gId = this.selectedGroupId();
-    if (!gId) return [];
-    const group = this.groups().find((g) => g.id === gId);
-    if (!group) return [];
-    return this.programs().find((p) => p.id === group.planEstudioId)?.materias ?? [];
-  });
+  private readonly _subjects = signal<Subject[]>([]);
+  readonly availableSubjects = this._subjects.asReadonly();
 
   readonly filtered = computed(() => {
     const q = this.filterQ().trim().toUpperCase();
@@ -62,8 +58,20 @@ export class Profesores {
   }
 
   onGroupChange(value: string): void {
-    this.selectedGroupId.set(value ? +value : null);
+    const gId = value ? +value : null;
+    this.selectedGroupId.set(gId);
     this.addForm.patchValue({ subjectId: '' });
+
+    if (gId) {
+      const group = this.groups().find((g) => g.id === gId);
+      if (group) {
+        this.programsService.getSubjectsByProgram(group.planEstudioId).subscribe({
+          next: (subjects) => this._subjects.set(subjects),
+        });
+      }
+    } else {
+      this._subjects.set([]);
+    }
   }
 
   toggleAddForm(): void {
@@ -71,6 +79,7 @@ export class Profesores {
     if (!this.showAddForm()) {
       this.addForm.reset();
       this.selectedGroupId.set(null);
+      this._subjects.set([]);
       this.duplicateError.set(false);
     }
   }
@@ -91,6 +100,7 @@ export class Profesores {
         this.duplicateError.set(false);
         this.addForm.reset();
         this.selectedGroupId.set(null);
+        this._subjects.set([]);
         this.showAddForm.set(false);
       });
   }
