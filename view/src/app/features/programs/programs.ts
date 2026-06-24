@@ -24,7 +24,7 @@ export class Programs {
     const q = this.filterQ().trim().toUpperCase();
     if (!q) return this.programs();
     return this.programs().filter(
-      (p) => p.nombre.toUpperCase().includes(q) || p.numRvoe.toUpperCase().includes(q)
+      (p) => p.nombre.toUpperCase().includes(q) || p.numeroRvoe.toUpperCase().includes(q)
     );
   });
 
@@ -33,7 +33,7 @@ export class Programs {
   readonly editForm = this.fb.nonNullable.group({
     nombre: ['', Validators.required],
     grado: ['Licenciatura' as Degree, Validators.required],
-    numRvoe: ['', Validators.required],
+    numeroRvoe: ['', Validators.required],
     fechaRvoe: ['', Validators.required],
     duracionCuatrimestres: [1, [Validators.required, Validators.min(1)]],
   });
@@ -41,7 +41,7 @@ export class Programs {
   readonly addForm = this.fb.nonNullable.group({
     nombre: ['', Validators.required],
     grado: ['Licenciatura' as Degree, Validators.required],
-    numRvoe: ['', Validators.required],
+    numeroRvoe: ['', Validators.required],
     fechaRvoe: ['', Validators.required],
     duracionCuatrimestres: [1, [Validators.required, Validators.min(1)]],
   });
@@ -62,7 +62,7 @@ export class Programs {
     this.editForm.setValue({
       nombre: p.nombre ?? '',
       grado: p.grado ?? 'Licenciatura',
-      numRvoe: p.numRvoe ?? p.numeroRvoe ?? '',
+      numeroRvoe: p.numeroRvoe ?? '',
       fechaRvoe: p.fechaRvoe ?? '',
       duracionCuatrimestres: p.duracionCuatrimestres ?? p.terms ?? 1,
     });

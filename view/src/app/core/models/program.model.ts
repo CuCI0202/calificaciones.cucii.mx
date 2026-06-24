@@ -4,9 +4,10 @@ export interface Program {
   id: number;
   nombre: string;
   grado: Degree;
-  numRvoe: string;
+  numeroRvoe: string;
   fechaRvoe: string;
   duracionCuatrimestres: number;
+  cantidadMaterias: number;
   materias: Subject[];
 }
 

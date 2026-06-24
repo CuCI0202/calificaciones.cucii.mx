@@ -1,7 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, forkJoin } from 'rxjs';
-import { tap, map, catchError, switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { tap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Program, Subject } from '../models/program.model';
 
@@ -17,20 +17,17 @@ export class ProgramsService {
   }
 
   private loadAll(): void {
-    this.http.get<any[]>(`${environment.apiUrl}/planes-estudio`).pipe(
-      switchMap((list) => {
-        if (list.length === 0) return of([]);
-        return forkJoin(
-          list.map((p) =>
-            this.http.get<any>(`${environment.apiUrl}/planes-estudio/${p.id}/con-materias`).pipe(
-              map((detail) => ({ ...p, materias: detail.materias ?? [] })),
-              catchError(() => of(p)),
-            )
-          )
-        );
-      }),
-    ).subscribe({
-      next: (programs) => this._programs.set(programs),
+    this.http.get<any[]>(`${environment.apiUrl}/planes-estudio/con-materias-count`).subscribe({
+      next: (list) => this._programs.set(list.map((p) => ({
+        id: p.id,
+        nombre: p.nombre,
+        grado: p.grado,
+        numeroRvoe: p.numeroRvoe,
+        fechaRvoe: p.fechaRvoe,
+        duracionCuatrimestres: p.duracionCuatrimestres,
+        cantidadMaterias: p.cantidadMaterias ?? 0,
+        materias: [],
+      }))),
     });
   }
 
@@ -45,20 +42,20 @@ export class ProgramsService {
   add(data: {
     nombre: string;
     grado: string;
-    numRvoe: string;
+    numeroRvoe: string;
     fechaRvoe: string;
     duracionCuatrimestres: number;
   }): Observable<Program> {
     return this.http.post<any>(`${environment.apiUrl}/planes-estudio`, data).pipe(
-      tap((res) => this._programs.update((list) => [...list, { ...res, materias: [] }])),
-      map((res) => ({ ...res, materias: [] })),
+      tap((res) => this._programs.update((list) => [...list, { ...res, materias: [], cantidadMaterias: 0 }])),
+      map((res) => ({ ...res, materias: [], cantidadMaterias: 0 })),
     );
   }
 
   update(id: number, data: Partial<{
     nombre: string;
     grado: string;
-    numRvoe: string;
+    numeroRvoe: string;
     fechaRvoe: string;
     duracionCuatrimestres: number;
   }>): Observable<Program> {
@@ -66,12 +63,12 @@ export class ProgramsService {
       tap((res) => {
         const existing = this._programs().find((p) => p.id === id);
         this._programs.update((list) =>
-          list.map((p) => (p.id === id ? { ...res, materias: existing?.materias ?? [] } : p))
+          list.map((p) => (p.id === id ? { ...res, materias: existing?.materias ?? [], cantidadMaterias: existing?.cantidadMaterias ?? 0 } : p))
         );
       }),
       map((res) => {
         const existing = this._programs().find((p) => p.id === id);
-        return { ...res, materias: existing?.materias ?? [] };
+        return { ...res, materias: existing?.materias ?? [], cantidadMaterias: existing?.cantidadMaterias ?? 0 };
       }),
     );
   }
@@ -96,7 +93,7 @@ export class ProgramsService {
       tap((res) =>
         this._programs.update((list) =>
           list.map((p) =>
-            p.id === programId ? { ...p, materias: [...p.materias, res] } : p
+            p.id === programId ? { ...p, materias: [...p.materias, res], cantidadMaterias: p.cantidadMaterias + 1 } : p
           )
         )
       ),
@@ -126,7 +123,7 @@ export class ProgramsService {
       tap(() =>
         this._programs.update((list) =>
           list.map((p) =>
-            p.id !== programId ? p : { ...p, materias: p.materias.filter((s) => s.id !== subjectId) }
+            p.id !== programId ? p : { ...p, materias: p.materias.filter((s) => s.id !== subjectId), cantidadMaterias: p.cantidadMaterias - 1 }
           )
         )
       ),
