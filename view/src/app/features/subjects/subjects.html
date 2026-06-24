@@ -81,17 +81,17 @@
             <tbody class="divide-y divide-gray-100">
               @for (subject of subjects(); track subject.id) {
                 @if (editingId() === subject.id) {
-                  <tr class="bg-blue-50">
+                  <tr class="bg-blue-50" [formGroup]="editForm">
                     <td class="px-4 py-2">
-                      <input [formControl]="editForm.controls.clave" placeholder="Clave"
+                      <input formControlName="clave" placeholder="Clave"
                         class="w-full border rounded px-2 py-1 text-xs" />
                     </td>
                     <td class="px-4 py-2">
-                      <input [formControl]="editForm.controls.nombre" placeholder="Nombre"
+                      <input formControlName="nombre" placeholder="Nombre"
                         class="w-full border rounded px-2 py-1 text-xs" />
                     </td>
                     <td class="px-4 py-2">
-                      <select [formControl]="editForm.controls.cuatrimestre"
+                      <select formControlName="cuatrimestre"
                         class="w-full border rounded px-2 py-1 text-xs">
                         @for (t of availableTerms(); track t) {
                           <option [value]="t">{{ t }}</option>
@@ -99,7 +99,7 @@
                       </select>
                     </td>
                     <td class="px-4 py-2">
-                      <input [formControl]="editForm.controls.creditos" type="number" min="0" step="0.01" placeholder="Créditos"
+                      <input formControlName="creditos" type="number" min="0" step="0.01" placeholder="Créditos"
                         class="w-full border rounded px-2 py-1 text-xs" />
                     </td>
                     <td class="px-4 py-2 text-center">
