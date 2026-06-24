@@ -62,15 +62,15 @@ export class Campuses {
     this.editingId.set(campus.id);
     this.showAddForm.set(false);
     this.editForm.setValue({
-      nombreOficial: campus.nombreOficial,
+      nombreOficial: campus.nombreOficial ?? '',
       nombreCorto: campus.nombreCorto ?? '',
       direccionCalle: campus.direccionCalle ?? '',
       direccionNumeroExt: campus.direccionNumeroExt ?? '',
       direccionNumeroInt: campus.direccionNumeroInt ?? '',
       colonia: campus.colonia ?? '',
       codigoPostal: campus.codigoPostal ?? '',
-      ciudadMunicipio: campus.ciudadMunicipio,
-      estado: campus.estado,
+      ciudadMunicipio: campus.ciudadMunicipio ?? '',
+      estado: campus.estado ?? '',
       pais: campus.pais ?? 'México',
       directorNombre: campus.directorNombre ?? '',
     });

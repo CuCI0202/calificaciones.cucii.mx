@@ -153,18 +153,18 @@
                       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
                         <div class="sm:col-span-2">
                           <label class="block text-xs font-medium text-gray-600 mb-1">Nombre oficial <span class="text-red-500">*</span></label>
-                          <input [formControl]="editForm.controls.nombreOficial" placeholder="Nombre oficial"
+                          <input formControlName="nombreOficial" placeholder="Nombre oficial"
                             class="w-full border rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
                             [class.border-red-400]="editForm.controls.nombreOficial.invalid && editForm.controls.nombreOficial.touched" />
                         </div>
                         <div>
                           <label class="block text-xs font-medium text-gray-600 mb-1">Nombre corto</label>
-                          <input [formControl]="editForm.controls.nombreCorto" placeholder="Corto"
+                          <input formControlName="nombreCorto" placeholder="Corto"
                             class="w-full border rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary" />
                         </div>
                         <div>
                           <label class="block text-xs font-medium text-gray-600 mb-1">Director</label>
-                          <input [formControl]="editForm.controls.directorNombre" placeholder="Lic. Juan Pérez"
+                          <input formControlName="directorNombre" placeholder="Lic. Juan Pérez"
                             class="w-full border rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary" />
                         </div>
                       </div>
@@ -172,46 +172,46 @@
                       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
                         <div class="sm:col-span-2">
                           <label class="block text-xs font-medium text-gray-600 mb-1">Calle</label>
-                          <input [formControl]="editForm.controls.direccionCalle" placeholder="Av. Principal"
+                          <input formControlName="direccionCalle" placeholder="Av. Principal"
                             class="w-full border rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary" />
                         </div>
                         <div>
                           <label class="block text-xs font-medium text-gray-600 mb-1">Núm. ext.</label>
-                          <input [formControl]="editForm.controls.direccionNumeroExt" placeholder="100"
+                          <input formControlName="direccionNumeroExt" placeholder="100"
                             class="w-full border rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary" />
                         </div>
                         <div>
                           <label class="block text-xs font-medium text-gray-600 mb-1">Núm. int.</label>
-                          <input [formControl]="editForm.controls.direccionNumeroInt" placeholder="Piso 2"
+                          <input formControlName="direccionNumeroInt" placeholder="Piso 2"
                             class="w-full border rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary" />
                         </div>
                         <div>
                           <label class="block text-xs font-medium text-gray-600 mb-1">Colonia</label>
-                          <input [formControl]="editForm.controls.colonia" placeholder="Colonia"
+                          <input formControlName="colonia" placeholder="Colonia"
                             class="w-full border rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary" />
                         </div>
                         <div>
                           <label class="block text-xs font-medium text-gray-600 mb-1">CP</label>
-                          <input [formControl]="editForm.controls.codigoPostal" placeholder="00000" maxlength="5"
+                          <input formControlName="codigoPostal" placeholder="00000" maxlength="5"
                             class="w-full border rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
                             [class.border-red-400]="editForm.controls.codigoPostal.invalid && editForm.controls.codigoPostal.touched" />
                           <p class="text-red-500 text-xs mt-1" [class.invisible]="!(editForm.controls.codigoPostal.touched && editForm.controls.codigoPostal.errors?.['pattern'])">Debe ser exactamente 5 dígitos.</p>
                         </div>
                         <div>
                           <label class="block text-xs font-medium text-gray-600 mb-1">Ciudad / Municipio <span class="text-red-500">*</span></label>
-                          <input [formControl]="editForm.controls.ciudadMunicipio" placeholder="Ciudad"
+                          <input formControlName="ciudadMunicipio" placeholder="Ciudad"
                             class="w-full border rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
                             [class.border-red-400]="editForm.controls.ciudadMunicipio.invalid && editForm.controls.ciudadMunicipio.touched" />
                         </div>
                         <div>
                           <label class="block text-xs font-medium text-gray-600 mb-1">Estado <span class="text-red-500">*</span></label>
-                          <input [formControl]="editForm.controls.estado" placeholder="Estado"
+                          <input formControlName="estado" placeholder="Estado"
                             class="w-full border rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
                             [class.border-red-400]="editForm.controls.estado.invalid && editForm.controls.estado.touched" />
                         </div>
                         <div>
                           <label class="block text-xs font-medium text-gray-600 mb-1">País</label>
-                          <input [formControl]="editForm.controls.pais" placeholder="México"
+                          <input formControlName="pais" placeholder="México"
                             class="w-full border rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary" />
                         </div>
                       </div>
