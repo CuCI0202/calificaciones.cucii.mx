@@ -6,6 +6,8 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 .mvn/repository/
 
+.factorypath
+
 ### IntelliJ IDEA ###
 .idea/
 *.iws
@@ -14,6 +16,10 @@ target/
 
 ### VS Code ###
 .vscode/
+
+# IA
+.agents/
+skills-lock.json
 
 ### Mac OS ###
 .DS_Store
