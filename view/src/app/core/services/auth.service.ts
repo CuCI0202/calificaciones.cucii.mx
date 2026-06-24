@@ -10,7 +10,13 @@ import {
   AuthUser,
   mapRolId,
 } from '../models/auth.model';
-import { setTokenCookie, getTokenCookie, removeTokenCookie } from './cookie-utils';
+import {
+  setTokenCookie,
+  getTokenCookie,
+  removeTokenCookie,
+  setRoleCookie,
+  getRoleCookie,
+} from './cookie-utils';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -21,8 +27,18 @@ export class AuthService {
 
   constructor() {
     const token = getTokenCookie();
-    if (token) {
+    const rolId = getRoleCookie();
+
+    if (token && rolId !== null) {
       this._token.set(token);
+      this.currentUser.set({
+        id: 0,
+        nombre: '',
+        apellido: '',
+        email: '',
+        rolId,
+        rol: mapRolId(rolId),
+      });
       setTimeout(() => this.validateSession(), 0);
     }
   }
@@ -50,6 +66,7 @@ export class AuthService {
       tap((res) => {
         this._token.set(res.token);
         setTokenCookie(res.token);
+        setRoleCookie(res.rolId);
         this.currentUser.set({
           id: res.id,
           nombre: res.nombre,
@@ -81,7 +98,7 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    const role = this.currentUser()?.rol
+    const role = this.currentUser()?.rol;
     return role === 'admin' || role === 'rector';
   }
 }
