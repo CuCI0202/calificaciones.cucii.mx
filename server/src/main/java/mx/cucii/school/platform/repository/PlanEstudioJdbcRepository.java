@@ -1,6 +1,7 @@
 package mx.cucii.school.platform.repository;
 
 import mx.cucii.school.platform.dto.MateriaResponse;
+import mx.cucii.school.platform.dto.PlanEstudioConMateriasCountResponse;
 import mx.cucii.school.platform.dto.PlanEstudioConMateriasResponse;
 import mx.cucii.school.platform.model.Materia;
 import mx.cucii.school.platform.model.PlanEstudio;
@@ -171,6 +172,46 @@ public class PlanEstudioJdbcRepository {
 
         return jdbcTemplate.query(sql, extractPlanWithMaterias(id), id);
     }
+
+    public PlanEstudioConMateriasCountResponse findByIdWithMateriasCount(Integer id) {
+        String sql = """
+            SELECT pe.*,
+                   COUNT(m.id) AS cantidad_materias
+            FROM planes_estudio pe
+            LEFT JOIN materias m ON m.plan_estudio_id = pe.id AND m.is_active = true
+            WHERE pe.id = ?
+            GROUP BY pe.id
+            """;
+
+        return jdbcTemplate.query(sql, PLAN_CON_MATERIAS_COUNT_MAPPER, id)
+                .stream().findFirst().orElse(null);
+    }
+
+    public List<PlanEstudioConMateriasCountResponse> findAllWithMateriasCount() {
+        String sql = """
+            SELECT pe.*,
+                   COUNT(m.id) AS cantidad_materias
+            FROM planes_estudio pe
+            LEFT JOIN materias m ON m.plan_estudio_id = pe.id AND m.is_active = true
+            GROUP BY pe.id
+            """;
+
+        return jdbcTemplate.query(sql, PLAN_CON_MATERIAS_COUNT_MAPPER);
+    }
+
+    private static final RowMapper<PlanEstudioConMateriasCountResponse> PLAN_CON_MATERIAS_COUNT_MAPPER = (rs, rowNum) ->
+        new PlanEstudioConMateriasCountResponse(
+                rs.getInt("id"),
+                rs.getString("nombre"),
+                rs.getString("grado"),
+                rs.getString("numero_rvoe"),
+                rs.getObject("fecha_rvoe", LocalDate.class),
+                rs.getInt("duracion_cuatrimestres"),
+                rs.getBoolean("is_active"),
+                rs.getObject("created_at", OffsetDateTime.class),
+                rs.getObject("updated_at", OffsetDateTime.class),
+                rs.getInt("cantidad_materias")
+        );
 
     private ResultSetExtractor<PlanEstudioConMateriasResponse> extractPlanWithMaterias(Integer id) {
         return (ResultSet rs) -> {

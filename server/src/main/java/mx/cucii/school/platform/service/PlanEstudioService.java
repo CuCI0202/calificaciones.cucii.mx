@@ -1,6 +1,7 @@
 package mx.cucii.school.platform.service;
 
 import lombok.RequiredArgsConstructor;
+import mx.cucii.school.platform.dto.PlanEstudioConMateriasCountResponse;
 import mx.cucii.school.platform.dto.PlanEstudioConMateriasResponse;
 import mx.cucii.school.platform.dto.PlanEstudioRequest;
 import mx.cucii.school.platform.dto.PlanEstudioResponse;
@@ -36,6 +37,18 @@ public class PlanEstudioService {
 
     public PlanEstudioConMateriasResponse findByIdWithMaterias(Integer id) {
         PlanEstudioConMateriasResponse result = repository.findByIdWithMaterias(id);
+        if (result == null) {
+            throw new ResourceNotFoundException("Plan de estudio no encontrado: " + id);
+        }
+        return result;
+    }
+
+    public List<PlanEstudioConMateriasCountResponse> findAllWithMateriasCount() {
+        return repository.findAllWithMateriasCount();
+    }
+
+    public PlanEstudioConMateriasCountResponse findByIdWithMateriasCount(Integer id) {
+        PlanEstudioConMateriasCountResponse result = repository.findByIdWithMateriasCount(id);
         if (result == null) {
             throw new ResourceNotFoundException("Plan de estudio no encontrado: " + id);
         }

@@ -1,6 +1,7 @@
 package mx.cucii.school.platform.controller;
 
 import lombok.RequiredArgsConstructor;
+import mx.cucii.school.platform.dto.PlanEstudioConMateriasCountResponse;
 import mx.cucii.school.platform.dto.PlanEstudioConMateriasResponse;
 import mx.cucii.school.platform.dto.PlanEstudioRequest;
 import mx.cucii.school.platform.dto.PlanEstudioResponse;
@@ -31,6 +32,16 @@ public class PlanEstudioController {
     @GetMapping("/{id}/con-materias")
     public ResponseEntity<PlanEstudioConMateriasResponse> getByIdWithMaterias(@PathVariable Integer id) {
         return ResponseEntity.ok(planEstudioService.findByIdWithMaterias(id));
+    }
+
+    @GetMapping("/con-materias-count")
+    public ResponseEntity<List<PlanEstudioConMateriasCountResponse>> getAllWithMateriasCount() {
+        return ResponseEntity.ok(planEstudioService.findAllWithMateriasCount());
+    }
+
+    @GetMapping("/{id}/con-materias-count")
+    public ResponseEntity<PlanEstudioConMateriasCountResponse> getByIdWithMateriasCount(@PathVariable Integer id) {
+        return ResponseEntity.ok(planEstudioService.findByIdWithMateriasCount(id));
     }
 
     @PostMapping
