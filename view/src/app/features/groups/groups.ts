@@ -71,10 +71,10 @@ export class Groups {
     this.editingId.set(group.id);
     this.showAddForm.set(false);
     this.editForm.setValue({
-      clave: group.clave,
-      nombre: group.nombre,
-      planEstudioId: String(group.planEstudioId),
-      plantelId: String(group.plantelId),
+      clave: group.clave ?? '',
+      nombre: group.nombre ?? '',
+      planEstudioId: String(group.planEstudioId ?? ''),
+      plantelId: String(group.plantelId ?? ''),
     });
   }
 

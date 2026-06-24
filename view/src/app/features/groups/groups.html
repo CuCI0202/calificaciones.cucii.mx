@@ -110,32 +110,32 @@
           <tbody class="divide-y divide-gray-100">
             @for (group of filtered(); track group.id) {
               @if (editingId() === group.id) {
-                <tr class="bg-blue-50">
-                  <td class="px-4 py-2">
-                    <input [formControl]="editForm.controls.clave" placeholder="Clave"
-                      class="w-full border rounded px-2 py-1 text-xs" />
-                  </td>
-                  <td class="px-4 py-2">
-                    <input [formControl]="editForm.controls.nombre" placeholder="Nombre"
-                      class="w-full border rounded px-2 py-1 text-xs" />
-                  </td>
-                  <td class="px-4 py-2">
-                    <select [formControl]="editForm.controls.planEstudioId"
-                      class="w-full border rounded px-2 py-1 text-xs">
-                      <option value="" disabled>Selecciona...</option>
-                      @for (p of programs(); track p.id) {
-                        <option [value]="p.id">{{ p.nombre }}</option>
-                      }
-                    </select>
-                  </td>
-                  <td class="px-4 py-2">
-                    <select [formControl]="editForm.controls.plantelId"
-                      class="w-full border rounded px-2 py-1 text-xs">
-                      <option value="" disabled>Selecciona...</option>
-                      @for (c of campuses(); track c.id) {
-                        <option [value]="c.id">{{ c.nombreOficial }}</option>
-                      }
-                    </select>
+                  <tr class="bg-blue-50" [formGroup]="editForm">
+                    <td class="px-4 py-2">
+                      <input formControlName="clave" placeholder="Clave"
+                        class="w-full border rounded px-2 py-1 text-xs" />
+                    </td>
+                    <td class="px-4 py-2">
+                      <input formControlName="nombre" placeholder="Nombre"
+                        class="w-full border rounded px-2 py-1 text-xs" />
+                    </td>
+                    <td class="px-4 py-2">
+                      <select formControlName="planEstudioId"
+                        class="w-full border rounded px-2 py-1 text-xs">
+                        <option value="" disabled>Selecciona...</option>
+                        @for (p of programs(); track p.id) {
+                          <option [value]="p.id">{{ p.nombre }}</option>
+                        }
+                      </select>
+                    </td>
+                    <td class="px-4 py-2">
+                      <select formControlName="plantelId"
+                        class="w-full border rounded px-2 py-1 text-xs">
+                        <option value="" disabled>Selecciona...</option>
+                        @for (c of campuses(); track c.id) {
+                          <option [value]="c.id">{{ c.nombreOficial }}</option>
+                        }
+                      </select>
                   </td>
                   <td class="px-4 py-2 text-center">
                     <div class="flex justify-center gap-2">
