@@ -106,21 +106,21 @@
           <tbody class="divide-y divide-gray-100">
             @for (student of filtered(); track student.id) {
               @if (editingId() === student.id) {
-                <tr class="bg-blue-50">
+                <tr class="bg-blue-50" [formGroup]="editForm">
                   <td class="px-4 py-2" colspan="2">
                     <div class="grid grid-cols-3 gap-2">
-                      <input [formControl]="editForm.controls.nombres" placeholder="Nombre(s)"
+                      <input formControlName="nombres" placeholder="Nombre(s)"
                         class="border rounded px-2 py-1 text-xs w-full" />
-                      <input [formControl]="editForm.controls.primerApellido" placeholder="Primer apellido"
+                      <input formControlName="primerApellido" placeholder="Primer apellido"
                         class="border rounded px-2 py-1 text-xs w-full" />
-                      <input [formControl]="editForm.controls.segundoApellido" placeholder="Segundo apellido"
+                      <input formControlName="segundoApellido" placeholder="Segundo apellido"
                         class="border rounded px-2 py-1 text-xs w-full" />
                     </div>
                     <div class="grid grid-cols-2 gap-2 mt-2">
-                      <input [formControl]="editForm.controls.curp" placeholder="CURP"
+                      <input formControlName="curp" placeholder="CURP"
                         maxlength="18"
                         class="border rounded px-2 py-1 text-xs uppercase tracking-widest w-full" />
-                      <input [formControl]="editForm.controls.correoInstitucional" placeholder="Correo institucional"
+                      <input formControlName="correoInstitucional" placeholder="Correo institucional"
                         class="border rounded px-2 py-1 text-xs w-full" />
                     </div>
                   </td>

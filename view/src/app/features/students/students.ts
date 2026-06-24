@@ -65,11 +65,11 @@ export class Students {
     this.editingId.set(student.id);
     this.showAddForm.set(false);
     this.editForm.setValue({
-      nombres: student.nombres,
-      primerApellido: student.primerApellido,
+      nombres: student.nombres ?? '',
+      primerApellido: student.primerApellido ?? '',
       segundoApellido: student.segundoApellido ?? '',
-      curp: student.curp,
-      correoInstitucional: student.correoInstitucional,
+      curp: student.curp ?? '',
+      correoInstitucional: student.correoInstitucional ?? '',
     });
   }
 
