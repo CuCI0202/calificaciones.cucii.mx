@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Table("materias")
@@ -11,7 +12,7 @@ public record Materia(
         @Id Integer id,
         String nombre,
         String clave,
-        Integer creditos,
+        BigDecimal creditos,
         Integer cuatrimestre,
         @Column("plan_estudio_id") Integer planEstudioId,
         @Column("is_active") boolean isActive,

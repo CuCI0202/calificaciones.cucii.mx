@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +18,7 @@ public class MateriaJdbcRepository {
                 rs.getInt("id"),
                 rs.getString("nombre"),
                 rs.getString("clave"),
-                rs.getInt("creditos"),
+                rs.getBigDecimal("creditos"),
                 rs.getInt("cuatrimestre"),
                 rs.getInt("plan_estudio_id"),
                 rs.getBoolean("is_active"),
