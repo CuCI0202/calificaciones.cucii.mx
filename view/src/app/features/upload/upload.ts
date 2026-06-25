@@ -1,25 +1,14 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 import { GradesService } from '../../core/services/grades.service';
 import { StudentsService } from '../../core/services/students.service';
-import { ProgramsService } from '../../core/services/programs.service';
 import { GroupsService } from '../../core/services/groups.service';
 import { GroupStudentsService } from '../../core/services/group-students.service';
-import { Grade } from '../../core/models/grade.model';
-import { Group } from '../../core/models/group.model';
 import { Student, fullName } from '../../core/models/student.model';
-import { Subject } from '../../core/models/subject.model';
-
-const TERMS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-interface CsvRow {
-  studentCurp: string;
-  subjectId: number;
-  term: number;
-  score: number;
-  error?: string;
-}
+import { Subject } from '../../core/models/program.model';
+import { Group } from '../../core/models/group.model';
 
 @Component({
   selector: 'app-upload',
@@ -27,16 +16,13 @@ interface CsvRow {
   templateUrl: './upload.html',
 })
 export class Upload {
+  private readonly auth = inject(AuthService);
   private readonly gradesService = inject(GradesService);
   private readonly studentsService = inject(StudentsService);
-  private readonly programsService = inject(ProgramsService);
   private readonly groupsService = inject(GroupsService);
   private readonly groupStudentsService = inject(GroupStudentsService);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
-
-  readonly terms = TERMS;
-  readonly activeTab = signal<'manual' | 'csv'>('manual');
 
   // ── Student search ────────────────────────────────────────────────────────
   readonly searchQuery = signal('');
@@ -56,7 +42,8 @@ export class Upload {
     return this.groupsService.groups().filter((g) => assignedIds.has(g.id));
   });
 
-  readonly studentSubjects = computed<Subject[]>(() => []);
+  readonly availableTerms = signal<number[]>([]);
+  readonly studentSubjects = signal<Subject[]>([]);
 
   fullName(student: Student): string {
     return fullName(student);
@@ -80,12 +67,42 @@ export class Upload {
     this.showModal.set(false);
     this.searchError.set('');
     this.searchQuery.set(student.curp);
-    this.form.controls.groupId.setValue('');
-    this.form.controls.subjectId.setValue('');
+    this.form.patchValue({ groupId: '', term: 0, subjectId: '' });
+    this.availableTerms.set([]);
+    this.studentSubjects.set([]);
   }
 
   closeModal(): void {
     this.showModal.set(false);
+  }
+
+  // ── Group / Term / Subject ─────────────────────────────────────────────────
+  onGroupChange(value: string): void {
+    const gId = value ? +value : null;
+    this.form.patchValue({ term: 0, subjectId: '' });
+    this.availableTerms.set([]);
+    this.studentSubjects.set([]);
+
+    if (gId) {
+      this.groupsService.getCuatrimestresCount(gId).subscribe({
+        next: (count) => this.availableTerms.set(
+          Array.from({ length: count }, (_, i) => i + 1)
+        ),
+      });
+    }
+  }
+
+  onTermChange(value: string): void {
+    const term = value ? +value : 0;
+    const gId = this.form.getRawValue().groupId;
+    this.form.patchValue({ subjectId: '' });
+    this.studentSubjects.set([]);
+
+    if (gId && term > 0) {
+      this.groupsService.getSubjectsByGroupAndTerm(+gId, term).subscribe({
+        next: (subjects) => this.studentSubjects.set(subjects),
+      });
+    }
   }
 
   // ── Manual form ──────────────────────────────────────────────────────────
@@ -108,129 +125,29 @@ export class Upload {
 
     const v = this.form.getRawValue();
     const student = this.foundStudent()!;
-    const subjectIdNum = +v.subjectId;
-    const subject = this.studentSubjects().find((s) => s.id === subjectIdNum)!;
+    const registradoPor = this.auth.currentUser()?.id;
 
-    const newGrade: Omit<Grade, 'id'> = {
+    this.gradesService.addGrade({
       alumnoId: student.id,
-      alumnoNombre: fullName(student),
-      alumnoCurp: student.curp,
       grupoId: +v.groupId,
-      materiaId: subjectIdNum,
-      materiaNombre: subject?.nombre ?? String(subjectIdNum),
-      cuatrimestre: +v.term,
+      materiaId: +v.subjectId,
       calificacion: +v.score,
-    };
-
-    this.gradesService.addGrade(newGrade).subscribe(() => {
-      this.successMsg.set('Calificación registrada correctamente.');
-      this.errorMsg.set('');
-      this.form.reset({ groupId: '', term: 0, score: 0 });
-      this.foundStudent.set(null);
-      this.searchQuery.set('');
-      this.searchError.set('');
-      setTimeout(() => this.successMsg.set(''), 3000);
+      registradoPor: registradoPor ?? 0,
+    }).subscribe({
+      next: () => {
+        this.successMsg.set('Calificación registrada correctamente.');
+        this.errorMsg.set('');
+        this.form.reset({ groupId: '', term: 0, score: 0 });
+        this.foundStudent.set(null);
+        this.searchQuery.set('');
+        this.searchError.set('');
+        this.availableTerms.set([]);
+        this.studentSubjects.set([]);
+        setTimeout(() => this.successMsg.set(''), 3000);
+      },
+      error: () => {
+        this.errorMsg.set('Error al registrar la calificación.');
+      },
     });
-  }
-
-  // ── CSV import ────────────────────────────────────────────────────────────
-  readonly csvRows = signal<CsvRow[]>([]);
-  readonly csvError = signal('');
-  readonly csvLoaded = signal(false);
-  readonly csvSuccess = signal('');
-
-  onFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = (e.target?.result as string) ?? '';
-      this.parseCsv(text);
-    };
-    reader.readAsText(file);
-  }
-
-  private parseCsv(text: string): void {
-    const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
-    if (lines.length === 0) {
-      this.csvError.set('El archivo está vacío.');
-      return;
-    }
-
-    const students = this.studentsService.students();
-    const startIdx = lines[0].toLowerCase().startsWith('alumno_curp') ? 1 : 0;
-    const rows: CsvRow[] = [];
-
-    for (let i = startIdx; i < lines.length; i++) {
-      const cols = lines[i].split(',').map((c) => c.trim());
-      if (cols.length < 4) {
-        rows.push({ studentCurp: '', subjectId: 0, term: 0, score: 0, error: 'Columnas insuficientes' });
-        continue;
-      }
-
-      const [studentCurp, subjectIdStr, termStr, scoreStr] = cols;
-      const subjectIdNum = parseInt(subjectIdStr, 10);
-      const scoreNum = parseFloat(scoreStr);
-      const termNum = parseInt(termStr, 10);
-
-      let error: string | undefined;
-      if (!studentCurp || studentCurp.length !== 18) error = 'CURP inválida';
-      else if (!students.find((s) => s.curp === studentCurp.toUpperCase())) error = 'CURP no registrada';
-      else if (isNaN(subjectIdNum) || subjectIdNum <= 0) error = 'ID de materia inválido';
-      else if (isNaN(termNum) || termNum < 1) error = 'Cuatrimestre inválido';
-      else if (isNaN(scoreNum) || scoreNum < 0 || scoreNum > 100) error = 'Calificación inválida';
-
-      rows.push({ studentCurp: studentCurp.toUpperCase(), subjectId: subjectIdNum, term: termNum, score: scoreNum, error });
-    }
-
-    this.csvRows.set(rows);
-    this.csvLoaded.set(true);
-    this.csvError.set('');
-  }
-
-  get csvRowsValid(): CsvRow[] {
-    return this.csvRows().filter((r) => !r.error);
-  }
-
-  get csvRowsInvalid(): CsvRow[] {
-    return this.csvRows().filter((r) => !!r.error);
-  }
-
-  confirmCsv(): void {
-    const valid = this.csvRowsValid;
-    if (valid.length === 0) return;
-
-    const students = this.studentsService.students();
-    const allSubjects = this.programsService.programs().flatMap((p) => p.materias);
-
-    const grades: Omit<Grade, 'id'>[] = valid.map((r) => {
-      const student = students.find((s) => s.curp === r.studentCurp)!;
-      const subject = allSubjects.find((s) => s.id === r.subjectId);
-      return {
-        alumnoId: student.id,
-        alumnoNombre: fullName(student),
-        alumnoCurp: student.curp,
-        grupoId: 0,
-        materiaId: r.subjectId,
-        materiaNombre: subject?.nombre ?? String(r.subjectId),
-        cuatrimestre: r.term,
-        calificacion: r.score,
-      };
-    });
-
-    this.gradesService.addMany(grades).subscribe(() => {
-      this.csvSuccess.set(`${grades.length} calificaciones importadas correctamente.`);
-      this.csvRows.set([]);
-      this.csvLoaded.set(false);
-      setTimeout(() => this.router.navigate(['/browse']), 1500);
-    });
-  }
-
-  cancelCsv(): void {
-    this.csvRows.set([]);
-    this.csvLoaded.set(false);
-    this.csvError.set('');
   }
 }

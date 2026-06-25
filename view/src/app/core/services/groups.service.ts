@@ -1,9 +1,10 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Group } from '../models/group.model';
+import { Subject } from '../models/program.model';
 
 @Injectable({ providedIn: 'root' })
 export class GroupsService {
@@ -32,6 +33,18 @@ export class GroupsService {
 
   getByProgram(planEstudioId: number): Observable<Group[]> {
     return this.http.get<Group[]>(`${environment.apiUrl}/grupos`);
+  }
+
+  getCuatrimestresCount(groupId: number): Observable<number> {
+    return this.http.get<{ cantidadCuatrimestres: number }>(
+      `${environment.apiUrl}/grupos/${groupId}/cuatrimestres`
+    ).pipe(map((res) => res.cantidadCuatrimestres));
+  }
+
+  getSubjectsByGroupAndTerm(groupId: number, cuatrimestre: number): Observable<Subject[]> {
+    return this.http.get<Subject[]>(
+      `${environment.apiUrl}/grupos/${groupId}/cuatrimestres/${cuatrimestre}/materias`
+    );
   }
 
   add(group: Omit<Group, 'id'>): Observable<Group> {

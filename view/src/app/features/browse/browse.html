@@ -8,7 +8,7 @@
         <div class="flex items-center gap-3 mb-8">
           <button (click)="backToList()"
             class="text-primary hover:text-primary-dark text-sm">
-            ← Volver
+            &larr; Volver
           </button>
           <span class="text-gray-300">|</span>
           <div>
@@ -17,14 +17,61 @@
           </div>
         </div>
 
-        <!-- No enrollment notice -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center text-gray-400">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mx-auto mb-3 text-gray-300">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-          </svg>
-          <p class="font-medium text-gray-500 mb-1">Sin inscripción registrada</p>
-          <p class="text-sm">Las calificaciones estarán disponibles cuando el alumno sea inscrito a un grupo.</p>
-        </div>
+        @if (detailRows().length === 0) {
+          <!-- No enrollment notice -->
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mx-auto mb-3 text-gray-300">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+            </svg>
+            <p class="font-medium text-gray-500 mb-1">Sin inscripci&oacute;n registrada</p>
+            <p class="text-sm">Las calificaciones estar&aacute;n disponibles cuando el alumno sea inscrito a un grupo.</p>
+          </div>
+        } @else {
+          <!-- Grade blocks per term -->
+          <div class="space-y-6">
+            @for (block of detailRows(); track block.term) {
+              <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="px-5 py-3 bg-gray-50 border-b border-gray-100">
+                  <h2 class="text-sm font-semibold text-brand-dark">{{ block.term }}&deg; Cuatrimestre</h2>
+                </div>
+                @if (block.rows.length === 0) {
+                  <div class="px-5 py-6 text-center text-sm text-gray-400">
+                    No hay materias registradas para este cuatrimestre.
+                  </div>
+                } @else {
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                      <thead class="text-gray-500 text-xs uppercase tracking-wide">
+                        <tr>
+                          <th class="px-4 py-2.5 text-left">Clave</th>
+                          <th class="px-4 py-2.5 text-left">Materia</th>
+                          <th class="px-4 py-2.5 text-center">Calificaci&oacute;n</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-gray-100">
+                        @for (row of block.rows; track row.subjectId) {
+                          <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-4 py-2.5 font-mono text-xs text-gray-500">{{ row.subjectClave }}</td>
+                            <td class="px-4 py-2.5 text-gray-800">{{ row.subjectNombre }}</td>
+                            <td class="px-4 py-2.5 text-center">
+                              @if (row.score !== null) {
+                                <span class="inline-block min-w-[2.5rem] px-2 py-0.5 rounded-full text-sm {{ getGradeClass(row.score) }}">
+                                  {{ row.score }}
+                                </span>
+                              } @else {
+                                <span class="text-gray-300">&mdash;</span>
+                              }
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
       </div>
     }
 
@@ -70,7 +117,7 @@
               @if (hasFilters()) {
                 {{ filteredStudents().length }} alumno(s) encontrado(s)
               } @else {
-                Mostrando todos los alumnos — {{ filteredStudents().length }} en total
+                Mostrando todos los alumnos &mdash; {{ filteredStudents().length }} en total
               }
             </p>
             <div class="flex gap-2">
@@ -110,7 +157,7 @@
                     <td class="px-4 py-3 text-gray-600">{{ student.correoInstitucional }}</td>
                     <td class="px-4 py-3 text-center">
                       <span class="text-primary hover:text-primary-dark text-xs font-medium">
-                        Ver calificaciones →
+                        Ver calificaciones &rarr;
                       </span>
                     </td>
                   </tr>
