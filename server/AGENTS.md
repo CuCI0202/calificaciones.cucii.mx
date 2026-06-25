@@ -18,6 +18,7 @@
 | Comando | Descripción |
 |---------|-------------|
 | `./mvnw spring-boot:run` | Arranca servidor en :8080 |
+| `./mvnw compile` | Compilar sin ejecutar tests |
 | `./mvnw test` | Todos los tests |
 | `./mvnw test -Dtest=NombreTest` | Test específico |
 | `./mvnw package -DskipTests` | Genera JAR |
@@ -149,7 +150,15 @@ public class EntidadJdbcRepository {
 - `roles` — solo tiene `created_at`
 - `alumnos_grupos` — solo tiene `created_at`
 - `profesores_grupos` — solo tiene `created_at`
-- `profesores_grupos` — solo tiene `created_at`
+
+### FK chain: grupo → plan_estudio → materias/cuatrimestres
+- `grupos.plan_estudio_id` → `planes_estudio.id` → `planes_estudio.duracion_cuatrimestres`
+- Desde un `grupos.id` se obtiene la duración de la carrera y las materias por cuatrimestre.
+
+### Cross-resource queries (FK traversal)
+- **Services** pueden inyectar `*JdbcRepository` de otras entidades para navegar por FKs (ej. `GrupoService` inyecta `PlanEstudioJdbcRepository` y `MateriaJdbcRepository`).
+- **Patrón:** buscar entidad padre → extraer FK → consultar repositorio hijo.
+- Para joins simples en el mismo repositorio se puede usar `jdbcTemplate.query()` con la query JOIN. Para traer datos de entidades diferentes se inyecta el `JdbcRepository` de la entidad destino.
 
 ## Endpoints
 
@@ -211,6 +220,8 @@ public class EntidadJdbcRepository {
 |--------|------|--------|
 | GET | `/grupos` | Listar todos |
 | GET | `/grupos/{id}` | Obtener por ID |
+| GET | `/grupos/{id}/cuatrimestres` | Cantidad de cuatrimestres de la carrera |
+| GET | `/grupos/{id}/cuatrimestres/{cuatrimestre}/materias` | Materias de un cuatrimestre |
 | POST | `/grupos` | Crear (201). Clave auto-generada si no se provee. |
 | PUT | `/grupos/{id}` | Actualizar |
 | DELETE | `/grupos/{id}` | Soft-delete (204) |
@@ -240,6 +251,7 @@ public class EntidadJdbcRepository {
 | Método | Ruta | Acción |
 |--------|------|--------|
 | GET | `/calificaciones` | Listar todas |
+| GET | `/calificaciones?alumnoId=X` | Calificaciones de un alumno |
 | GET | `/calificaciones/{id}` | Obtener por ID |
 | POST | `/calificaciones` | Registrar calificación (201). Rango 0-100. Unique: alumno+materia+grupo. |
 | PUT | `/calificaciones/{id}` | Actualizar |
