@@ -43,6 +43,13 @@ public class MateriaJdbcRepository {
         ).stream().findFirst();
     }
 
+    public List<Materia> findByPlanEstudioIdAndCuatrimestre(Integer planEstudioId, Integer cuatrimestre) {
+        return jdbcTemplate.query(
+                "SELECT * FROM materias WHERE plan_estudio_id = ? AND cuatrimestre = ?",
+                MATERIA_MAPPER, planEstudioId, cuatrimestre
+        );
+    }
+
     public Materia save(Materia materia) {
         if (materia.id() == null) {
             return insert(materia);

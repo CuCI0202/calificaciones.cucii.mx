@@ -1,8 +1,10 @@
 package mx.cucii.school.platform.controller;
 
 import lombok.RequiredArgsConstructor;
+import mx.cucii.school.platform.dto.CantidadCuatrimestresResponse;
 import mx.cucii.school.platform.dto.GrupoRequest;
 import mx.cucii.school.platform.dto.GrupoResponse;
+import mx.cucii.school.platform.dto.MateriaResponse;
 import mx.cucii.school.platform.service.GrupoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,18 @@ public class GrupoController {
     public ResponseEntity<GrupoResponse> update(@PathVariable Integer id,
                                                  @RequestBody GrupoRequest request) {
         return ResponseEntity.ok(grupoService.update(id, request));
+    }
+
+    @GetMapping("/{id}/cuatrimestres")
+    public ResponseEntity<CantidadCuatrimestresResponse> getCuatrimestres(@PathVariable Integer id) {
+        return ResponseEntity.ok(grupoService.getCuatrimestres(id));
+    }
+
+    @GetMapping("/{id}/cuatrimestres/{cuatrimestre}/materias")
+    public ResponseEntity<List<MateriaResponse>> getMateriasByCuatrimestre(
+            @PathVariable Integer id,
+            @PathVariable Integer cuatrimestre) {
+        return ResponseEntity.ok(grupoService.getMateriasByCuatrimestre(id, cuatrimestre));
     }
 
     @DeleteMapping("/{id}")

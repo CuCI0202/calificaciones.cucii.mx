@@ -88,6 +88,13 @@ public class CalificacionJdbcRepository {
         );
     }
 
+    public List<Calificacion> findByAlumnoId(Integer alumnoId) {
+        return jdbcTemplate.query(
+                "SELECT * FROM calificaciones WHERE alumno_id = ?",
+                MAPPER, alumnoId
+        );
+    }
+
     public void softDeleteById(Integer id, OffsetDateTime now) {
         jdbcTemplate.update(
                 "UPDATE calificaciones SET is_active = false, updated_at = ? WHERE id = ?",

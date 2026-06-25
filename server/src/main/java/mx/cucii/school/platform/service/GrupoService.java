@@ -1,11 +1,16 @@
 package mx.cucii.school.platform.service;
 
 import lombok.RequiredArgsConstructor;
+import mx.cucii.school.platform.dto.CantidadCuatrimestresResponse;
 import mx.cucii.school.platform.dto.GrupoRequest;
 import mx.cucii.school.platform.dto.GrupoResponse;
+import mx.cucii.school.platform.dto.MateriaResponse;
 import mx.cucii.school.platform.exception.ResourceNotFoundException;
 import mx.cucii.school.platform.model.Grupo;
+import mx.cucii.school.platform.model.Materia;
+import mx.cucii.school.platform.model.PlanEstudio;
 import mx.cucii.school.platform.repository.GrupoJdbcRepository;
+import mx.cucii.school.platform.repository.MateriaJdbcRepository;
 import mx.cucii.school.platform.repository.PlanEstudioJdbcRepository;
 import mx.cucii.school.platform.repository.PlantelJdbcRepository;
 import org.springframework.stereotype.Service;
@@ -21,6 +26,7 @@ public class GrupoService {
     private final GrupoJdbcRepository repository;
     private final PlanEstudioJdbcRepository planEstudioRepository;
     private final PlantelJdbcRepository plantelRepository;
+    private final MateriaJdbcRepository materiaRepository;
 
     public List<GrupoResponse> findAll() {
         return repository.findAll().stream()
@@ -101,6 +107,28 @@ public class GrupoService {
         return toResponse(repository.save(updated));
     }
 
+    public CantidadCuatrimestresResponse getCuatrimestres(Integer grupoId) {
+        Grupo grupo = repository.findById(grupoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Grupo no encontrado: " + grupoId));
+        PlanEstudio plan = planEstudioRepository.findById(grupo.planEstudioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Plan de estudio no encontrado"));
+        return new CantidadCuatrimestresResponse(plan.duracionCuatrimestres());
+    }
+
+    public List<MateriaResponse> getMateriasByCuatrimestre(Integer grupoId, Integer cuatrimestre) {
+        Grupo grupo = repository.findById(grupoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Grupo no encontrado: " + grupoId));
+        PlanEstudio plan = planEstudioRepository.findById(grupo.planEstudioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Plan de estudio no encontrado"));
+        if (cuatrimestre <= 0 || cuatrimestre > plan.duracionCuatrimestres()) {
+            throw new IllegalArgumentException(
+                    "El cuatrimestre debe estar entre 1 y " + plan.duracionCuatrimestres());
+        }
+        return materiaRepository.findByPlanEstudioIdAndCuatrimestre(plan.id(), cuatrimestre).stream()
+                .map(this::toMateriaResponse)
+                .toList();
+    }
+
     @Transactional
     public void delete(Integer id) {
         if (repository.findById(id).isEmpty()) {
@@ -126,6 +154,13 @@ public class GrupoService {
                 g.id(), g.clave(), g.nombre(),
                 g.planEstudioId(), g.plantelId(),
                 g.isActive(), g.createdAt(), g.updatedAt()
+        );
+    }
+
+    private MateriaResponse toMateriaResponse(Materia m) {
+        return new MateriaResponse(
+                m.id(), m.nombre(), m.clave(), m.creditos(), m.cuatrimestre(),
+                m.planEstudioId(), m.isActive(), m.createdAt(), m.updatedAt()
         );
     }
 }

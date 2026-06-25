@@ -18,7 +18,11 @@ public class CalificacionController {
     private final CalificacionService calificacionService;
 
     @GetMapping
-    public ResponseEntity<List<CalificacionResponse>> getAll() {
+    public ResponseEntity<List<CalificacionResponse>> getAll(
+            @RequestParam(name = "alumnoId", required = false) Integer alumnoId) {
+        if (alumnoId != null) {
+            return ResponseEntity.ok(calificacionService.findByAlumnoId(alumnoId));
+        }
         return ResponseEntity.ok(calificacionService.findAll());
     }
 

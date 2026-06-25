@@ -29,6 +29,15 @@ public class CalificacionService {
                 .toList();
     }
 
+    public List<CalificacionResponse> findByAlumnoId(Integer alumnoId) {
+        if (alumnoRepository.findById(alumnoId).isEmpty()) {
+            throw new ResourceNotFoundException("Alumno no encontrado: " + alumnoId);
+        }
+        return repository.findByAlumnoId(alumnoId).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     public CalificacionResponse findById(Integer id) {
         return repository.findById(id)
                 .map(this::toResponse)
