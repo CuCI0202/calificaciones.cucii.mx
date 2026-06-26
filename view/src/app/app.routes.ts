@@ -4,11 +4,6 @@ import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   {
-    path: '',
-    redirectTo: 'browse',
-    pathMatch: 'full',
-  },
-  {
     path: 'login',
     loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
   },
@@ -64,6 +59,11 @@ export const routes: Routes = [
       import('./features/groups/group-students/group-students').then(
         (m) => m.GroupStudents
       ),
+  },
+  {
+    path: '',
+    redirectTo: 'browse',
+    pathMatch: 'full',
   },
   {
     path: '**',
