@@ -8,9 +8,10 @@ import {
   LoginResponse,
   MeResponse,
   AuthUser,
+  UserRole,
   mapRolId,
 } from '../models/auth.model';
-import { setTokenCookie, getTokenCookie, removeTokenCookie } from './cookie-utils';
+import { setTokenCookie, getTokenCookie, removeTokenCookie, setRoleCookie, getRoleCookie, removeRoleCookie } from './cookie-utils';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -18,11 +19,16 @@ export class AuthService {
 
   readonly currentUser = signal<AuthUser | null>(null);
   private readonly _token = signal<string | null>(null);
+  private readonly _cachedRole = signal<UserRole | null>(null);
 
   constructor() {
     const token = getTokenCookie();
     if (token) {
       this._token.set(token);
+      const rolId = getRoleCookie();
+      if (rolId !== null) {
+        this._cachedRole.set(mapRolId(rolId));
+      }
       setTimeout(() => this.validateSession(), 0);
     }
   }
@@ -30,14 +36,17 @@ export class AuthService {
   private validateSession(): void {
     this.http.get<MeResponse>(`${environment.apiUrl}/auth/me`).subscribe({
       next: (me) => {
+        const rol = mapRolId(me.rolId);
         this.currentUser.set({
           id: me.id,
           nombre: me.nombre,
           apellido: me.apellido,
           email: me.email,
           rolId: me.rolId,
-          rol: mapRolId(me.rolId),
+          rol,
         });
+        this._cachedRole.set(rol);
+        setRoleCookie(me.rolId);
       },
       error: () => this.logout(),
     });
@@ -48,6 +57,7 @@ export class AuthService {
 
     return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, body).pipe(
       tap((res) => {
+        const rol = mapRolId(res.rolId);
         this._token.set(res.token);
         setTokenCookie(res.token);
         this.currentUser.set({
@@ -56,8 +66,10 @@ export class AuthService {
           apellido: res.apellido,
           email: res.email,
           rolId: res.rolId,
-          rol: mapRolId(res.rolId),
+          rol,
         });
+        this._cachedRole.set(rol);
+        setRoleCookie(res.rolId);
       })
     );
   }
@@ -65,7 +77,9 @@ export class AuthService {
   logout(): void {
     this._token.set(null);
     this.currentUser.set(null);
+    this._cachedRole.set(null);
     removeTokenCookie();
+    removeRoleCookie();
   }
 
   getToken(): string | null {
@@ -81,7 +95,7 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    const role = this.currentUser()?.rol
+    const role = this.currentUser()?.rol ?? this._cachedRole();
     return role === 'admin' || role === 'rector';
   }
 }
