@@ -655,6 +655,145 @@
       ]
     },
     {
+      "name": "public.estatus_alumnos",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "nombre",
+          "type": "varchar(50)",
+          "nullable": false
+        },
+        {
+          "name": "descripcion",
+          "type": "varchar(200)",
+          "nullable": false
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": false,
+          "default": "true"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "estatus_alumnos_pkey",
+          "def": "CREATE UNIQUE INDEX estatus_alumnos_pkey ON public.estatus_alumnos USING btree (id)",
+          "table": "public.estatus_alumnos",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "estatus_alumnos_nombre_key",
+          "def": "CREATE UNIQUE INDEX estatus_alumnos_nombre_key ON public.estatus_alumnos USING btree (nombre)",
+          "table": "public.estatus_alumnos",
+          "columns": [
+            "nombre"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "estatus_alumnos_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.estatus_alumnos",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
+          ]
+        },
+        {
+          "name": "estatus_alumnos_descripcion_not_null",
+          "type": "n",
+          "def": "NOT NULL descripcion",
+          "table": "public.estatus_alumnos",
+          "referenced_table": "",
+          "columns": [
+            "descripcion"
+          ]
+        },
+        {
+          "name": "estatus_alumnos_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.estatus_alumnos",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "estatus_alumnos_is_active_not_null",
+          "type": "n",
+          "def": "NOT NULL is_active",
+          "table": "public.estatus_alumnos",
+          "referenced_table": "",
+          "columns": [
+            "is_active"
+          ]
+        },
+        {
+          "name": "estatus_alumnos_nombre_not_null",
+          "type": "n",
+          "def": "NOT NULL nombre",
+          "table": "public.estatus_alumnos",
+          "referenced_table": "",
+          "columns": [
+            "nombre"
+          ]
+        },
+        {
+          "name": "estatus_alumnos_updated_at_not_null",
+          "type": "n",
+          "def": "NOT NULL updated_at",
+          "table": "public.estatus_alumnos",
+          "referenced_table": "",
+          "columns": [
+            "updated_at"
+          ]
+        },
+        {
+          "name": "estatus_alumnos_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.estatus_alumnos",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "estatus_alumnos_nombre_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (nombre)",
+          "table": "public.estatus_alumnos",
+          "referenced_table": "",
+          "columns": [
+            "nombre"
+          ]
+        }
+      ]
+    },
+    {
       "name": "public.alumnos",
       "type": "BASE TABLE",
       "columns": [
@@ -687,6 +826,11 @@
         {
           "name": "correo_institucional",
           "type": "varchar(120)",
+          "nullable": false
+        },
+        {
+          "name": "estatus_id",
+          "type": "integer",
           "nullable": false
         },
         {
@@ -774,6 +918,16 @@
           ]
         },
         {
+          "name": "alumnos_estatus_id_not_null",
+          "type": "n",
+          "def": "NOT NULL estatus_id",
+          "table": "public.alumnos",
+          "referenced_table": "",
+          "columns": [
+            "estatus_id"
+          ]
+        },
+        {
           "name": "alumnos_id_not_null",
           "type": "n",
           "def": "NOT NULL id",
@@ -841,6 +995,19 @@
           "referenced_table": "",
           "columns": [
             "curp"
+          ]
+        },
+        {
+          "name": "fk_alumnos_estatus",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (estatus_id) REFERENCES estatus_alumnos(id) ON UPDATE CASCADE ON DELETE RESTRICT",
+          "table": "public.alumnos",
+          "referenced_table": "public.estatus_alumnos",
+          "columns": [
+            "estatus_id"
+          ],
+          "referenced_columns": [
+            "id"
           ]
         },
         {
@@ -2119,6 +2286,19 @@
       ],
       "parent_cardinality": "exactly_one",
       "def": "FOREIGN KEY (plan_estudio_id) REFERENCES planes_estudio(id) ON UPDATE CASCADE ON DELETE CASCADE"
+    },
+    {
+      "table": "public.alumnos",
+      "columns": [
+        "estatus_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.estatus_alumnos",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (estatus_id) REFERENCES estatus_alumnos(id) ON UPDATE CASCADE ON DELETE RESTRICT"
     },
     {
       "table": "public.usuarios",

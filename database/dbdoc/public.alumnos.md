@@ -10,6 +10,7 @@
 | segundo_apellido | varchar(80) | ''::character varying | true |  |  |  |
 | curp | character(18) |  | false |  |  |  |
 | correo_institucional | varchar(120) |  | false |  |  |  |
+| estatus_id | integer |  | false |  | [public.estatus_alumnos](public.estatus_alumnos.md) |  |
 | is_active | boolean | true | false |  |  |  |
 | created_at | timestamp with time zone | CURRENT_TIMESTAMP | false |  |  |  |
 | updated_at | timestamp with time zone | CURRENT_TIMESTAMP | false |  |  |  |
@@ -21,6 +22,7 @@
 | alumnos_correo_institucional_not_null | n | NOT NULL correo_institucional |
 | alumnos_created_at_not_null | n | NOT NULL created_at |
 | alumnos_curp_not_null | n | NOT NULL curp |
+| alumnos_estatus_id_not_null | n | NOT NULL estatus_id |
 | alumnos_id_not_null | n | NOT NULL id |
 | alumnos_is_active_not_null | n | NOT NULL is_active |
 | alumnos_nombres_not_null | n | NOT NULL nombres |
@@ -28,6 +30,7 @@
 | alumnos_updated_at_not_null | n | NOT NULL updated_at |
 | chk_curp_format | CHECK | CHECK ((curp ~ '^[A-Z][AEIOUX][A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HMX][A-Z]{2}[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z][0-9]$'::text)) |
 | chk_curp_length | CHECK | CHECK ((char_length(curp) = 18)) |
+| fk_alumnos_estatus | FOREIGN KEY | FOREIGN KEY (estatus_id) REFERENCES estatus_alumnos(id) ON UPDATE CASCADE ON DELETE RESTRICT |
 | alumnos_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 | alumnos_curp_key | UNIQUE | UNIQUE (curp) |
 | alumnos_correo_institucional_key | UNIQUE | UNIQUE (correo_institucional) |

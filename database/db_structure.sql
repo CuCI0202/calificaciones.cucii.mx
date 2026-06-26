@@ -72,6 +72,27 @@ alter table materias
 
 create index idx_materias_plan_estudio on materias (plan_estudio_id);
 
+-- ─── estatus_alumnos ─────────────────────────────────────────────────────────
+
+create table estatus_alumnos
+(
+    id          integer generated always as identity primary key,
+    nombre      varchar(50)  not null unique,
+    descripcion varchar(200) not null,
+    is_active   boolean      not null default true,
+    created_at  timestamp with time zone default current_timestamp not null,
+    updated_at  timestamp with time zone default current_timestamp not null
+);
+
+alter table estatus_alumnos
+    owner to ssant0;
+
+insert into estatus_alumnos (nombre, descripcion)
+values ('Invasión', 'Alumno en invasión de ciclos'),
+       ('Cursando', 'Alumno cursando activamente'),
+       ('Egresado', 'Alumno egresado'),
+       ('Baja', 'Alumno dado de baja');
+
 -- ─── alumnos ─────────────────────────────────────────────────────────────────
 
 create table alumnos
@@ -82,6 +103,7 @@ create table alumnos
     segundo_apellido     varchar(80)              default '',
     curp                 char(18)                                           not null unique,
     correo_institucional varchar(120)                                       not null unique,
+    estatus_id           integer                                            not null,
     is_active            boolean                                            not null default true,
     created_at           timestamp with time zone default current_timestamp not null,
     updated_at           timestamp with time zone default current_timestamp not null,
@@ -89,7 +111,12 @@ create table alumnos
     constraint chk_curp_length check (char_length(curp) = 18),
     constraint chk_curp_format check (
         curp ~ '^[A-Z][AEIOUX][A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HMX][A-Z]{2}[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z][0-9]$'
-    )
+    ),
+
+    constraint fk_alumnos_estatus
+        foreign key (estatus_id)
+            references estatus_alumnos (id)
+            on update cascade on delete restrict
 );
 
 alter table alumnos
@@ -324,7 +351,7 @@ values ('Fundamentos de Programación', 'FP-101', 8, 1, 1),
 -- ─── usuarios (id: 1 admin | 2 rector | 3-4 docentes | 5 servicios) ──────────
 -- roles: 1=admin 2=rector 3=docente 4=school services manager
 insert into usuarios (nombre, apellido, email, password_hash, rol_id, plantel_id)
-values ('Admin', 'Sistema', 'admin@cucii.edu.mx', '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 1, null),
+values ('Admin', 'Sistema', 'admin@cucii.edu.mx', '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 1, 1),
        ('Marco', 'Herrera', 'mherrera@cucii.edu.mx', '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 2, 1),
        ('Ana', 'Torres', 'atorres@cucii.edu.mx', '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 3, 1),
        ('Luis', 'Pérez', 'lperez@cucii.edu.mx', '$2a$10$ah38fS7voJjmL7CIQTmEhu7.ULXxbZzItC2XTQtQiIRimmD/7x7iG', 3, 1),
@@ -337,10 +364,10 @@ values ('IDS-2024A — Primer Cuatrimestre', 1, 1),
        ('LAE-2024A — Primer Cuatrimestre', 2, 2);
 
 -- ─── alumnos (id: 1-3) ───────────────────────────────────────────────────────
-insert into alumnos (nombres, primer_apellido, segundo_apellido, curp, correo_institucional)
-values ('Juan', 'García', 'López', 'GALJ950320HJCRPNA5', 'jgarcia@alumnos.cucii.edu.mx'),
-       ('María', 'Rodríguez', 'Hernández', 'ROHM980705MJCDRRB2', 'mrodriguez@alumnos.cucii.edu.mx'),
-       ('Carlos', 'Mendoza', 'Torres', 'METC001128HJCNRRC4', 'cmendoza@alumnos.cucii.edu.mx');
+insert into alumnos (nombres, primer_apellido, segundo_apellido, curp, correo_institucional, estatus_id)
+values ('Juan', 'García', 'López', 'GALJ950320HJCRPNA5', 'jgarcia@alumnos.cucii.edu.mx', 2),
+       ('María', 'Rodríguez', 'Hernández', 'ROHM980705MJCDRRB2', 'mrodriguez@alumnos.cucii.edu.mx', 2),
+       ('Carlos', 'Mendoza', 'Torres', 'METC001128HJCNRRC4', 'cmendoza@alumnos.cucii.edu.mx', 2);
 
 -- ─── alumnos_grupos ──────────────────────────────────────────────────────────
 -- Juan y María en grupo 1 (IDS Primer Cuatrimestre)

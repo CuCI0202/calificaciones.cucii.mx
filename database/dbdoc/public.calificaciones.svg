@@ -49,44 +49,47 @@
 <!-- public.alumnos -->
 <g id="node2" class="node">
 <title>public.alumnos</title>
-<polygon fill="#efefef" stroke="none" points="43.2,-335.8 43.2,-371.4 296.88,-371.4 296.88,-335.8 43.2,-335.8"/>
-<polygon fill="none" stroke="black" points="43.2,-335.8 43.2,-371.4 296.88,-371.4 296.88,-335.8 43.2,-335.8"/>
-<text text-anchor="start" x="52.55" y="-349.2" font-family="Arial Bold" font-size="18.00">public.alumnos</text>
-<text text-anchor="start" x="163.04" y="-349.2" font-family="Arial" font-size="14.00">    </text>
-<text text-anchor="start" x="194.16" y="-349.2" font-family="Arial" font-size="14.00" fill="#666666">[BASE TABLE]</text>
-<polygon fill="none" stroke="black" points="43.2,-305 43.2,-335.8 296.88,-335.8 296.88,-305 43.2,-305"/>
-<text text-anchor="start" x="50.2" y="-317.2" font-family="Arial" font-size="14.00">id </text>
-<text text-anchor="start" x="64.99" y="-317.2" font-family="Arial" font-size="14.00" fill="#666666">[integer]</text>
-<polygon fill="none" stroke="black" points="43.2,-274.2 43.2,-305 296.88,-305 296.88,-274.2 43.2,-274.2"/>
-<text text-anchor="start" x="50.2" y="-286.4" font-family="Arial" font-size="14.00">nombres </text>
-<text text-anchor="start" x="108.56" y="-286.4" font-family="Arial" font-size="14.00" fill="#666666">[varchar(80)]</text>
-<polygon fill="none" stroke="black" points="43.2,-243.4 43.2,-274.2 296.88,-274.2 296.88,-243.4 43.2,-243.4"/>
-<text text-anchor="start" x="50.2" y="-255.6" font-family="Arial" font-size="14.00">primer_apellido </text>
-<text text-anchor="start" x="149.81" y="-255.6" font-family="Arial" font-size="14.00" fill="#666666">[varchar(80)]</text>
-<polygon fill="none" stroke="black" points="43.2,-212.6 43.2,-243.4 296.88,-243.4 296.88,-212.6 43.2,-212.6"/>
-<text text-anchor="start" x="50.2" y="-224.8" font-family="Arial" font-size="14.00">segundo_apellido </text>
-<text text-anchor="start" x="163.85" y="-224.8" font-family="Arial" font-size="14.00" fill="#666666">[varchar(80)]</text>
-<polygon fill="none" stroke="black" points="43.2,-181.8 43.2,-212.6 296.88,-212.6 296.88,-181.8 43.2,-181.8"/>
-<text text-anchor="start" x="50.2" y="-194" font-family="Arial" font-size="14.00">curp </text>
-<text text-anchor="start" x="81.32" y="-194" font-family="Arial" font-size="14.00" fill="#666666">[character(18)]</text>
-<polygon fill="none" stroke="black" points="43.2,-151 43.2,-181.8 296.88,-181.8 296.88,-151 43.2,-151"/>
-<text text-anchor="start" x="50.2" y="-163.2" font-family="Arial" font-size="14.00">correo_institucional </text>
-<text text-anchor="start" x="174.71" y="-163.2" font-family="Arial" font-size="14.00" fill="#666666">[varchar(120)]</text>
-<polygon fill="none" stroke="black" points="43.2,-120.2 43.2,-151 296.88,-151 296.88,-120.2 43.2,-120.2"/>
-<text text-anchor="start" x="50.2" y="-132.4" font-family="Arial" font-size="14.00">is_active </text>
-<text text-anchor="start" x="108.56" y="-132.4" font-family="Arial" font-size="14.00" fill="#666666">[boolean]</text>
-<polygon fill="none" stroke="black" points="43.2,-89.4 43.2,-120.2 296.88,-120.2 296.88,-89.4 43.2,-89.4"/>
-<text text-anchor="start" x="50.2" y="-101.6" font-family="Arial" font-size="14.00">created_at </text>
-<text text-anchor="start" x="120.25" y="-101.6" font-family="Arial" font-size="14.00" fill="#666666">[timestamp with time zone]</text>
-<polygon fill="none" stroke="black" points="43.2,-58.6 43.2,-89.4 296.88,-89.4 296.88,-58.6 43.2,-58.6"/>
-<text text-anchor="start" x="50.2" y="-70.8" font-family="Arial" font-size="14.00">updated_at </text>
-<text text-anchor="start" x="124.16" y="-70.8" font-family="Arial" font-size="14.00" fill="#666666">[timestamp with time zone]</text>
+<polygon fill="#efefef" stroke="none" points="43.2,-351.2 43.2,-386.8 296.88,-386.8 296.88,-351.2 43.2,-351.2"/>
+<polygon fill="none" stroke="black" points="43.2,-351.2 43.2,-386.8 296.88,-386.8 296.88,-351.2 43.2,-351.2"/>
+<text text-anchor="start" x="52.55" y="-364.6" font-family="Arial Bold" font-size="18.00">public.alumnos</text>
+<text text-anchor="start" x="163.04" y="-364.6" font-family="Arial" font-size="14.00">    </text>
+<text text-anchor="start" x="194.16" y="-364.6" font-family="Arial" font-size="14.00" fill="#666666">[BASE TABLE]</text>
+<polygon fill="none" stroke="black" points="43.2,-320.4 43.2,-351.2 296.88,-351.2 296.88,-320.4 43.2,-320.4"/>
+<text text-anchor="start" x="50.2" y="-332.6" font-family="Arial" font-size="14.00">id </text>
+<text text-anchor="start" x="64.99" y="-332.6" font-family="Arial" font-size="14.00" fill="#666666">[integer]</text>
+<polygon fill="none" stroke="black" points="43.2,-289.6 43.2,-320.4 296.88,-320.4 296.88,-289.6 43.2,-289.6"/>
+<text text-anchor="start" x="50.2" y="-301.8" font-family="Arial" font-size="14.00">nombres </text>
+<text text-anchor="start" x="108.56" y="-301.8" font-family="Arial" font-size="14.00" fill="#666666">[varchar(80)]</text>
+<polygon fill="none" stroke="black" points="43.2,-258.8 43.2,-289.6 296.88,-289.6 296.88,-258.8 43.2,-258.8"/>
+<text text-anchor="start" x="50.2" y="-271" font-family="Arial" font-size="14.00">primer_apellido </text>
+<text text-anchor="start" x="149.81" y="-271" font-family="Arial" font-size="14.00" fill="#666666">[varchar(80)]</text>
+<polygon fill="none" stroke="black" points="43.2,-228 43.2,-258.8 296.88,-258.8 296.88,-228 43.2,-228"/>
+<text text-anchor="start" x="50.2" y="-240.2" font-family="Arial" font-size="14.00">segundo_apellido </text>
+<text text-anchor="start" x="163.85" y="-240.2" font-family="Arial" font-size="14.00" fill="#666666">[varchar(80)]</text>
+<polygon fill="none" stroke="black" points="43.2,-197.2 43.2,-228 296.88,-228 296.88,-197.2 43.2,-197.2"/>
+<text text-anchor="start" x="50.2" y="-209.4" font-family="Arial" font-size="14.00">curp </text>
+<text text-anchor="start" x="81.32" y="-209.4" font-family="Arial" font-size="14.00" fill="#666666">[character(18)]</text>
+<polygon fill="none" stroke="black" points="43.2,-166.4 43.2,-197.2 296.88,-197.2 296.88,-166.4 43.2,-166.4"/>
+<text text-anchor="start" x="50.2" y="-178.6" font-family="Arial" font-size="14.00">correo_institucional </text>
+<text text-anchor="start" x="174.71" y="-178.6" font-family="Arial" font-size="14.00" fill="#666666">[varchar(120)]</text>
+<polygon fill="none" stroke="black" points="43.2,-135.6 43.2,-166.4 296.88,-166.4 296.88,-135.6 43.2,-135.6"/>
+<text text-anchor="start" x="50.2" y="-147.8" font-family="Arial" font-size="14.00">estatus_id </text>
+<text text-anchor="start" x="117.91" y="-147.8" font-family="Arial" font-size="14.00" fill="#666666">[integer]</text>
+<polygon fill="none" stroke="black" points="43.2,-104.8 43.2,-135.6 296.88,-135.6 296.88,-104.8 43.2,-104.8"/>
+<text text-anchor="start" x="50.2" y="-117" font-family="Arial" font-size="14.00">is_active </text>
+<text text-anchor="start" x="108.56" y="-117" font-family="Arial" font-size="14.00" fill="#666666">[boolean]</text>
+<polygon fill="none" stroke="black" points="43.2,-74 43.2,-104.8 296.88,-104.8 296.88,-74 43.2,-74"/>
+<text text-anchor="start" x="50.2" y="-86.2" font-family="Arial" font-size="14.00">created_at </text>
+<text text-anchor="start" x="120.25" y="-86.2" font-family="Arial" font-size="14.00" fill="#666666">[timestamp with time zone]</text>
+<polygon fill="none" stroke="black" points="43.2,-43.2 43.2,-74 296.88,-74 296.88,-43.2 43.2,-43.2"/>
+<text text-anchor="start" x="50.2" y="-55.4" font-family="Arial" font-size="14.00">updated_at </text>
+<text text-anchor="start" x="124.16" y="-55.4" font-family="Arial" font-size="14.00" fill="#666666">[timestamp with time zone]</text>
 </g>
 <!-- public.calificaciones&#45;&gt;public.alumnos -->
 <g id="edge1" class="edge">
 <title>public.calificaciones:alumno_id&#45;&gt;public.alumnos:id</title>
-<path fill="none" stroke="black" d="M552.47,-742.99C395.63,-736.37 430.69,-573.41 349.04,-430 322.44,-383.28 351.64,-320.4 297.88,-320.4"/>
-<polygon fill="black" stroke="black" points="552.25,-742.99 562.15,-747.69 557.58,-743.1 561.91,-743.19 561.91,-743.19 561.91,-743.19 557.58,-743.1 562.34,-738.69 552.25,-742.99"/>
+<path fill="none" stroke="black" d="M552.48,-742.99C395.8,-736.26 435.01,-570.86 349.04,-430 324.22,-389.33 345.52,-335.8 297.88,-335.8"/>
+<polygon fill="black" stroke="black" points="552.25,-742.98 562.15,-747.69 557.58,-743.1 561.91,-743.19 561.91,-743.19 561.91,-743.19 557.58,-743.1 562.34,-738.69 552.25,-742.98"/>
 <text text-anchor="start" x="82.69" y="-753.2" font-family="Arial" font-size="10.00">FOREIGN KEY (alumno_id) REFERENCES alumnos(id) ON UPDATE CASCADE ON DELETE CASCADE</text>
 </g>
 <!-- public.grupos -->
