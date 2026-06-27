@@ -142,6 +142,7 @@ public class EntidadJdbcRepository {
 | `planteles` | `pais` | `varchar(50)` | `String pais` | Default 'México'. Service asigna si es null. |
 | `alumnos` | `curp` | `char(18)` | `String curp` | UNIQUE, validado con regex en service. |
 | `alumnos` | `correo_institucional` | `varchar(120)` | `String correoInstitucional` | UNIQUE, nullable. |
+| `alumnos` | `estatus_id` | `int` | `Integer estatusId` | FK a `estatus_alumnos.id`, NOT NULL. Service valida existencia. |
 | `grupos` | `clave` | `varchar(20)` | `String clave` | UNIQUE. Auto-generada via `nextval('grupos_numero_seq')` → "CG-{n}". |
 | `calificaciones` | `calificacion` | `numeric(5,2)` | `BigDecimal calificacion` | Rango 0-100. Validado en service. |
 | `calificaciones` | `registrado_por` | `int` | `Integer registradoPor` | FK a `usuarios.id`, nullable, on delete set null. |
@@ -210,7 +211,7 @@ public class EntidadJdbcRepository {
 |--------|------|--------|
 | GET | `/alumnos` | Listar todos |
 | GET | `/alumnos/{id}` | Obtener por ID |
-| POST | `/alumnos` | Crear (201). Valida CURP y correo únicos. |
+| POST | `/alumnos` | Crear (201). Valida CURP, correo únicos y estatus FK existente. |
 | PUT | `/alumnos/{id}` | Actualizar |
 | DELETE | `/alumnos/{id}` | Soft-delete (204) |
 
@@ -331,5 +332,12 @@ Toda la migración de Spring Data JDBC → JdbcTemplate se realizó en la rama `
 | `jdbc-alumno-grupo` | AlumnoGrupoJdbcRepository + AlumnoGrupoService + AlumnoGrupoController |
 | `jdbc-profesor-grupo` | ProfesorGrupoJdbcRepository + ProfesorGrupoService + ProfesorGrupoController |
 | `jdbc-calificacion` | CalificacionJdbcRepository + CalificacionService + CalificacionController |
+
+## Features implementadas
+
+| Rama | Scope |
+|------|-------|
+| `db/estatus-alumno` | Tabla `estatus_alumnos` + columna `estatus_id` en `alumnos` (SQL) |
+| `feature/estatus-alumno-api` | `EstatusAlumno` model + `EstatusAlumnoJdbcRepository` + validación FK en `AlumnoService` |
 
 Convención para futuras migraciones: `jdbc-{entidad}`.
