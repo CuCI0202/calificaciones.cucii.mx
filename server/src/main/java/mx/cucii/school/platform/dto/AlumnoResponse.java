@@ -9,6 +9,7 @@ public record AlumnoResponse(
         String segundoApellido,
         String curp,
         String correoInstitucional,
+        Integer estatusId,
         boolean isActive,
         OffsetDateTime createdAt,
         OffsetDateTime updatedAt

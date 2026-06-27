@@ -6,15 +6,11 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.OffsetDateTime;
 
-@Table("alumnos")
-public record Alumno(
+@Table("estatus_alumnos")
+public record EstatusAlumno(
         @Id Integer id,
-        String nombres,
-        @Column("primer_apellido") String primerApellido,
-        @Column("segundo_apellido") String segundoApellido,
-        String curp,
-        @Column("correo_institucional") String correoInstitucional,
-        @Column("estatus_id") Integer estatusId,
+        String nombre,
+        String descripcion,
         @Column("is_active") boolean isActive,
         @Column("created_at") OffsetDateTime createdAt,
         @Column("updated_at") OffsetDateTime updatedAt

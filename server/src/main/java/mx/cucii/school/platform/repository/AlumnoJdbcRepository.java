@@ -20,6 +20,7 @@ public class AlumnoJdbcRepository {
                 rs.getString("segundo_apellido"),
                 rs.getString("curp"),
                 rs.getString("correo_institucional"),
+                rs.getInt("estatus_id"),
                 rs.getBoolean("is_active"),
                 rs.getObject("created_at", OffsetDateTime.class),
                 rs.getObject("updated_at", OffsetDateTime.class)
@@ -66,13 +67,13 @@ public class AlumnoJdbcRepository {
     private Alumno insert(Alumno alumno) {
         return jdbcTemplate.queryForObject(
                 """
-                INSERT INTO alumnos (nombres, primer_apellido, segundo_apellido, curp, correo_institucional, is_active, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO alumnos (nombres, primer_apellido, segundo_apellido, curp, correo_institucional, estatus_id, is_active, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 RETURNING *
                 """,
                 ALUMNO_MAPPER,
                 alumno.nombres(), alumno.primerApellido(), alumno.segundoApellido(),
-                alumno.curp(), alumno.correoInstitucional(),
+                alumno.curp(), alumno.correoInstitucional(), alumno.estatusId(),
                 alumno.isActive(), alumno.createdAt(), alumno.updatedAt()
         );
     }
@@ -82,13 +83,13 @@ public class AlumnoJdbcRepository {
                 """
                 UPDATE alumnos
                 SET nombres = ?, primer_apellido = ?, segundo_apellido = ?, curp = ?,
-                    correo_institucional = ?, updated_at = ?
+                    correo_institucional = ?, estatus_id = ?, updated_at = ?
                 WHERE id = ?
                 RETURNING *
                 """,
                 ALUMNO_MAPPER,
                 alumno.nombres(), alumno.primerApellido(), alumno.segundoApellido(),
-                alumno.curp(), alumno.correoInstitucional(),
+                alumno.curp(), alumno.correoInstitucional(), alumno.estatusId(),
                 alumno.updatedAt(), alumno.id()
         );
     }

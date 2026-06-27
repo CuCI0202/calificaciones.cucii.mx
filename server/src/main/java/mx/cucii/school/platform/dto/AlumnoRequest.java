@@ -5,5 +5,6 @@ public record AlumnoRequest(
         String primerApellido,
         String segundoApellido,
         String curp,
-        String correoInstitucional
+        String correoInstitucional,
+        Integer estatusId
 ) {}
