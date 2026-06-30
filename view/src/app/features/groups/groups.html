@@ -6,9 +6,9 @@
         <h1 class="text-2xl font-bold text-brand-dark">Gestión de Grupos</h1>
         <p class="text-gray-500 text-sm">{{ groups().length }} grupo(s) registrado(s)</p>
       </div>
-      <button (click)="toggleAddForm()"
+      <button (click)="toggleForm()"
         class="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm">
-        @if (showAddForm()) {
+        @if (showForm()) {
           Cancelar
         } @else {
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -19,53 +19,57 @@
       </button>
     </div>
 
-    <!-- Add form -->
-    @if (showAddForm()) {
+    <!-- Unified form -->
+    @if (showForm()) {
       <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
-        <h2 class="text-base font-semibold text-gray-800 mb-4">Nuevo grupo</h2>
-        <form [formGroup]="addForm" (ngSubmit)="submitAdd()" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <h2 class="text-base font-semibold text-gray-800 mb-4">{{ editingId() ? 'Actualizar grupo' : 'Nuevo grupo' }}</h2>
+        <form [formGroup]="form" (ngSubmit)="submit()" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Clave</label>
             <input formControlName="clave" type="text" placeholder="ISC-A"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.clave.invalid && addForm.controls.clave.touched" />
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.clave.touched && addForm.controls.clave.errors?.['required'])">La clave es obligatoria.</p>
+              [class.border-red-400]="form.controls.clave.invalid && form.controls.clave.touched" />
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.clave.touched && form.controls.clave.errors?.['required'])">La clave es obligatoria.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
             <input formControlName="nombre" type="text" placeholder="Grupo A"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.nombre.invalid && addForm.controls.nombre.touched" />
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.nombre.touched && addForm.controls.nombre.errors?.['required'])">El nombre es obligatorio.</p>
+              [class.border-red-400]="form.controls.nombre.invalid && form.controls.nombre.touched" />
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.nombre.touched && form.controls.nombre.errors?.['required'])">El nombre es obligatorio.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Carrera</label>
             <select formControlName="planEstudioId"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.planEstudioId.invalid && addForm.controls.planEstudioId.touched">
+              [class.border-red-400]="form.controls.planEstudioId.invalid && form.controls.planEstudioId.touched">
               <option value="" disabled>Selecciona...</option>
               @for (p of programs(); track p.id) {
                 <option [value]="p.id">{{ p.nombre }}</option>
               }
             </select>
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.planEstudioId.touched && addForm.controls.planEstudioId.errors?.['required'])">La carrera es obligatoria.</p>
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.planEstudioId.touched && form.controls.planEstudioId.errors?.['required'])">La carrera es obligatoria.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Plantel</label>
             <select formControlName="plantelId"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.plantelId.invalid && addForm.controls.plantelId.touched">
+              [class.border-red-400]="form.controls.plantelId.invalid && form.controls.plantelId.touched">
               <option value="" disabled>Selecciona...</option>
               @for (c of campuses(); track c.id) {
                 <option [value]="c.id">{{ c.nombreOficial }}</option>
               }
             </select>
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.plantelId.touched && addForm.controls.plantelId.errors?.['required'])">El plantel es obligatorio.</p>
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.plantelId.touched && form.controls.plantelId.errors?.['required'])">El plantel es obligatorio.</p>
           </div>
-          <div class="sm:col-span-2 lg:col-span-4 flex justify-end">
+          <div class="sm:col-span-2 lg:col-span-4 flex justify-end gap-2">
             <button type="submit"
               class="bg-primary text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm">
-              Guardar grupo
+              {{ editingId() ? 'Actualizar grupo' : 'Guardar grupo' }}
+            </button>
+            <button type="button" (click)="closeForm()"
+              class="px-6 py-2.5 rounded-lg font-medium text-sm border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors">
+              Cancelar
             </button>
           </div>
         </form>
@@ -109,71 +113,28 @@
           </thead>
           <tbody class="divide-y divide-gray-100">
             @for (group of filtered(); track group.id) {
-              @if (editingId() === group.id) {
-                  <tr class="bg-blue-50" [formGroup]="editForm">
-                    <td class="px-4 py-2">
-                      <input formControlName="clave" placeholder="Clave"
-                        class="w-full border rounded px-2 py-1 text-xs" />
-                    </td>
-                    <td class="px-4 py-2">
-                      <input formControlName="nombre" placeholder="Nombre"
-                        class="w-full border rounded px-2 py-1 text-xs" />
-                    </td>
-                    <td class="px-4 py-2">
-                      <select formControlName="planEstudioId"
-                        class="w-full border rounded px-2 py-1 text-xs">
-                        <option value="" disabled>Selecciona...</option>
-                        @for (p of programs(); track p.id) {
-                          <option [value]="p.id">{{ p.nombre }}</option>
-                        }
-                      </select>
-                    </td>
-                    <td class="px-4 py-2">
-                      <select formControlName="plantelId"
-                        class="w-full border rounded px-2 py-1 text-xs">
-                        <option value="" disabled>Selecciona...</option>
-                        @for (c of campuses(); track c.id) {
-                          <option [value]="c.id">{{ c.nombreOficial }}</option>
-                        }
-                      </select>
-                  </td>
-                  <td class="px-4 py-2 text-center">
-                    <div class="flex justify-center gap-2">
-                      <button (click)="saveEdit(group.id)"
-                        class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700">
-                        Guardar
-                      </button>
-                      <button (click)="cancelEdit()"
-                        class="bg-gray-300 text-gray-700 px-3 py-1 rounded text-xs hover:bg-gray-400">
-                        Cancelar
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              } @else {
-                <tr class="hover:bg-gray-50 transition-colors">
-                  <td class="px-4 py-3 font-mono font-medium text-gray-800">{{ group.clave }}</td>
-                  <td class="px-4 py-3 text-gray-600">{{ group.nombre }}</td>
-                  <td class="px-4 py-3 text-gray-600">{{ getProgramName(group.planEstudioId) }}</td>
-                  <td class="px-4 py-3 text-gray-600">{{ getCampusName(group.plantelId) }}</td>
-                  <td class="px-4 py-3 text-center">
-                    <div class="flex justify-center gap-2">
-                      <button (click)="goToStudents(group.id)"
-                        class="text-blue-600 hover:text-blue-800 text-xs font-medium cursor-pointer">
-                        Alumnos
-                      </button>
-                      <button (click)="startEdit(group)"
-                        class="text-primary hover:text-primary-dark text-xs font-medium cursor-pointer">
-                        Editar
-                      </button>
-                      <button (click)="delete(group.id)"
-                        class="text-red-500 hover:text-red-700 text-xs font-medium cursor-pointer">
-                        Eliminar
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              }
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-4 py-3 font-mono font-medium text-gray-800">{{ group.clave }}</td>
+                <td class="px-4 py-3 text-gray-600">{{ group.nombre }}</td>
+                <td class="px-4 py-3 text-gray-600">{{ getProgramName(group.planEstudioId) }}</td>
+                <td class="px-4 py-3 text-gray-600">{{ getCampusName(group.plantelId) }}</td>
+                <td class="px-4 py-3 text-center">
+                  <div class="flex justify-center gap-2">
+                    <button (click)="goToStudents(group.id)"
+                      class="text-blue-600 hover:text-blue-800 text-xs font-medium cursor-pointer">
+                      Alumnos
+                    </button>
+                    <button (click)="startEdit(group)"
+                      class="text-primary hover:text-primary-dark text-xs font-medium cursor-pointer">
+                      Editar
+                    </button>
+                    <button (click)="delete(group.id)"
+                      class="text-red-500 hover:text-red-700 text-xs font-medium cursor-pointer">
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
             } @empty {
               <tr>
                 <td colspan="5" class="px-4 py-10 text-center text-gray-400">

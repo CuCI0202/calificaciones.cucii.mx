@@ -26,7 +26,7 @@ export class Groups {
   readonly filterDraft = signal('');
   readonly filterQ = signal('');
   readonly editingId = signal<number | null>(null);
-  readonly showAddForm = signal(false);
+  readonly showForm = signal(false);
 
   readonly filtered = computed(() => {
     const q = this.filterQ().trim().toUpperCase();
@@ -36,14 +36,7 @@ export class Groups {
     );
   });
 
-  readonly editForm = this.fb.nonNullable.group({
-    clave: ['', Validators.required],
-    nombre: ['', Validators.required],
-    planEstudioId: ['', Validators.required],
-    plantelId: ['', Validators.required],
-  });
-
-  readonly addForm = this.fb.nonNullable.group({
+  readonly form = this.fb.nonNullable.group({
     clave: ['', Validators.required],
     nombre: ['', Validators.required],
     planEstudioId: ['', Validators.required],
@@ -69,8 +62,8 @@ export class Groups {
 
   startEdit(group: Group): void {
     this.editingId.set(group.id);
-    this.showAddForm.set(false);
-    this.editForm.setValue({
+    this.showForm.set(true);
+    this.form.setValue({
       clave: group.clave ?? '',
       nombre: group.nombre ?? '',
       planEstudioId: String(group.planEstudioId ?? ''),
@@ -78,48 +71,51 @@ export class Groups {
     });
   }
 
-  saveEdit(id: number): void {
-    if (this.editForm.invalid) return;
-    const v = this.editForm.getRawValue();
-    this.groupsService.update(id, {
-      clave: v.clave,
-      nombre: v.nombre,
-      planEstudioId: +v.planEstudioId,
-      plantelId: +v.plantelId,
-    }).subscribe();
+  closeForm(): void {
     this.editingId.set(null);
+    this.showForm.set(false);
+    this.form.reset();
   }
 
-  cancelEdit(): void {
+  private openAddForm(): void {
     this.editingId.set(null);
+    this.showForm.set(true);
+    this.form.reset();
   }
 
-  submitAdd(): void {
-    if (this.addForm.invalid) {
-      this.addForm.markAllAsTouched();
+  toggleForm(): void {
+    if (this.showForm()) {
+      this.closeForm();
+    } else {
+      this.openAddForm();
+    }
+  }
+
+  submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
-    const v = this.addForm.getRawValue();
-    this.groupsService.add({
+    const v = this.form.getRawValue();
+    const payload = {
       clave: v.clave,
       nombre: v.nombre,
       planEstudioId: +v.planEstudioId,
       plantelId: +v.plantelId,
-    }).subscribe();
-    this.addForm.reset();
-    this.showAddForm.set(false);
+    };
+    const id = this.editingId();
+    if (id !== null) {
+      this.groupsService.update(id, payload).subscribe();
+    } else {
+      this.groupsService.add(payload).subscribe();
+    }
+    this.closeForm();
   }
 
   delete(id: number): void {
     this.confirm.confirm('¿Eliminar este grupo?').subscribe((ok) => {
       if (ok) this.groupsService.delete(id).subscribe();
     });
-  }
-
-  toggleAddForm(): void {
-    this.showAddForm.update((v) => !v);
-    this.editingId.set(null);
-    if (!this.showAddForm()) this.addForm.reset();
   }
 
   goToStudents(id: number): void {
