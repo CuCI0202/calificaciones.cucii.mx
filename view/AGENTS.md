@@ -29,7 +29,8 @@
 
 - Token JWT guardado en cookie `auth_token` (JS-accessible, SameSite=Lax, Secure, 24h)
 - `rolId` guardado en cookie `auth_role` para restaurar rol inmediatamente al recargar
-- `GET /auth/me` se llama al recargar para refrescar datos completos del usuario
+- `GET /auth/me` se llama al recargar (vía `setTimeout(0)`) para refrescar datos completos del usuario
+- `AuthService` expone señal `_cachedRole` que se hidrata sincrónicamente desde cookie `auth_role` en el constructor. `isAdmin()` usa `currentUser()?.rol ?? _cachedRole()` como fallback, evitando race condition con guards que corren antes de que `/auth/me` resuelva.
 - Sin `POST /auth/logout` — el logout del frontend limpia las cookies
 - Interceptor HTTP agrega `Authorization: Bearer <token>` y captura 401 → logout + redirect a `/login`
 
@@ -49,7 +50,8 @@ User          { id, nombre, apellido, email, rolId, plantelId, isActive }
 UsuarioRequest { nombre, apellido, email, password, rolId, plantelId }
 
 // student.model.ts
-Student       { id, nombres, primerApellido, segundoApellido?, curp, correoInstitucional }
+Student       { id, nombres, primerApellido, segundoApellido?, curp, correoInstitucional, estatusId }
+STATUS_MAP    Record<number, { label, classes }> — 1=Invasión (amarillo), 2=Cursando (verde), 3=Egresado (verde brillante), 4=Baja (rojo)
 
 // program.model.ts
 Program       { id, nombre, grado, numeroRvoe, fechaRvoe, duracionCuatrimestres, cantidadMaterias, materias: Subject[] }
@@ -81,7 +83,7 @@ Los métodos retornan `Observable<T>` con HTTP real, no `of()` mock.
 
 | Servicio | Endpoints base | Notas |
 |---|---|---|
-| `AuthService` | `/auth/login`, `/auth/me` | Cookie + signal. `login()` → setea cookies + currentUser. Constructor restaura desde cookies + valida con `/auth/me`. |
+| `AuthService` | `/auth/login`, `/auth/me` | Cookie + signal. `login()` → setea cookies + currentUser. Constructor restaura desde cookies + valida con `/auth/me`. `_cachedRole` fallback desde cookie `auth_role` para guards sincrónicos. |
 | `UsersService` | `/usuarios` | CRUD completo. `add`/`update` esperan `UsuarioRequest`. |
 | `StudentsService` | `/alumnos` | CRUD completo. `getByCurp()` filtra cliente-side. |
 | `GradesService` | `/calificaciones` | `getByStudent(alumnoId)` usa `?alumnoId=`. Sin `addMany` (pendiente batch). |
@@ -115,8 +117,14 @@ Los métodos retornan `Observable<T>` con HTTP real, no `of()` mock.
 - **No usar `ngOnInit`** — inicialización en constructor o inline
 - Forms: `FormBuilder.nonNullable.group({})` siempre
 - **Búsqueda en listas**: patrón draft+committed — `filterDraft` (input) + `filterQ` (aplicado en `computed()` vía `search()`)
-- Edit rows en tablas: `<tr [formGroup]="editForm">` + `formControlName="xxx"` (NO `[formControl]="editForm.controls.xxx"` — causa bugs con zoneless)
+- **Formularios unificados**: un solo `form` (NO `addForm` + `editForm` separados). Control de modo vía `editingId = signal<number | null>(null)`:
+  - `null` = modo creación, `<id>` = modo actualización
+  - `startEdit(item)`: setea `editingId`, carga valores en `form` con `setValue()`, muestra el formulario
+  - `closeForm()`: limpia `editingId`, resetea `form`, oculta
+  - `toggleForm()`: alterna entre abrir/cerrar formulario
+  - `submit()`: si `editingId()` → `update()`, si no → `add()`, luego `closeForm()`
 - `startEdit()`: usar `?? ''` en todos los valores de `setValue()` para evitar error de `NonNullableFormBuilder` con `undefined`
+- `closeForm()` siempre llama `form.reset()` para restaurar defaults del form builder
 - Templates: `@if`, `@for`, `@empty`, `@else` (control flow de Angular 17+, no directivas estructurales)
 - Inputs sin two-way: `[value]="signal()"` + `(input)="signal.set($any($event.target).value)"`
 
