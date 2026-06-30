@@ -21,7 +21,7 @@ export class Students {
   readonly filterDraft = signal('');
   readonly filterQ = signal('');
   readonly editingId = signal<number | null>(null);
-  readonly showAddForm = signal(false);
+  readonly showForm = signal(false);
 
   readonly filtered = computed(() => {
     const q = this.filterQ().trim().toUpperCase();
@@ -33,16 +33,7 @@ export class Students {
     );
   });
 
-  readonly editForm = this.fb.nonNullable.group({
-    nombres: ['', Validators.required],
-    primerApellido: ['', Validators.required],
-    segundoApellido: [''],
-    curp: ['', [Validators.required, Validators.pattern(CURP_PATTERN)]],
-    correoInstitucional: ['', [Validators.required, Validators.email]],
-    estatusId: [1, Validators.required],
-  });
-
-  readonly addForm = this.fb.nonNullable.group({
+  readonly form = this.fb.nonNullable.group({
     nombres: ['', Validators.required],
     primerApellido: ['', Validators.required],
     segundoApellido: [''],
@@ -66,8 +57,8 @@ export class Students {
 
   startEdit(student: Student): void {
     this.editingId.set(student.id);
-    this.showAddForm.set(false);
-    this.editForm.setValue({
+    this.showForm.set(true);
+    this.form.setValue({
       nombres: student.nombres ?? '',
       primerApellido: student.primerApellido ?? '',
       segundoApellido: student.segundoApellido ?? '',
@@ -77,51 +68,52 @@ export class Students {
     });
   }
 
-  saveEdit(id: number): void {
-    if (this.editForm.invalid) return;
-    const v = this.editForm.getRawValue();
-    this.studentsService.update(id, {
-      nombres: v.nombres,
-      primerApellido: v.primerApellido,
-      segundoApellido: v.segundoApellido || undefined,
-      curp: v.curp,
-      correoInstitucional: v.correoInstitucional,
-      estatusId: v.estatusId,
-    }).subscribe();
+  closeForm(): void {
     this.editingId.set(null);
+    this.showForm.set(false);
+    this.form.reset();
   }
 
-  cancelEdit(): void {
+  private openAddForm(): void {
     this.editingId.set(null);
+    this.showForm.set(true);
+    this.form.reset();
   }
 
-  submitAdd(): void {
-    if (this.addForm.invalid) {
-      this.addForm.markAllAsTouched();
+  toggleForm(): void {
+    if (this.showForm()) {
+      this.closeForm();
+    } else {
+      this.openAddForm();
+    }
+  }
+
+  submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
-    const v = this.addForm.getRawValue();
-    this.studentsService.add({
+    const v = this.form.getRawValue();
+    const payload = {
       nombres: v.nombres,
       primerApellido: v.primerApellido,
       segundoApellido: v.segundoApellido || undefined,
       curp: v.curp,
       correoInstitucional: v.correoInstitucional,
       estatusId: v.estatusId,
-    }).subscribe();
-    this.addForm.reset();
-    this.showAddForm.set(false);
+    };
+    const id = this.editingId();
+    if (id !== null) {
+      this.studentsService.update(id, payload).subscribe();
+    } else {
+      this.studentsService.add(payload).subscribe();
+    }
+    this.closeForm();
   }
 
   delete(id: number): void {
     this.confirm.confirm('¿Eliminar este alumno?').subscribe((ok) => {
       if (ok) this.studentsService.delete(id).subscribe();
     });
-  }
-
-  toggleAddForm(): void {
-    this.showAddForm.update((v) => !v);
-    this.editingId.set(null);
-    if (!this.showAddForm()) this.addForm.reset();
   }
 }
