@@ -28,6 +28,10 @@ yarn-error.log
 !.vscode/extensions.json
 .history/*
 
+# Agents
+.agents
+skills-lock.json
+
 # Miscellaneous
 /.angular/cache
 .sass-cache/
