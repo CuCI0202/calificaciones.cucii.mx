@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { StudentsService } from '../../core/services/students.service';
-import { Student, fullName } from '../../core/models/student.model';
+import { Student, fullName, STATUS_MAP } from '../../core/models/student.model';
 
 const CURP_PATTERN = /^[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]\d$/;
 
@@ -17,6 +17,7 @@ export class Students {
   private readonly confirm = inject(ConfirmService);
 
   readonly students = this.studentsService.students;
+  readonly STATUS_MAP = STATUS_MAP;
   readonly filterDraft = signal('');
   readonly filterQ = signal('');
   readonly editingId = signal<number | null>(null);
@@ -38,6 +39,7 @@ export class Students {
     segundoApellido: [''],
     curp: ['', [Validators.required, Validators.pattern(CURP_PATTERN)]],
     correoInstitucional: ['', [Validators.required, Validators.email]],
+    estatusId: [1, Validators.required],
   });
 
   readonly addForm = this.fb.nonNullable.group({
@@ -46,6 +48,7 @@ export class Students {
     segundoApellido: [''],
     curp: ['', [Validators.required, Validators.pattern(CURP_PATTERN)]],
     correoInstitucional: ['', [Validators.required, Validators.email]],
+    estatusId: [1, Validators.required],
   });
 
   fullName(student: Student): string {
@@ -70,6 +73,7 @@ export class Students {
       segundoApellido: student.segundoApellido ?? '',
       curp: student.curp ?? '',
       correoInstitucional: student.correoInstitucional ?? '',
+      estatusId: student.estatusId ?? 1,
     });
   }
 
@@ -82,6 +86,7 @@ export class Students {
       segundoApellido: v.segundoApellido || undefined,
       curp: v.curp,
       correoInstitucional: v.correoInstitucional,
+      estatusId: v.estatusId,
     }).subscribe();
     this.editingId.set(null);
   }
@@ -102,6 +107,7 @@ export class Students {
       segundoApellido: v.segundoApellido || undefined,
       curp: v.curp,
       correoInstitucional: v.correoInstitucional,
+      estatusId: v.estatusId,
     }).subscribe();
     this.addForm.reset();
     this.showAddForm.set(false);
