@@ -5,6 +5,7 @@ import mx.cucii.school.platform.dto.CantidadCuatrimestresResponse;
 import mx.cucii.school.platform.dto.GrupoRequest;
 import mx.cucii.school.platform.dto.GrupoResponse;
 import mx.cucii.school.platform.dto.MateriaResponse;
+import mx.cucii.school.platform.dto.PageResponse;
 import mx.cucii.school.platform.exception.ResourceNotFoundException;
 import mx.cucii.school.platform.model.Grupo;
 import mx.cucii.school.platform.model.Materia;
@@ -28,10 +29,20 @@ public class GrupoService {
     private final PlantelJdbcRepository plantelRepository;
     private final MateriaJdbcRepository materiaRepository;
 
-    public List<GrupoResponse> findAll() {
-        return repository.findAll().stream()
+    public PageResponse<GrupoResponse> findAll(int page, int size) {
+        if (page < 0) throw new IllegalArgumentException("La página no puede ser negativa");
+        if (size < 1) throw new IllegalArgumentException("El tamaño de página debe ser al menos 1");
+        if (size > 100) throw new IllegalArgumentException("El tamaño de página no puede ser mayor a 100");
+
+        long totalElements = repository.countAll();
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+        int offset = page * size;
+
+        List<GrupoResponse> content = repository.findAll(size, offset).stream()
                 .map(this::toResponse)
                 .toList();
+
+        return new PageResponse<>(content, totalElements, totalPages, page, size);
     }
 
     public GrupoResponse findById(Integer id) {

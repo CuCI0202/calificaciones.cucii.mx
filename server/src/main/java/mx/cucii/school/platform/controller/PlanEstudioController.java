@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import mx.cucii.school.platform.dto.PageResponse;
 
 @RestController
 @RequestMapping("/planes-estudio")
@@ -20,8 +20,10 @@ public class PlanEstudioController {
     private final PlanEstudioService planEstudioService;
 
     @GetMapping
-    public ResponseEntity<List<PlanEstudioResponse>> getAll() {
-        return ResponseEntity.ok(planEstudioService.findAll());
+    public ResponseEntity<PageResponse<PlanEstudioResponse>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(planEstudioService.findAll(page, size));
     }
 
     @GetMapping("/{id}")
@@ -35,8 +37,10 @@ public class PlanEstudioController {
     }
 
     @GetMapping("/con-materias-count")
-    public ResponseEntity<List<PlanEstudioConMateriasCountResponse>> getAllWithMateriasCount() {
-        return ResponseEntity.ok(planEstudioService.findAllWithMateriasCount());
+    public ResponseEntity<PageResponse<PlanEstudioConMateriasCountResponse>> getAllWithMateriasCount(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(planEstudioService.findAllWithMateriasCount(page, size));
     }
 
     @GetMapping("/{id}/con-materias-count")

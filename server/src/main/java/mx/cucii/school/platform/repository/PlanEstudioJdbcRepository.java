@@ -56,6 +56,18 @@ public class PlanEstudioJdbcRepository {
         return jdbcTemplate.query("SELECT * FROM planes_estudio", PLAN_MAPPER);
     }
 
+    public List<PlanEstudio> findAll(int limit, int offset) {
+        return jdbcTemplate.query(
+                "SELECT * FROM planes_estudio ORDER BY id ASC LIMIT ? OFFSET ?",
+                PLAN_MAPPER, limit, offset
+        );
+    }
+
+    public long countAll() {
+        Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM planes_estudio", Long.class);
+        return count != null ? count : 0;
+    }
+
     public Optional<PlanEstudio> findById(Integer id) {
         return jdbcTemplate.query(
                 "SELECT * FROM planes_estudio WHERE id = ?",
@@ -197,6 +209,33 @@ public class PlanEstudioJdbcRepository {
             """;
 
         return jdbcTemplate.query(sql, PLAN_CON_MATERIAS_COUNT_MAPPER);
+    }
+
+    public List<PlanEstudioConMateriasCountResponse> findAllWithMateriasCount(int limit, int offset) {
+        String sql = """
+            SELECT pe.*,
+                   COUNT(m.id) AS cantidad_materias
+            FROM planes_estudio pe
+            LEFT JOIN materias m ON m.plan_estudio_id = pe.id AND m.is_active = true
+            GROUP BY pe.id
+            ORDER BY pe.id ASC
+            LIMIT ? OFFSET ?
+            """;
+
+        return jdbcTemplate.query(sql, PLAN_CON_MATERIAS_COUNT_MAPPER, limit, offset);
+    }
+
+    public long countAllWithMateriasCount() {
+        String sql = """
+            SELECT COUNT(*) FROM (
+                SELECT 1
+                FROM planes_estudio pe
+                LEFT JOIN materias m ON m.plan_estudio_id = pe.id AND m.is_active = true
+                GROUP BY pe.id
+            ) sub
+            """;
+        Long count = jdbcTemplate.queryForObject(sql, Long.class);
+        return count != null ? count : 0;
     }
 
     private static final RowMapper<PlanEstudioConMateriasCountResponse> PLAN_CON_MATERIAS_COUNT_MAPPER = (rs, rowNum) ->

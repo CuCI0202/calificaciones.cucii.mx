@@ -34,6 +34,18 @@ public class GrupoJdbcRepository {
         return jdbcTemplate.query("SELECT * FROM grupos", GRUPO_MAPPER);
     }
 
+    public List<Grupo> findAll(int limit, int offset) {
+        return jdbcTemplate.query(
+                "SELECT * FROM grupos ORDER BY id ASC LIMIT ? OFFSET ?",
+                GRUPO_MAPPER, limit, offset
+        );
+    }
+
+    public long countAll() {
+        Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM grupos", Long.class);
+        return count != null ? count : 0;
+    }
+
     public Optional<Grupo> findById(Integer id) {
         return jdbcTemplate.query(
                 "SELECT * FROM grupos WHERE id = ?",

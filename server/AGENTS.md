@@ -94,6 +94,18 @@ public class EntidadJdbcRepository {
         return jdbcTemplate.query("SELECT * FROM tabla", MAPPER);
     }
 
+    public List<Entidad> findAll(int limit, int offset) {
+        return jdbcTemplate.query(
+                "SELECT * FROM tabla ORDER BY id ASC LIMIT ? OFFSET ?",
+                MAPPER, limit, offset
+        );
+    }
+
+    public long countAll() {
+        Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM tabla", Long.class);
+        return count != null ? count : 0;
+    }
+
     public Optional<Entidad> findById(Integer id) {
         return jdbcTemplate.query("SELECT * FROM tabla WHERE id = ?", MAPPER, id)
                 .stream().findFirst();
@@ -167,7 +179,7 @@ public class EntidadJdbcRepository {
 
 | Método | Ruta | Acción |
 |--------|------|--------|
-| GET | `/planes-estudio` | Listar todos |
+| GET | `/planes-estudio` | Listar todos (paginado) |
 | GET | `/planes-estudio/{id}` | Obtener por ID |
 | GET | `/planes-estudio/{id}/con-materias` | Plan + materias activas (LEFT JOIN) |
 | GET | `/planes-estudio/{id}/con-materias-sql` | Ídem (alias) |
@@ -179,7 +191,7 @@ public class EntidadJdbcRepository {
 
 | Método | Ruta | Acción |
 |--------|------|--------|
-| GET | `/materias` | Listar todas |
+| GET | `/materias` | Listar todas (paginado) |
 | GET | `/materias/{id}` | Obtener por ID |
 | POST | `/materias` | Crear (201) |
 | PUT | `/materias/{id}` | Actualizar |
@@ -189,7 +201,7 @@ public class EntidadJdbcRepository {
 
 | Método | Ruta | Acción |
 |--------|------|--------|
-| GET | `/usuarios` | Listar todos (solo ADMIN) |
+| GET | `/usuarios` | Listar todos (paginado, solo ADMIN) |
 | GET | `/usuarios/{id}` | Obtener por ID |
 | POST | `/usuarios` | Crear (201) |
 | PUT | `/usuarios/{id}` | Actualizar |
@@ -199,7 +211,7 @@ public class EntidadJdbcRepository {
 
 | Método | Ruta | Acción |
 |--------|------|--------|
-| GET | `/planteles` | Listar todos |
+| GET | `/planteles` | Listar todos (paginado) |
 | GET | `/planteles/{id}` | Obtener por ID |
 | POST | `/planteles` | Crear (201) |
 | PUT | `/planteles/{id}` | Actualizar |
@@ -209,7 +221,7 @@ public class EntidadJdbcRepository {
 
 | Método | Ruta | Acción |
 |--------|------|--------|
-| GET | `/alumnos` | Listar todos |
+| GET | `/alumnos` | Listar todos (paginado) |
 | GET | `/alumnos/{id}` | Obtener por ID |
 | POST | `/alumnos` | Crear (201). Valida CURP, correo únicos y estatus FK existente. |
 | PUT | `/alumnos/{id}` | Actualizar |
@@ -219,7 +231,7 @@ public class EntidadJdbcRepository {
 
 | Método | Ruta | Acción |
 |--------|------|--------|
-| GET | `/grupos` | Listar todos |
+| GET | `/grupos` | Listar todos (paginado) |
 | GET | `/grupos/{id}` | Obtener por ID |
 | GET | `/grupos/{id}/cuatrimestres` | Cantidad de cuatrimestres de la carrera |
 | GET | `/grupos/{id}/cuatrimestres/{cuatrimestre}/materias` | Materias de un cuatrimestre |
@@ -231,7 +243,7 @@ public class EntidadJdbcRepository {
 
 | Método | Ruta | Acción |
 |--------|------|--------|
-| GET | `/alumnos-grupos` | Listar asignaciones |
+| GET | `/alumnos-grupos` | Listar asignaciones (paginado) |
 | GET | `/alumnos-grupos/{id}` | Obtener por ID |
 | POST | `/alumnos-grupos` | Asignar alumno a grupo (201). Unique: alumno+grupo. |
 | PUT | `/alumnos-grupos/{id}` | Actualizar |
@@ -241,7 +253,7 @@ public class EntidadJdbcRepository {
 
 | Método | Ruta | Acción |
 |--------|------|--------|
-| GET | `/profesores-grupos` | Listar asignaciones |
+| GET | `/profesores-grupos` | Listar asignaciones (paginado) |
 | GET | `/profesores-grupos/{id}` | Obtener por ID |
 | POST | `/profesores-grupos` | Asignar profesor a grupo+materia (201). Unique: profesor+grupo+materia. |
 | PUT | `/profesores-grupos/{id}` | Actualizar |
@@ -251,8 +263,8 @@ public class EntidadJdbcRepository {
 
 | Método | Ruta | Acción |
 |--------|------|--------|
-| GET | `/calificaciones` | Listar todas |
-| GET | `/calificaciones?alumnoId=X` | Calificaciones de un alumno |
+| GET | `/calificaciones` | Listar todas (paginado) |
+| GET | `/calificaciones?alumnoId=X` | Calificaciones de un alumno (sin paginación) |
 | GET | `/calificaciones/{id}` | Obtener por ID |
 | POST | `/calificaciones` | Registrar calificación (201). Rango 0-100. Unique: alumno+materia+grupo. |
 | PUT | `/calificaciones/{id}` | Actualizar |
@@ -279,6 +291,99 @@ public class EntidadJdbcRepository {
 
 - `ResourceNotFoundException` → 404 | `IllegalArgumentException` → 400 | `BadCredentialsException`/`UsernameNotFoundException` → 401
 - Todo centralizado en `GlobalExceptionHandler`; controllers no hacen try/catch.
+
+## Paginación
+
+Todos los endpoints GET que retornan listas (`getAll`) están paginados. Los endpoints que retornan una sola entidad (`getById`, `findByAlumnoId`, `getMateriasByCuatrimestre`, etc.) **no** llevan paginación.
+
+### Parámetros de query
+
+| Parámetro | Default | Descripción |
+|-----------|---------|-------------|
+| `page` | `0` | Página actual (0-indexed) |
+| `size` | `20` | Elementos por página (1-100) |
+
+Ejemplo: `GET /alumnos?page=0&size=10`
+
+### PageResponse DTO
+
+```java
+// mx.cucii.school.platform.dto.PageResponse
+public record PageResponse<T>(
+        List<T> content,
+        long totalElements,
+        int totalPages,
+        int currentPage,
+        int pageSize
+) {}
+```
+
+### Ejemplo de respuesta
+
+```json
+{
+  "content": [
+    { "id": 1, "nombres": "Juan", "primerApellido": "Pérez", ... }
+  ],
+  "totalElements": 50,
+  "totalPages": 3,
+  "currentPage": 0,
+  "pageSize": 20
+}
+```
+
+### Endpoints paginados
+
+| Ruta | Controlador | Servicio |
+|------|------------|----------|
+| `GET /alumnos` | `AlumnoController.getAll(page, size)` | `AlumnoService.findAll(page, size)` |
+| `GET /alumnos-grupos` | `AlumnoGrupoController.getAll(page, size)` | `AlumnoGrupoService.findAll(page, size)` |
+| `GET /calificaciones` (sin alumnoId) | `CalificacionController.getAll(page, size)` | `CalificacionService.findAll(page, size)` |
+| `GET /grupos` | `GrupoController.getAll(page, size)` | `GrupoService.findAll(page, size)` |
+| `GET /materias` | `MateriaController.getAll(page, size)` | `MateriaService.findAll(page, size)` |
+| `GET /planes-estudio` | `PlanEstudioController.getAll(page, size)` | `PlanEstudioService.findAll(page, size)` |
+| `GET /planes-estudio/con-materias-count` | `PlanEstudioController.getAllWithMateriasCount(page, size)` | `PlanEstudioService.findAllWithMateriasCount(page, size)` |
+| `GET /planteles` | `PlantelController.getAll(page, size)` | `PlantelService.findAll(page, size)` |
+| `GET /profesores-grupos` | `ProfesorGrupoController.getAll(page, size)` | `ProfesorGrupoService.findAll(page, size)` |
+| `GET /usuarios` | `UsuarioController.getAll(page, size)` | `UsuarioService.findAll(page, size)` |
+
+### Endpoints EXCLUIDOS de paginación (retornan lista completa)
+
+| Ruta | Motivo |
+|------|--------|
+| `GET /calificaciones?alumnoId=X` | Se necesitan todas las calificaciones de un alumno de golpe |
+| `GET /grupos/{id}/cuatrimestres/{n}/materias` | Se necesitan todas las materias de un cuatrimestre de la carrera |
+
+### Patrón en el service
+
+```java
+public PageResponse<XxxResponse> findAll(int page, int size) {
+    if (page < 0) throw new IllegalArgumentException("La página no puede ser negativa");
+    if (size < 1) throw new IllegalArgumentException("El tamaño de página debe ser al menos 1");
+    if (size > 100) throw new IllegalArgumentException("El tamaño de página no puede ser mayor a 100");
+
+    long totalElements = repository.countAll();
+    int totalPages = (int) Math.ceil((double) totalElements / size);
+    int offset = page * size;
+
+    List<XxxResponse> content = repository.findAll(size, offset).stream()
+            .map(this::toResponse)
+            .toList();
+
+    return new PageResponse<>(content, totalElements, totalPages, page, size);
+}
+```
+
+### Patrón en el controller
+
+```java
+@GetMapping
+public ResponseEntity<PageResponse<XxxResponse>> getAll(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "20") int size) {
+    return ResponseEntity.ok(service.findAll(page, size));
+}
+```
 
 ## Respuestas HTTP
 

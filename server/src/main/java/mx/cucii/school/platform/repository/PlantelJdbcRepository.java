@@ -44,6 +44,18 @@ public class PlantelJdbcRepository {
         return jdbcTemplate.query("SELECT * FROM planteles", PLANTEL_MAPPER);
     }
 
+    public List<Plantel> findAll(int limit, int offset) {
+        return jdbcTemplate.query(
+                "SELECT * FROM planteles ORDER BY id ASC LIMIT ? OFFSET ?",
+                PLANTEL_MAPPER, limit, offset
+        );
+    }
+
+    public long countAll() {
+        Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM planteles", Long.class);
+        return count != null ? count : 0;
+    }
+
     public Optional<Plantel> findById(Integer id) {
         return jdbcTemplate.query(
                 "SELECT * FROM planteles WHERE id = ?",

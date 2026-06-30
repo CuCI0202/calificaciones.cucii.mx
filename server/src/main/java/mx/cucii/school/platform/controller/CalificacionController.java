@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import mx.cucii.school.platform.dto.PageResponse;
 
 @RestController
 @RequestMapping("/calificaciones")
@@ -18,12 +18,14 @@ public class CalificacionController {
     private final CalificacionService calificacionService;
 
     @GetMapping
-    public ResponseEntity<List<CalificacionResponse>> getAll(
-            @RequestParam(name = "alumnoId", required = false) Integer alumnoId) {
+    public ResponseEntity<?> getAll(
+            @RequestParam(name = "alumnoId", required = false) Integer alumnoId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
         if (alumnoId != null) {
             return ResponseEntity.ok(calificacionService.findByAlumnoId(alumnoId));
         }
-        return ResponseEntity.ok(calificacionService.findAll());
+        return ResponseEntity.ok(calificacionService.findAll(page, size));
     }
 
     @GetMapping("/{id}")

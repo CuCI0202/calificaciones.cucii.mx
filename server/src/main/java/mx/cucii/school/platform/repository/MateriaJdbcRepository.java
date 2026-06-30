@@ -36,6 +36,18 @@ public class MateriaJdbcRepository {
         return jdbcTemplate.query("SELECT * FROM materias", MATERIA_MAPPER);
     }
 
+    public List<Materia> findAll(int limit, int offset) {
+        return jdbcTemplate.query(
+                "SELECT * FROM materias ORDER BY id ASC LIMIT ? OFFSET ?",
+                MATERIA_MAPPER, limit, offset
+        );
+    }
+
+    public long countAll() {
+        Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM materias", Long.class);
+        return count != null ? count : 0;
+    }
+
     public Optional<Materia> findById(Integer id) {
         return jdbcTemplate.query(
                 "SELECT * FROM materias WHERE id = ?",

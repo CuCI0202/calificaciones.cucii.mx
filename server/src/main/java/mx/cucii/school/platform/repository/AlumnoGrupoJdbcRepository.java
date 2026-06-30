@@ -31,6 +31,18 @@ public class AlumnoGrupoJdbcRepository {
         return jdbcTemplate.query("SELECT * FROM alumnos_grupos", MAPPER);
     }
 
+    public List<AlumnoGrupo> findAll(int limit, int offset) {
+        return jdbcTemplate.query(
+                "SELECT * FROM alumnos_grupos ORDER BY id ASC LIMIT ? OFFSET ?",
+                MAPPER, limit, offset
+        );
+    }
+
+    public long countAll() {
+        Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM alumnos_grupos", Long.class);
+        return count != null ? count : 0;
+    }
+
     public Optional<AlumnoGrupo> findById(Integer id) {
         return jdbcTemplate.query(
                 "SELECT * FROM alumnos_grupos WHERE id = ?",

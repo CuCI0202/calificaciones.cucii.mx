@@ -36,6 +36,18 @@ public class UsuarioJdbcRepository {
         return jdbcTemplate.query("SELECT * FROM usuarios", USUARIO_MAPPER);
     }
 
+    public List<Usuario> findAll(int limit, int offset) {
+        return jdbcTemplate.query(
+                "SELECT * FROM usuarios ORDER BY id ASC LIMIT ? OFFSET ?",
+                USUARIO_MAPPER, limit, offset
+        );
+    }
+
+    public long countAll() {
+        Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM usuarios", Long.class);
+        return count != null ? count : 0;
+    }
+
     public Optional<Usuario> findById(Integer id) {
         return jdbcTemplate.query(
                 "SELECT * FROM usuarios WHERE id = ?",

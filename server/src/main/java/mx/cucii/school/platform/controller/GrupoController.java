@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import mx.cucii.school.platform.dto.PageResponse;
 
 @RestController
 @RequestMapping("/grupos")
@@ -20,8 +21,10 @@ public class GrupoController {
     private final GrupoService grupoService;
 
     @GetMapping
-    public ResponseEntity<List<GrupoResponse>> getAll() {
-        return ResponseEntity.ok(grupoService.findAll());
+    public ResponseEntity<PageResponse<GrupoResponse>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(grupoService.findAll(page, size));
     }
 
     @GetMapping("/{id}")

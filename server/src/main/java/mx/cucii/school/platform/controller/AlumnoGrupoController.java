@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import mx.cucii.school.platform.dto.PageResponse;
 
 @RestController
 @RequestMapping("/alumnos-grupos")
@@ -18,8 +18,10 @@ public class AlumnoGrupoController {
     private final AlumnoGrupoService alumnoGrupoService;
 
     @GetMapping
-    public ResponseEntity<List<AlumnoGrupoResponse>> getAll() {
-        return ResponseEntity.ok(alumnoGrupoService.findAll());
+    public ResponseEntity<PageResponse<AlumnoGrupoResponse>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(alumnoGrupoService.findAll(page, size));
     }
 
     @GetMapping("/{id}")

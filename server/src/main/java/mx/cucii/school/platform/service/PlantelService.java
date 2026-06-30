@@ -3,6 +3,7 @@ package mx.cucii.school.platform.service;
 import lombok.RequiredArgsConstructor;
 import mx.cucii.school.platform.dto.PlantelRequest;
 import mx.cucii.school.platform.dto.PlantelResponse;
+import mx.cucii.school.platform.dto.PageResponse;
 import mx.cucii.school.platform.exception.ResourceNotFoundException;
 import mx.cucii.school.platform.model.Plantel;
 import mx.cucii.school.platform.repository.PlantelJdbcRepository;
@@ -20,10 +21,20 @@ public class PlantelService {
 
     private final PlantelJdbcRepository repository;
 
-    public List<PlantelResponse> findAll() {
-        return repository.findAll().stream()
+    public PageResponse<PlantelResponse> findAll(int page, int size) {
+        if (page < 0) throw new IllegalArgumentException("La página no puede ser negativa");
+        if (size < 1) throw new IllegalArgumentException("El tamaño de página debe ser al menos 1");
+        if (size > 100) throw new IllegalArgumentException("El tamaño de página no puede ser mayor a 100");
+
+        long totalElements = repository.countAll();
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+        int offset = page * size;
+
+        List<PlantelResponse> content = repository.findAll(size, offset).stream()
                 .map(this::toResponse)
                 .toList();
+
+        return new PageResponse<>(content, totalElements, totalPages, page, size);
     }
 
     public PlantelResponse findById(Integer id) {
