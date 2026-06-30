@@ -18,7 +18,7 @@ export class Campuses {
   readonly filterDraft = signal('');
   readonly filterQ = signal('');
   readonly editingId = signal<number | null>(null);
-  readonly showAddForm = signal(false);
+  readonly showForm = signal(false);
 
   readonly filtered = computed(() => {
     const q = this.filterQ().trim().toUpperCase();
@@ -32,7 +32,7 @@ export class Campuses {
     );
   });
 
-  private readonly formFields = {
+  readonly form = this.fb.nonNullable.group({
     nombreOficial: ['', Validators.required],
     nombreCorto: [''],
     direccionCalle: [''],
@@ -44,10 +44,7 @@ export class Campuses {
     estado: ['', Validators.required],
     pais: ['México'],
     directorNombre: [''],
-  };
-
-  readonly editForm = this.fb.nonNullable.group({ ...this.formFields });
-  readonly addForm = this.fb.nonNullable.group({ ...this.formFields });
+  });
 
   search(): void {
     this.filterQ.set(this.filterDraft());
@@ -60,8 +57,8 @@ export class Campuses {
 
   startEdit(campus: Campus): void {
     this.editingId.set(campus.id);
-    this.showAddForm.set(false);
-    this.editForm.setValue({
+    this.showForm.set(true);
+    this.form.setValue({
       nombreOficial: campus.nombreOficial ?? '',
       nombreCorto: campus.nombreCorto ?? '',
       direccionCalle: campus.direccionCalle ?? '',
@@ -76,36 +73,33 @@ export class Campuses {
     });
   }
 
-  saveEdit(id: number): void {
-    if (this.editForm.invalid) return;
-    const v = this.editForm.getRawValue();
-    this.campusesService.update(id, {
-      nombreOficial: v.nombreOficial,
-      nombreCorto: v.nombreCorto || undefined,
-      direccionCalle: v.direccionCalle || undefined,
-      direccionNumeroExt: v.direccionNumeroExt || undefined,
-      direccionNumeroInt: v.direccionNumeroInt || undefined,
-      colonia: v.colonia || undefined,
-      codigoPostal: v.codigoPostal || undefined,
-      ciudadMunicipio: v.ciudadMunicipio,
-      estado: v.estado,
-      pais: v.pais || undefined,
-      directorNombre: v.directorNombre || undefined,
-    }).subscribe();
+  closeForm(): void {
     this.editingId.set(null);
+    this.showForm.set(false);
+    this.form.reset();
   }
 
-  cancelEdit(): void {
+  private openAddForm(): void {
     this.editingId.set(null);
+    this.showForm.set(true);
+    this.form.reset();
   }
 
-  submitAdd(): void {
-    if (this.addForm.invalid) {
-      this.addForm.markAllAsTouched();
+  toggleForm(): void {
+    if (this.showForm()) {
+      this.closeForm();
+    } else {
+      this.openAddForm();
+    }
+  }
+
+  submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
-    const v = this.addForm.getRawValue();
-    this.campusesService.add({
+    const v = this.form.getRawValue();
+    const payload = {
       nombreOficial: v.nombreOficial,
       nombreCorto: v.nombreCorto || undefined,
       direccionCalle: v.direccionCalle || undefined,
@@ -117,20 +111,19 @@ export class Campuses {
       estado: v.estado,
       pais: v.pais || undefined,
       directorNombre: v.directorNombre || undefined,
-    }).subscribe();
-    this.addForm.reset({ pais: 'México' });
-    this.showAddForm.set(false);
+    };
+    const id = this.editingId();
+    if (id !== null) {
+      this.campusesService.update(id, payload).subscribe();
+    } else {
+      this.campusesService.add(payload).subscribe();
+    }
+    this.closeForm();
   }
 
   delete(id: number): void {
     this.confirm.confirm('¿Eliminar este plantel?').subscribe((ok) => {
       if (ok) this.campusesService.delete(id).subscribe();
     });
-  }
-
-  toggleAddForm(): void {
-    this.showAddForm.update((v) => !v);
-    this.editingId.set(null);
-    if (!this.showAddForm()) this.addForm.reset({ pais: 'México' });
   }
 }
