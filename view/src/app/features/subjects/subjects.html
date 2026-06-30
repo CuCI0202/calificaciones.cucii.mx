@@ -21,47 +21,55 @@
     </div>
 
     @if (selectedProgramId()) {
-      <!-- Add subject form -->
+      <!-- Unified form -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
-        <h2 class="text-base font-semibold text-gray-800 mb-4">Agregar materia</h2>
-        <form [formGroup]="addForm" (ngSubmit)="submitAdd()" class="grid grid-cols-1 sm:grid-cols-5 gap-3 items-start">
+        <h2 class="text-base font-semibold text-gray-800 mb-4">{{ editingId() ? 'Actualizar materia' : 'Agregar materia' }}</h2>
+        <form [formGroup]="form" (ngSubmit)="submit()" class="grid grid-cols-1 sm:grid-cols-5 gap-3 items-start">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Clave</label>
             <input formControlName="clave" type="text" placeholder="Ej. MAT-101"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.clave.invalid && addForm.controls.clave.touched" />
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.clave.touched && addForm.controls.clave.errors?.['required'])">La clave es obligatoria.</p>
+              [class.border-red-400]="form.controls.clave.invalid && form.controls.clave.touched" />
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.clave.touched && form.controls.clave.errors?.['required'])">La clave es obligatoria.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
             <input formControlName="nombre" type="text" placeholder="Nombre de la materia"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.nombre.invalid && addForm.controls.nombre.touched" />
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.nombre.touched && addForm.controls.nombre.errors?.['required'])">El nombre es obligatorio.</p>
+              [class.border-red-400]="form.controls.nombre.invalid && form.controls.nombre.touched" />
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.nombre.touched && form.controls.nombre.errors?.['required'])">El nombre es obligatorio.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Cuatrimestre</label>
             <select formControlName="cuatrimestre"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.cuatrimestre.invalid && addForm.controls.cuatrimestre.touched">
+              [class.border-red-400]="form.controls.cuatrimestre.invalid && form.controls.cuatrimestre.touched">
               <option value="" disabled>Selecciona...</option>
               @for (t of availableTerms(); track t) {
                 <option [value]="t">Cuatrimestre {{ t }}</option>
               }
             </select>
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.cuatrimestre.touched && addForm.controls.cuatrimestre.invalid)">Selecciona un cuatrimestre.</p>
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.cuatrimestre.touched && form.controls.cuatrimestre.invalid)">Selecciona un cuatrimestre.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Créditos</label>
             <input formControlName="creditos" type="number" min="0" step="0.01" placeholder="Ej. 8"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.creditos.invalid && addForm.controls.creditos.touched" />
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.creditos.touched && addForm.controls.creditos.errors?.['min'])">Valor inválido.</p>
+              [class.border-red-400]="form.controls.creditos.invalid && form.controls.creditos.touched" />
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.creditos.touched && form.controls.creditos.errors?.['min'])">Valor inválido.</p>
           </div>
-          <button type="submit"
-            class="bg-primary text-white px-5 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm whitespace-nowrap">
-            Agregar
-          </button>
+          <div class="flex gap-2">
+            <button type="submit"
+              class="flex-1 bg-primary text-white px-5 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm whitespace-nowrap">
+              {{ editingId() ? 'Actualizar' : 'Agregar' }}
+            </button>
+            @if (editingId()) {
+              <button type="button" (click)="closeForm()"
+                class="px-4 py-2 rounded-lg font-medium text-sm border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors whitespace-nowrap">
+                Cancelar
+              </button>
+            }
+          </div>
         </form>
       </div>
 
@@ -85,67 +93,30 @@
             </thead>
             <tbody class="divide-y divide-gray-100">
               @for (subject of subjects(); track subject.id) {
-                @if (editingId() === subject.id) {
-                  <tr class="bg-blue-50" [formGroup]="editForm">
-                    <td class="px-4 py-2">
-                      <input formControlName="clave" placeholder="Clave"
-                        class="w-full border rounded px-2 py-1 text-xs" />
-                    </td>
-                    <td class="px-4 py-2">
-                      <input formControlName="nombre" placeholder="Nombre"
-                        class="w-full border rounded px-2 py-1 text-xs" />
-                    </td>
-                    <td class="px-4 py-2">
-                      <select formControlName="cuatrimestre"
-                        class="w-full border rounded px-2 py-1 text-xs">
-                        @for (t of availableTerms(); track t) {
-                          <option [value]="t">{{ t }}</option>
-                        }
-                      </select>
-                    </td>
-                    <td class="px-4 py-2">
-                      <input formControlName="creditos" type="number" min="0" step="0.01" placeholder="Créditos"
-                        class="w-full border rounded px-2 py-1 text-xs" />
-                    </td>
-                    <td class="px-4 py-2 text-center">
-                      <div class="flex justify-center gap-2">
-                        <button (click)="saveEdit(subject.id)"
-                          class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700">
-                          Guardar
-                        </button>
-                        <button (click)="cancelEdit()"
-                          class="bg-gray-300 text-gray-700 px-3 py-1 rounded text-xs hover:bg-gray-400">
-                          Cancelar
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                } @else {
-                  <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 font-mono text-gray-600">{{ subject.clave }}</td>
-                    <td class="px-4 py-3 font-medium text-gray-800">{{ subject.nombre }}</td>
-                    <td class="px-4 py-3 text-center">
-                      <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">
-                        {{ subject.cuatrimestre }}
-                      </span>
-                    </td>
-                    <td class="px-4 py-3 text-center text-gray-600">
-                      {{ subject.creditos ?? '—' }}
-                    </td>
-                    <td class="px-4 py-3 text-center">
-                      <div class="flex justify-center gap-2">
-                        <button (click)="startEdit(subject)"
-                          class="text-primary hover:text-primary-dark text-xs font-medium">
-                          Editar
-                        </button>
-                        <button (click)="delete(subject.id)"
-                          class="text-red-500 hover:text-red-700 text-xs font-medium">
-                          Eliminar
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                }
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <td class="px-4 py-3 font-mono text-gray-600">{{ subject.clave }}</td>
+                  <td class="px-4 py-3 font-medium text-gray-800">{{ subject.nombre }}</td>
+                  <td class="px-4 py-3 text-center">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">
+                      {{ subject.cuatrimestre }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-3 text-center text-gray-600">
+                    {{ subject.creditos ?? '—' }}
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="flex justify-center gap-2">
+                      <button (click)="startEdit(subject)"
+                        class="text-primary hover:text-primary-dark text-xs font-medium">
+                        Editar
+                      </button>
+                      <button (click)="delete(subject.id)"
+                        class="text-red-500 hover:text-red-700 text-xs font-medium">
+                        Eliminar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
               } @empty {
                 <tr>
                   <td colspan="5" class="px-4 py-10 text-center text-gray-400">

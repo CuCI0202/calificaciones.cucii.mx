@@ -17,7 +17,6 @@ export class Subjects {
   readonly programs = this.programsService.programs;
   readonly selectedProgramId = signal<number>(0);
   readonly editingId = signal<number | null>(null);
-  readonly showAddForm = signal(false);
   private readonly _subjects = signal<Subject[]>([]);
   readonly subjects = this._subjects.asReadonly();
 
@@ -29,14 +28,7 @@ export class Subjects {
     return Array.from({ length: program.duracionCuatrimestres }, (_, i) => i + 1);
   });
 
-  readonly addForm = this.fb.nonNullable.group({
-    clave: ['', Validators.required],
-    nombre: ['', Validators.required],
-    cuatrimestre: [1, [Validators.required, Validators.min(1)]],
-    creditos: [0, [Validators.required, Validators.min(0)]],
-  });
-
-  readonly editForm = this.fb.nonNullable.group({
+  readonly form = this.fb.nonNullable.group({
     clave: ['', Validators.required],
     nombre: ['', Validators.required],
     cuatrimestre: [1, [Validators.required, Validators.min(1)]],
@@ -53,33 +45,13 @@ export class Subjects {
 
   onProgramChange(value: string): void {
     this.selectedProgramId.set(+value);
-    this.editingId.set(null);
-    this.showAddForm.set(false);
+    this.closeForm();
     this.loadSubjects();
-  }
-
-  toggleAddForm(): void {
-    this.showAddForm.update((v) => !v);
-    this.editingId.set(null);
-  }
-
-  submitAdd(): void {
-    if (this.addForm.invalid) {
-      this.addForm.markAllAsTouched();
-      return;
-    }
-    const v = this.addForm.getRawValue();
-    this.programsService.addSubject(this.selectedProgramId(), v).subscribe(() => {
-      this.loadSubjects();
-      this.addForm.reset({ creditos: 0 });
-      this.showAddForm.set(false);
-    });
   }
 
   startEdit(subject: Subject): void {
     this.editingId.set(subject.id);
-    this.showAddForm.set(false);
-    this.editForm.setValue({
+    this.form.setValue({
       clave: subject.clave,
       nombre: subject.nombre,
       cuatrimestre: subject.cuatrimestre,
@@ -87,17 +59,30 @@ export class Subjects {
     });
   }
 
-  saveEdit(subjectId: number): void {
-    if (this.editForm.invalid) return;
-    const v = this.editForm.getRawValue();
-    this.programsService.updateSubject(this.selectedProgramId(), subjectId, v).subscribe(() => {
-      this.loadSubjects();
-      this.editingId.set(null);
-    });
+  closeForm(): void {
+    this.editingId.set(null);
+    this.form.reset();
   }
 
-  cancelEdit(): void {
-    this.editingId.set(null);
+  submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    const v = this.form.getRawValue();
+    const programId = this.selectedProgramId();
+    const id = this.editingId();
+    if (id !== null) {
+      this.programsService.updateSubject(programId, id, v).subscribe(() => {
+        this.loadSubjects();
+        this.closeForm();
+      });
+    } else {
+      this.programsService.addSubject(programId, v).subscribe(() => {
+        this.loadSubjects();
+        this.closeForm();
+      });
+    }
   }
 
   delete(subjectId: number): void {
