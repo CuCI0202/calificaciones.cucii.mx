@@ -18,7 +18,7 @@ export class Programs {
   readonly filterDraft = signal('');
   readonly filterQ = signal('');
   readonly editingId = signal<number | null>(null);
-  readonly showAddForm = signal(false);
+  readonly showForm = signal(false);
 
   readonly filtered = computed(() => {
     const q = this.filterQ().trim().toUpperCase();
@@ -30,15 +30,7 @@ export class Programs {
 
   readonly degrees: Degree[] = ['Licenciatura', 'Maestría', 'Doctorado'];
 
-  readonly editForm = this.fb.nonNullable.group({
-    nombre: ['', Validators.required],
-    grado: ['Licenciatura' as Degree, Validators.required],
-    numeroRvoe: ['', Validators.required],
-    fechaRvoe: ['', Validators.required],
-    duracionCuatrimestres: [1, [Validators.required, Validators.min(1)]],
-  });
-
-  readonly addForm = this.fb.nonNullable.group({
+  readonly form = this.fb.nonNullable.group({
     nombre: ['', Validators.required],
     grado: ['Licenciatura' as Degree, Validators.required],
     numeroRvoe: ['', Validators.required],
@@ -57,48 +49,54 @@ export class Programs {
 
   startEdit(program: Program): void {
     this.editingId.set(program.id);
-    this.showAddForm.set(false);
-    const p = program as any;
-    this.editForm.setValue({
-      nombre: p.nombre ?? '',
-      grado: p.grado ?? 'Licenciatura',
-      numeroRvoe: p.numeroRvoe ?? '',
-      fechaRvoe: p.fechaRvoe ?? '',
-      duracionCuatrimestres: p.duracionCuatrimestres ?? p.terms ?? 1,
+    this.showForm.set(true);
+    this.form.setValue({
+      nombre: program.nombre ?? '',
+      grado: program.grado ?? 'Licenciatura',
+      numeroRvoe: program.numeroRvoe ?? '',
+      fechaRvoe: program.fechaRvoe ?? '',
+      duracionCuatrimestres: program.duracionCuatrimestres ?? 1,
     });
   }
 
-  saveEdit(id: number): void {
-    if (this.editForm.invalid) return;
-    const v = this.editForm.getRawValue();
-    this.programsService.update(id, v).subscribe();
+  closeForm(): void {
     this.editingId.set(null);
+    this.showForm.set(false);
+    this.form.reset();
   }
 
-  cancelEdit(): void {
+  private openAddForm(): void {
     this.editingId.set(null);
+    this.showForm.set(true);
+    this.form.reset();
   }
 
-  submitAdd(): void {
-    if (this.addForm.invalid) {
-      this.addForm.markAllAsTouched();
+  toggleForm(): void {
+    if (this.showForm()) {
+      this.closeForm();
+    } else {
+      this.openAddForm();
+    }
+  }
+
+  submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
-    const v = this.addForm.getRawValue();
-    this.programsService.add(v).subscribe();
-    this.addForm.reset();
-    this.showAddForm.set(false);
+    const v = this.form.getRawValue();
+    const id = this.editingId();
+    if (id !== null) {
+      this.programsService.update(id, v).subscribe();
+    } else {
+      this.programsService.add(v).subscribe();
+    }
+    this.closeForm();
   }
 
   delete(id: number): void {
     this.confirm.confirm('¿Eliminar esta carrera?').subscribe((ok) => {
       if (ok) this.programsService.delete(id).subscribe();
     });
-  }
-
-  toggleAddForm(): void {
-    this.showAddForm.update((v) => !v);
-    this.editingId.set(null);
-    if (!this.showAddForm()) this.addForm.reset();
   }
 }

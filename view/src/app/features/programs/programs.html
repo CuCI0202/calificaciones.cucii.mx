@@ -6,9 +6,9 @@
         <h1 class="text-2xl font-bold text-brand-dark">Gestión de Carreras</h1>
         <p class="text-gray-500 text-sm">{{ programs().length }} carrera(s) registrada(s)</p>
       </div>
-      <button (click)="toggleAddForm()"
+      <button (click)="toggleForm()"
         class="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm">
-        @if (showAddForm()) {
+        @if (showForm()) {
           Cancelar
         } @else {
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -19,17 +19,17 @@
       </button>
     </div>
 
-    <!-- Add form -->
-    @if (showAddForm()) {
+    <!-- Unified form -->
+    @if (showForm()) {
       <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
-        <h2 class="text-base font-semibold text-gray-800 mb-4">Nueva carrera</h2>
-        <form [formGroup]="addForm" (ngSubmit)="submitAdd()" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <h2 class="text-base font-semibold text-gray-800 mb-4">{{ editingId() ? 'Actualizar carrera' : 'Nueva carrera' }}</h2>
+        <form [formGroup]="form" (ngSubmit)="submit()" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div class="sm:col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
             <input formControlName="nombre" type="text" placeholder="Ingeniería en Sistemas"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.nombre.invalid && addForm.controls.nombre.touched" />
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.nombre.touched && addForm.controls.nombre.errors?.['required'])">El nombre es obligatorio.</p>
+              [class.border-red-400]="form.controls.nombre.invalid && form.controls.nombre.touched" />
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.nombre.touched && form.controls.nombre.errors?.['required'])">El nombre es obligatorio.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Grado</label>
@@ -45,27 +45,31 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">RVOE</label>
             <input formControlName="numeroRvoe" type="text" placeholder="RVOE-2024-001"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.numeroRvoe.invalid && addForm.controls.numeroRvoe.touched" />
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.numeroRvoe.touched && addForm.controls.numeroRvoe.errors?.['required'])">El RVOE es obligatorio.</p>
+              [class.border-red-400]="form.controls.numeroRvoe.invalid && form.controls.numeroRvoe.touched" />
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.numeroRvoe.touched && form.controls.numeroRvoe.errors?.['required'])">El RVOE es obligatorio.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Fecha RVOE</label>
             <input formControlName="fechaRvoe" type="date"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.fechaRvoe.invalid && addForm.controls.fechaRvoe.touched" />
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.fechaRvoe.touched && addForm.controls.fechaRvoe.errors?.['required'])">La fecha es obligatoria.</p>
+              [class.border-red-400]="form.controls.fechaRvoe.invalid && form.controls.fechaRvoe.touched" />
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.fechaRvoe.touched && form.controls.fechaRvoe.errors?.['required'])">La fecha es obligatoria.</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Cuatrimestres</label>
             <input formControlName="duracionCuatrimestres" type="number" min="1" placeholder="10"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              [class.border-red-400]="addForm.controls.duracionCuatrimestres.invalid && addForm.controls.duracionCuatrimestres.touched" />
-            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(addForm.controls.duracionCuatrimestres.touched && addForm.controls.duracionCuatrimestres.invalid)">Ingresa un número válido (mínimo 1).</p>
+              [class.border-red-400]="form.controls.duracionCuatrimestres.invalid && form.controls.duracionCuatrimestres.touched" />
+            <p class="text-red-500 text-xs mt-1" [class.invisible]="!(form.controls.duracionCuatrimestres.touched && form.controls.duracionCuatrimestres.invalid)">Ingresa un número válido (mínimo 1).</p>
           </div>
-          <div class="sm:col-span-3 flex justify-end">
+          <div class="sm:col-span-3 flex justify-end gap-2">
             <button type="submit"
               class="bg-primary text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm">
-              Guardar carrera
+              {{ editingId() ? 'Actualizar carrera' : 'Guardar carrera' }}
+            </button>
+            <button type="button" (click)="closeForm()"
+              class="px-6 py-2.5 rounded-lg font-medium text-sm border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors">
+              Cancelar
             </button>
           </div>
         </form>
@@ -111,76 +115,34 @@
           </thead>
           <tbody class="divide-y divide-gray-100">
             @for (program of filtered(); track program.id) {
-              @if (editingId() === program.id) {
-                <tr class="bg-blue-50" [formGroup]="editForm">
-                  <td class="px-4 py-2">
-                    <input formControlName="nombre" placeholder="Nombre"
-                      class="w-full border rounded px-2 py-1 text-xs" />
-                  </td>
-                  <td class="px-4 py-2">
-                    <select formControlName="grado"
-                      class="w-full border rounded px-2 py-1 text-xs">
-                      @for (d of degrees; track d) {
-                        <option [value]="d">{{ d }}</option>
-                      }
-                    </select>
-                  </td>
-                  <td class="px-4 py-2">
-                    <input formControlName="numeroRvoe" placeholder="RVOE"
-                      class="w-full border rounded px-2 py-1 text-xs" />
-                  </td>
-                  <td class="px-4 py-2">
-                    <input formControlName="fechaRvoe" type="date"
-                      class="w-full border rounded px-2 py-1 text-xs" />
-                  </td>
-                  <td class="px-4 py-2">
-                    <input formControlName="duracionCuatrimestres" type="number" min="1"
-                      class="w-full border rounded px-2 py-1 text-xs" />
-                  </td>
-                  <td class="px-4 py-2 text-center text-gray-400 text-xs">—</td>
-                  <td class="px-4 py-2 text-center">
-                    <div class="flex justify-center gap-2">
-                      <button (click)="saveEdit(program.id)"
-                        class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700">
-                        Guardar
-                      </button>
-                      <button (click)="cancelEdit()"
-                        class="bg-gray-300 text-gray-700 px-3 py-1 rounded text-xs hover:bg-gray-400">
-                        Cancelar
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              } @else {
-                <tr class="hover:bg-gray-50 transition-colors">
-                  <td class="px-4 py-3 font-medium text-gray-800">{{ program.nombre }}</td>
-                  <td class="px-4 py-3 text-gray-600 text-xs">{{ program.grado }}</td>
-                  <td class="px-4 py-3 text-gray-600 font-mono text-xs">{{ program.numeroRvoe }}</td>
-                  <td class="px-4 py-3 text-gray-500">{{ program.fechaRvoe }}</td>
-                  <td class="px-4 py-3 text-center">
-                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">
-                      {{ program.duracionCuatrimestres }}
-                    </span>
-                  </td>
-                  <td class="px-4 py-3 text-center">
-                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">
-                      {{ program.cantidadMaterias }}
-                    </span>
-                  </td>
-                  <td class="px-4 py-3 text-center">
-                    <div class="flex justify-center gap-2">
-                      <button (click)="startEdit(program)"
-                        class="text-primary hover:text-primary-dark text-xs font-medium">
-                        Editar
-                      </button>
-                      <button (click)="delete(program.id)"
-                        class="text-red-500 hover:text-red-700 text-xs font-medium">
-                        Eliminar
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              }
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-4 py-3 font-medium text-gray-800">{{ program.nombre }}</td>
+                <td class="px-4 py-3 text-gray-600 text-xs">{{ program.grado }}</td>
+                <td class="px-4 py-3 text-gray-600 font-mono text-xs">{{ program.numeroRvoe }}</td>
+                <td class="px-4 py-3 text-gray-500">{{ program.fechaRvoe }}</td>
+                <td class="px-4 py-3 text-center">
+                  <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">
+                    {{ program.duracionCuatrimestres }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-center">
+                  <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">
+                    {{ program.cantidadMaterias }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-center">
+                  <div class="flex justify-center gap-2">
+                    <button (click)="startEdit(program)"
+                      class="text-primary hover:text-primary-dark text-xs font-medium">
+                      Editar
+                    </button>
+                    <button (click)="delete(program.id)"
+                      class="text-red-500 hover:text-red-700 text-xs font-medium">
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
             } @empty {
               <tr>
                 <td colspan="7" class="px-4 py-10 text-center text-gray-400">
