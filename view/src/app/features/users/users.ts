@@ -22,9 +22,8 @@ export class Users {
   readonly filterDraft = signal('');
   readonly filterQ = signal('');
   readonly editingId = signal<number | null>(null);
-  readonly showAddForm = signal(false);
-  readonly showAddPassword = signal(false);
-  readonly showEditPassword = signal(false);
+  readonly showForm = signal(false);
+  readonly showPassword = signal(false);
 
   readonly filtered = computed(() => {
     const q = this.filterQ().trim().toUpperCase();
@@ -37,16 +36,7 @@ export class Users {
     );
   });
 
-  readonly addForm = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    nombre: ['', Validators.required],
-    apellido: ['', Validators.required],
-    password: ['', Validators.required],
-    rolId: [3 as number, Validators.required],
-    plantelId: [1 as number, Validators.required],
-  });
-
-  readonly editForm = this.fb.nonNullable.group({
+  readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     nombre: ['', Validators.required],
     apellido: ['', Validators.required],
@@ -72,30 +62,11 @@ export class Users {
     this.filterQ.set('');
   }
 
-  toggleAddForm(): void {
-    this.showAddForm.update((v) => !v);
-    this.editingId.set(null);
-    this.showAddPassword.set(false);
-    if (!this.showAddForm()) this.addForm.reset({ rolId: 3, plantelId: 1 });
-  }
-
-  submitAdd(): void {
-    if (this.addForm.invalid) {
-      this.addForm.markAllAsTouched();
-      return;
-    }
-    const v = this.addForm.getRawValue();
-    this.usersService.add(v).subscribe();
-    this.addForm.reset({ rolId: 3, plantelId: 1 });
-    this.showAddForm.set(false);
-    this.showAddPassword.set(false);
-  }
-
   startEdit(user: User): void {
     this.editingId.set(user.id);
-    this.showAddForm.set(false);
-    this.showEditPassword.set(false);
-    this.editForm.setValue({
+    this.showForm.set(true);
+    this.showPassword.set(false);
+    this.form.setValue({
       email: user.email,
       nombre: user.nombre,
       apellido: user.apellido,
@@ -105,24 +76,52 @@ export class Users {
     });
   }
 
-  saveEdit(id: number): void {
-    if (this.editForm.invalid) return;
-    const v = this.editForm.getRawValue();
-    this.usersService.update(id, {
-      nombre: v.nombre,
-      apellido: v.apellido,
-      email: v.email,
-      rolId: v.rolId,
-      plantelId: v.plantelId,
-      password: v.password.trim() || undefined,
-    }).subscribe();
+  closeForm(): void {
     this.editingId.set(null);
-    this.showEditPassword.set(false);
+    this.showForm.set(false);
+    this.showPassword.set(false);
+    this.form.reset();
   }
 
-  cancelEdit(): void {
+  private openAddForm(): void {
     this.editingId.set(null);
-    this.showEditPassword.set(false);
+    this.showForm.set(true);
+    this.showPassword.set(false);
+    this.form.reset();
+  }
+
+  toggleForm(): void {
+    if (this.showForm()) {
+      this.closeForm();
+    } else {
+      this.openAddForm();
+    }
+  }
+
+  submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    const v = this.form.getRawValue();
+    const id = this.editingId();
+    if (id !== null) {
+      this.usersService.update(id, {
+        nombre: v.nombre,
+        apellido: v.apellido,
+        email: v.email,
+        rolId: v.rolId,
+        plantelId: v.plantelId,
+        password: v.password.trim() || undefined,
+      }).subscribe();
+    } else {
+      if (!v.password.trim()) {
+        this.form.controls.password.markAsTouched();
+        return;
+      }
+      this.usersService.add(v).subscribe();
+    }
+    this.closeForm();
   }
 
   delete(id: number): void {
