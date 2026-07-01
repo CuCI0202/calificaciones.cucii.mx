@@ -3,8 +3,8 @@
     <span>Mostrando {{ startItem() }}–{{ endItem() }} de {{ totalElements() }} resultados</span>
     <span class="text-gray-300">|</span>
     <select
-      [value]="pageSize()"
-      (change)="onSizeChange($event)"
+      [ngModel]="pageSize()"
+      (ngModelChange)="onSizeChange($event)"
       class="border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white"
     >
       @for (opt of pageSizeOptions; track opt) {

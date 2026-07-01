@@ -1,14 +1,15 @@
+import { Component, computed, input, output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
 interface PageItem {
   label: string;
   page: number | null;
   active: boolean;
 }
 
-import { Component, computed, input, output } from '@angular/core';
-
 @Component({
   selector: 'app-pagination',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './pagination.html',
 })
 export class PaginationComponent {
@@ -68,8 +69,7 @@ export class PaginationComponent {
     this.pageChange.emit(item.page);
   }
 
-  onSizeChange(event: Event): void {
-    const size = +(event.target as HTMLSelectElement).value;
+  onSizeChange(size: number): void {
     this.sizeChange.emit(size);
   }
 }

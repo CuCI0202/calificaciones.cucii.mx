@@ -56,7 +56,7 @@ export class GradesService {
         this._totalElements.set(res.totalElements);
         this._totalPages.set(res.totalPages);
         this._currentPage.set(res.currentPage);
-        this._pageSize.set(res.pageSize);
+        this._pageSize.set(s);
       },
     });
   }
