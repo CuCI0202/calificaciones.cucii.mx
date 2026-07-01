@@ -6,10 +6,11 @@ import { ProgramsService } from '../../core/services/programs.service';
 import { UsersService } from '../../core/services/users.service';
 import { TeacherAssignmentsService } from '../../core/services/teacher-assignments.service';
 import { Subject } from '../../core/models/program.model';
+import { PaginationComponent } from '../../shared/components/pagination/pagination';
 
 @Component({
   selector: 'app-profesores',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, PaginationComponent],
   templateUrl: './profesores.html',
 })
 export class Profesores {
@@ -21,6 +22,10 @@ export class Profesores {
   private readonly confirm = inject(ConfirmService);
 
   readonly assignments = this.assignmentsService.assignments;
+  readonly totalElements = this.assignmentsService.totalElements;
+  readonly totalPages = this.assignmentsService.totalPages;
+  readonly currentPage = this.assignmentsService.currentPage;
+  readonly pageSize = this.assignmentsService.pageSize;
   readonly teachers = computed(() => this.usersService.users().filter((u) => u.rolId === 3));
   readonly groups = this.groupsService.groups;
   readonly programs = this.programsService.programs;
@@ -126,5 +131,13 @@ export class Profesores {
       if (subject) return `${subject.clave} – ${subject.nombre}`;
     }
     return String(subjectId);
+  }
+
+  onPageChange(page: number): void {
+    this.assignmentsService.loadPage(page);
+  }
+
+  onSizeChange(size: number): void {
+    this.assignmentsService.loadPage(0, size);
   }
 }

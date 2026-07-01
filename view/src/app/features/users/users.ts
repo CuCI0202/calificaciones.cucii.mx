@@ -5,10 +5,11 @@ import { UsersService } from '../../core/services/users.service';
 import { CampusesService } from '../../core/services/campuses.service';
 import { User } from '../../core/models/user.model';
 import { UserRole, mapRolId } from '../../core/models/auth.model';
+import { PaginationComponent } from '../../shared/components/pagination/pagination';
 
 @Component({
   selector: 'app-users',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, PaginationComponent],
   templateUrl: './users.html',
 })
 export class Users {
@@ -18,6 +19,10 @@ export class Users {
   private readonly confirm = inject(ConfirmService);
 
   readonly users = this.usersService.users;
+  readonly totalElements = this.usersService.totalElements;
+  readonly totalPages = this.usersService.totalPages;
+  readonly currentPage = this.usersService.currentPage;
+  readonly pageSize = this.usersService.pageSize;
   readonly campuses = this.campusesService.campuses;
   readonly filterDraft = signal('');
   readonly filterQ = signal('');
@@ -139,5 +144,13 @@ export class Users {
       coordinador: 'Coordinador',
     };
     return labels[mapRolId(rolId)] ?? 'Desconocido';
+  }
+
+  onPageChange(page: number): void {
+    this.usersService.loadPage(page);
+  }
+
+  onSizeChange(size: number): void {
+    this.usersService.loadPage(0, size);
   }
 }

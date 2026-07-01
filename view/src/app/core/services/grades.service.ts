@@ -1,9 +1,10 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Grade } from '../models/grade.model';
+import { PaginatedResponse } from '../models/pagination.model';
 
 interface CalificacionResponse {
   id: number;
@@ -29,19 +30,40 @@ export class GradesService {
   private readonly _grades = signal<Grade[]>([]);
   readonly grades = this._grades.asReadonly();
 
+  private readonly _totalElements = signal(0);
+  readonly totalElements = this._totalElements.asReadonly();
+
+  private readonly _totalPages = signal(0);
+  readonly totalPages = this._totalPages.asReadonly();
+
+  private readonly _currentPage = signal(0);
+  readonly currentPage = this._currentPage.asReadonly();
+
+  private readonly _pageSize = signal(20);
+  readonly pageSize = this._pageSize.asReadonly();
+
   constructor() {
-    this.loadAll();
+    this.loadPage(0);
   }
 
-  private loadAll(): void {
-    this.http.get<CalificacionResponse[]>(`${environment.apiUrl}/calificaciones`).subscribe({
-      next: (list) => this._grades.set(list.map(toGrade)),
+  loadPage(page: number, size?: number): void {
+    const s = size ?? this._pageSize();
+    this.http.get<PaginatedResponse<CalificacionResponse>>(`${environment.apiUrl}/calificaciones`, {
+      params: { page: String(page), size: String(s) },
+    }).subscribe({
+      next: (res) => {
+        this._grades.set(res.content.map(toGrade));
+        this._totalElements.set(res.totalElements);
+        this._totalPages.set(res.totalPages);
+        this._currentPage.set(res.currentPage);
+        this._pageSize.set(res.pageSize);
+      },
     });
   }
 
   getAll(): Observable<Grade[]> {
-    return this.http.get<CalificacionResponse[]>(`${environment.apiUrl}/calificaciones`).pipe(
-      map((list) => list.map(toGrade)),
+    return this.http.get<PaginatedResponse<CalificacionResponse>>(`${environment.apiUrl}/calificaciones`).pipe(
+      map((res) => res.content.map(toGrade)),
     );
   }
 
@@ -53,7 +75,7 @@ export class GradesService {
 
   addGrade(grade: Omit<Grade, 'id'>): Observable<Grade> {
     return this.http.post<CalificacionResponse>(`${environment.apiUrl}/calificaciones`, grade).pipe(
-      tap((res) => this._grades.update((list) => [...list, toGrade(res)])),
+      tap(() => this.loadPage(this._currentPage())),
       map(toGrade),
     );
   }
@@ -69,7 +91,7 @@ export class GradesService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/calificaciones/${id}`).pipe(
-      tap(() => this._grades.update((list) => list.filter((g) => g.id !== id))),
+      tap(() => this.loadPage(this._currentPage())),
     );
   }
 }

@@ -3,10 +3,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { ProgramsService } from '../../core/services/programs.service';
 import { Program, Degree } from '../../core/models/program.model';
+import { PaginationComponent } from '../../shared/components/pagination/pagination';
 
 @Component({
   selector: 'app-programs',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, PaginationComponent],
   templateUrl: './programs.html',
 })
 export class Programs {
@@ -15,6 +16,10 @@ export class Programs {
   private readonly confirm = inject(ConfirmService);
 
   readonly programs = this.programsService.programs;
+  readonly totalElements = this.programsService.totalElements;
+  readonly totalPages = this.programsService.totalPages;
+  readonly currentPage = this.programsService.currentPage;
+  readonly pageSize = this.programsService.pageSize;
   readonly filterDraft = signal('');
   readonly filterQ = signal('');
   readonly editingId = signal<number | null>(null);
@@ -98,5 +103,13 @@ export class Programs {
     this.confirm.confirm('¿Eliminar esta carrera?').subscribe((ok) => {
       if (ok) this.programsService.delete(id).subscribe();
     });
+  }
+
+  onPageChange(page: number): void {
+    this.programsService.loadPage(page);
+  }
+
+  onSizeChange(size: number): void {
+    this.programsService.loadPage(0, size);
   }
 }

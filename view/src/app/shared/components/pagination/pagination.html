@@ -1,0 +1,56 @@
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4 px-5 py-3 border-t border-gray-100">
+  <div class="flex items-center gap-2 text-sm text-gray-500">
+    <span>Mostrando {{ startItem() }}–{{ endItem() }} de {{ totalElements() }} resultados</span>
+    <span class="text-gray-300">|</span>
+    <select
+      [value]="pageSize()"
+      (change)="onSizeChange($event)"
+      class="border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white"
+    >
+      @for (opt of pageSizeOptions; track opt) {
+        <option [value]="opt">{{ opt }} por página</option>
+      }
+    </select>
+  </div>
+
+  <div class="flex items-center gap-1">
+    <button
+      (click)="pageChange.emit(currentPage() - 1)"
+      [disabled]="currentPage() === 0"
+      class="px-3 py-1.5 text-sm rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+
+    @for (p of pages(); track $index) {
+      @if (p.page === null) {
+        <span class="px-2 py-1.5 text-sm text-gray-400">…</span>
+      } @else {
+        <button
+          (click)="onPageClick(p)"
+          class="min-w-[2rem] px-2 py-1.5 text-sm rounded-lg border transition-colors"
+          [class.bg-primary]="p.active"
+          [class.text-white]="p.active"
+          [class.border-primary]="p.active"
+          [class.border-gray-300]="!p.active"
+          [class.text-gray-700]="!p.active"
+          [class.hover:bg-gray-50]="!p.active"
+        >
+          {{ p.label }}
+        </button>
+      }
+    }
+
+    <button
+      (click)="pageChange.emit(currentPage() + 1)"
+      [disabled]="currentPage() >= totalPages() - 1"
+      class="px-3 py-1.5 text-sm rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+</div>

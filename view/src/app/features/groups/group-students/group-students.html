@@ -119,6 +119,14 @@
           </tbody>
         </table>
       </div>
+      <app-pagination
+        [totalElements]="totalElements()"
+        [totalPages]="totalPages()"
+        [currentPage]="currentPage()"
+        [pageSize]="pageSize()"
+        (pageChange)="onPageChange($event)"
+        (sizeChange)="onSizeChange($event)"
+      />
     </div>
 
   </div>

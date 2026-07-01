@@ -6,6 +6,8 @@ import { GroupsService } from '../../core/services/groups.service';
 import { GroupStudentsService } from '../../core/services/group-students.service';
 import { Subject } from '../../core/models/program.model';
 import { Student, fullName } from '../../core/models/student.model';
+import { Grade } from '../../core/models/grade.model';
+import { PaginationComponent } from '../../shared/components/pagination/pagination';
 
 interface DetailRow {
   subjectId: number;
@@ -21,7 +23,7 @@ interface TermBlock {
 
 @Component({
   selector: 'app-browse',
-  imports: [],
+  imports: [PaginationComponent],
   templateUrl: './browse.html',
 })
 export class Browse {
@@ -36,6 +38,11 @@ export class Browse {
   readonly filterNameDraft = signal('');
   readonly filterCurp = signal('');
   readonly filterName = signal('');
+
+  readonly totalElements = this.studentsService.totalElements;
+  readonly totalPages = this.studentsService.totalPages;
+  readonly currentPage = this.studentsService.currentPage;
+  readonly pageSize = this.studentsService.pageSize;
 
   readonly filteredStudents = computed<Student[]>(() => {
     let list = this.studentsService.students();
@@ -73,6 +80,7 @@ export class Browse {
   readonly selectedStudent = signal<Student | null>(null);
 
   readonly studentProgramSubjects = signal<Subject[]>([]);
+  readonly studentGrades = signal<Grade[]>([]);
 
   readonly detailRows = computed<TermBlock[]>(() => {
     const student = this.selectedStudent();
@@ -81,7 +89,7 @@ export class Browse {
     const subjects = this.studentProgramSubjects();
     if (subjects.length === 0) return [];
 
-    const grades = this.gradesService.grades().filter((g) => g.alumnoId === student.id);
+    const grades = this.studentGrades();
     const maxTerm = Math.max(...subjects.map((s) => s.cuatrimestre), 0);
 
     return Array.from({ length: maxTerm }, (_, i) => {
@@ -105,7 +113,7 @@ export class Browse {
     if (!student) return [];
     const subjects = this.studentProgramSubjects();
     if (subjects.length === 0) return [];
-    const grades = this.gradesService.grades().filter((g) => g.alumnoId === student.id);
+    const grades = this.studentGrades();
     return subjects
       .filter((s) => !grades.find((g) => g.materiaId === s.id))
       .map((s) => ({
@@ -119,6 +127,7 @@ export class Browse {
   selectStudent(student: Student): void {
     this.selectedStudent.set(student);
     this.studentProgramSubjects.set([]);
+    this.studentGrades.set([]);
 
     const assignedIds = this.groupStudentsService.assignments()
       .filter((a) => a.studentId === student.id)
@@ -126,6 +135,10 @@ export class Browse {
 
     const group = this.groupsService.groups().find((g) => assignedIds.includes(g.id));
     if (!group) return;
+
+    this.gradesService.getByStudent(student.id).subscribe({
+      next: (grades) => this.studentGrades.set(grades),
+    });
 
     this.programsService.getSubjectsByProgram(group.planEstudioId).subscribe({
       next: (subjects) => this.studentProgramSubjects.set(subjects),
@@ -135,11 +148,20 @@ export class Browse {
   backToList(): void {
     this.selectedStudent.set(null);
     this.studentProgramSubjects.set([]);
+    this.studentGrades.set([]);
   }
 
   getGradeClass(score: number): string {
     if (score >= 90) return 'text-green-700 font-semibold';
     if (score >= 70) return 'text-yellow-700 font-semibold';
     return 'text-red-700 font-semibold';
+  }
+
+  onPageChange(page: number): void {
+    this.studentsService.loadPage(page);
+  }
+
+  onSizeChange(size: number): void {
+    this.studentsService.loadPage(0, size);
   }
 }

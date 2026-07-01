@@ -1,9 +1,10 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { TeacherAssignment } from '../models/teacher-assignment.model';
+import { PaginatedResponse } from '../models/pagination.model';
 
 interface ProfesorGrupoResponse {
   id: number;
@@ -19,13 +20,34 @@ export class TeacherAssignmentsService {
   private readonly _assignments = signal<TeacherAssignment[]>([]);
   readonly assignments = this._assignments.asReadonly();
 
+  private readonly _totalElements = signal(0);
+  readonly totalElements = this._totalElements.asReadonly();
+
+  private readonly _totalPages = signal(0);
+  readonly totalPages = this._totalPages.asReadonly();
+
+  private readonly _currentPage = signal(0);
+  readonly currentPage = this._currentPage.asReadonly();
+
+  private readonly _pageSize = signal(20);
+  readonly pageSize = this._pageSize.asReadonly();
+
   constructor() {
-    this.loadAll();
+    this.loadPage(0);
   }
 
-  private loadAll(): void {
-    this.http.get<ProfesorGrupoResponse[]>(`${environment.apiUrl}/profesores-grupos`).subscribe({
-      next: (list) => this._assignments.set(list.map(toAssignment)),
+  loadPage(page: number, size?: number): void {
+    const s = size ?? this._pageSize();
+    this.http.get<PaginatedResponse<ProfesorGrupoResponse>>(`${environment.apiUrl}/profesores-grupos`, {
+      params: { page: String(page), size: String(s) },
+    }).subscribe({
+      next: (res) => {
+        this._assignments.set(res.content.map(toAssignment));
+        this._totalElements.set(res.totalElements);
+        this._totalPages.set(res.totalPages);
+        this._currentPage.set(res.currentPage);
+        this._pageSize.set(res.pageSize);
+      },
     });
   }
 
@@ -36,13 +58,13 @@ export class TeacherAssignmentsService {
       materiaId: assignment.subjectId,
     }).pipe(
       map(toAssignment),
-      tap((res) => this._assignments.update((list) => [...list, res])),
+      tap(() => this.loadPage(this._currentPage())),
     );
   }
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/profesores-grupos/${id}`).pipe(
-      tap(() => this._assignments.update((list) => list.filter((a) => a.id !== id))),
+      tap(() => this.loadPage(this._currentPage())),
     );
   }
 }

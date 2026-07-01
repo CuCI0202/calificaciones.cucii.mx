@@ -6,10 +6,11 @@ import { GroupsService } from '../../core/services/groups.service';
 import { ProgramsService } from '../../core/services/programs.service';
 import { CampusesService } from '../../core/services/campuses.service';
 import { Group } from '../../core/models/group.model';
+import { PaginationComponent } from '../../shared/components/pagination/pagination';
 
 @Component({
   selector: 'app-groups',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, PaginationComponent],
   templateUrl: './groups.html',
 })
 export class Groups {
@@ -21,6 +22,10 @@ export class Groups {
   private readonly confirm = inject(ConfirmService);
 
   readonly groups = this.groupsService.groups;
+  readonly totalElements = this.groupsService.totalElements;
+  readonly totalPages = this.groupsService.totalPages;
+  readonly currentPage = this.groupsService.currentPage;
+  readonly pageSize = this.groupsService.pageSize;
   readonly programs = this.programsService.programs;
   readonly campuses = this.campusesService.campuses;
   readonly filterDraft = signal('');
@@ -120,5 +125,13 @@ export class Groups {
 
   goToStudents(id: number): void {
     this.router.navigate(['/groups', id, 'students']);
+  }
+
+  onPageChange(page: number): void {
+    this.groupsService.loadPage(page);
+  }
+
+  onSizeChange(size: number): void {
+    this.groupsService.loadPage(0, size);
   }
 }

@@ -3,10 +3,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { CampusesService } from '../../core/services/campuses.service';
 import { Campus } from '../../core/models/campus.model';
+import { PaginationComponent } from '../../shared/components/pagination/pagination';
 
 @Component({
   selector: 'app-campuses',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, PaginationComponent],
   templateUrl: './campuses.html',
 })
 export class Campuses {
@@ -15,6 +16,10 @@ export class Campuses {
   private readonly confirm = inject(ConfirmService);
 
   readonly campuses = this.campusesService.campuses;
+  readonly totalElements = this.campusesService.totalElements;
+  readonly totalPages = this.campusesService.totalPages;
+  readonly currentPage = this.campusesService.currentPage;
+  readonly pageSize = this.campusesService.pageSize;
   readonly filterDraft = signal('');
   readonly filterQ = signal('');
   readonly editingId = signal<number | null>(null);
@@ -125,5 +130,13 @@ export class Campuses {
     this.confirm.confirm('¿Eliminar este plantel?').subscribe((ok) => {
       if (ok) this.campusesService.delete(id).subscribe();
     });
+  }
+
+  onPageChange(page: number): void {
+    this.campusesService.loadPage(page);
+  }
+
+  onSizeChange(size: number): void {
+    this.campusesService.loadPage(0, size);
   }
 }

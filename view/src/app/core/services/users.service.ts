@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { User, UsuarioResponse, UsuarioRequest } from '../models/user.model';
+import { PaginatedResponse } from '../models/pagination.model';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
@@ -12,19 +13,40 @@ export class UsersService {
   private readonly _users = signal<User[]>([]);
   readonly users = this._users.asReadonly();
 
+  private readonly _totalElements = signal(0);
+  readonly totalElements = this._totalElements.asReadonly();
+
+  private readonly _totalPages = signal(0);
+  readonly totalPages = this._totalPages.asReadonly();
+
+  private readonly _currentPage = signal(0);
+  readonly currentPage = this._currentPage.asReadonly();
+
+  private readonly _pageSize = signal(20);
+  readonly pageSize = this._pageSize.asReadonly();
+
   constructor() {
-    this.loadAll();
+    this.loadPage(0);
   }
 
-  private loadAll(): void {
-    this.http.get<UsuarioResponse[]>(`${environment.apiUrl}/usuarios`).subscribe({
-      next: (res) => this._users.set(res),
+  loadPage(page: number, size?: number): void {
+    const s = size ?? this._pageSize();
+    this.http.get<PaginatedResponse<UsuarioResponse>>(`${environment.apiUrl}/usuarios`, {
+      params: { page: String(page), size: String(s) },
+    }).subscribe({
+      next: (res) => {
+        this._users.set(res.content);
+        this._totalElements.set(res.totalElements);
+        this._totalPages.set(res.totalPages);
+        this._currentPage.set(res.currentPage);
+        this._pageSize.set(res.pageSize);
+      },
     });
   }
 
   add(data: UsuarioRequest): Observable<User> {
     return this.http.post<User>(`${environment.apiUrl}/usuarios`, data).pipe(
-      tap((res) => this._users.update((list) => [...list, res])),
+      tap(() => this.loadPage(this._currentPage())),
     );
   }
 
@@ -50,7 +72,7 @@ export class UsersService {
     return this.http.delete<void>(`${environment.apiUrl}/usuarios/${id}`, {
       params: { deactivate: true },
     }).pipe(
-      tap(() => this._users.update((list) => list.filter((u) => u.id !== id))),
+      tap(() => this.loadPage(this._currentPage())),
     );
   }
 

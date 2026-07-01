@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Program, Subject } from '../models/program.model';
+import { PaginatedResponse } from '../models/pagination.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProgramsService {
@@ -12,22 +13,43 @@ export class ProgramsService {
   private readonly _programs = signal<Program[]>([]);
   readonly programs = this._programs.asReadonly();
 
+  private readonly _totalElements = signal(0);
+  readonly totalElements = this._totalElements.asReadonly();
+
+  private readonly _totalPages = signal(0);
+  readonly totalPages = this._totalPages.asReadonly();
+
+  private readonly _currentPage = signal(0);
+  readonly currentPage = this._currentPage.asReadonly();
+
+  private readonly _pageSize = signal(20);
+  readonly pageSize = this._pageSize.asReadonly();
+
   constructor() {
-    this.loadAll();
+    this.loadPage(0);
   }
 
-  private loadAll(): void {
-    this.http.get<any[]>(`${environment.apiUrl}/planes-estudio/con-materias-count`).subscribe({
-      next: (list) => this._programs.set(list.map((p) => ({
-        id: p.id,
-        nombre: p.nombre,
-        grado: p.grado,
-        numeroRvoe: p.numeroRvoe,
-        fechaRvoe: p.fechaRvoe,
-        duracionCuatrimestres: p.duracionCuatrimestres,
-        cantidadMaterias: p.cantidadMaterias ?? 0,
-        materias: [],
-      }))),
+  loadPage(page: number, size?: number): void {
+    const s = size ?? this._pageSize();
+    this.http.get<PaginatedResponse<any>>(`${environment.apiUrl}/planes-estudio/con-materias-count`, {
+      params: { page: String(page), size: String(s) },
+    }).subscribe({
+      next: (res) => {
+        this._programs.set(res.content.map((p: any) => ({
+          id: p.id,
+          nombre: p.nombre,
+          grado: p.grado,
+          numeroRvoe: p.numeroRvoe,
+          fechaRvoe: p.fechaRvoe,
+          duracionCuatrimestres: p.duracionCuatrimestres,
+          cantidadMaterias: p.cantidadMaterias ?? 0,
+          materias: [],
+        })));
+        this._totalElements.set(res.totalElements);
+        this._totalPages.set(res.totalPages);
+        this._currentPage.set(res.currentPage);
+        this._pageSize.set(res.pageSize);
+      },
     });
   }
 
@@ -47,7 +69,7 @@ export class ProgramsService {
     duracionCuatrimestres: number;
   }): Observable<Program> {
     return this.http.post<any>(`${environment.apiUrl}/planes-estudio`, data).pipe(
-      tap((res) => this._programs.update((list) => [...list, { ...res, materias: [], cantidadMaterias: 0 }])),
+      tap(() => this.loadPage(this._currentPage())),
       map((res) => ({ ...res, materias: [], cantidadMaterias: 0 })),
     );
   }
@@ -75,7 +97,7 @@ export class ProgramsService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/planes-estudio/${id}`).pipe(
-      tap(() => this._programs.update((list) => list.filter((p) => p.id !== id))),
+      tap(() => this.loadPage(this._currentPage())),
     );
   }
 

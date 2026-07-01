@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { GroupStudent } from '../models/group-student.model';
+import { PaginatedResponse } from '../models/pagination.model';
 
 interface AlumnoGrupoResponse {
   id: number;
@@ -18,19 +19,34 @@ export class GroupStudentsService {
   private readonly _assignments = signal<GroupStudent[]>([]);
   readonly assignments = this._assignments.asReadonly();
 
+  private readonly _totalElements = signal(0);
+  readonly totalElements = this._totalElements.asReadonly();
+
+  private readonly _totalPages = signal(0);
+  readonly totalPages = this._totalPages.asReadonly();
+
+  private readonly _currentPage = signal(0);
+  readonly currentPage = this._currentPage.asReadonly();
+
+  private readonly _pageSize = signal(20);
+  readonly pageSize = this._pageSize.asReadonly();
+
   constructor() {
-    this.loadAll();
+    this.loadPage(0);
   }
 
-  private loadAll(): void {
-    this.http.get<AlumnoGrupoResponse[]>(`${environment.apiUrl}/alumnos-grupos`).subscribe({
-      next: (list) => this._assignments.set(list.map(toGroupStudent)),
-    });
-  }
-
-  private refresh(): void {
-    this.http.get<AlumnoGrupoResponse[]>(`${environment.apiUrl}/alumnos-grupos`).subscribe({
-      next: (list) => this._assignments.set(list.map(toGroupStudent)),
+  loadPage(page: number, size?: number): void {
+    const s = size ?? this._pageSize();
+    this.http.get<PaginatedResponse<AlumnoGrupoResponse>>(`${environment.apiUrl}/alumnos-grupos`, {
+      params: { page: String(page), size: String(s) },
+    }).subscribe({
+      next: (res) => {
+        this._assignments.set(res.content.map(toGroupStudent));
+        this._totalElements.set(res.totalElements);
+        this._totalPages.set(res.totalPages);
+        this._currentPage.set(res.currentPage);
+        this._pageSize.set(res.pageSize);
+      },
     });
   }
 
@@ -44,7 +60,7 @@ export class GroupStudentsService {
       grupoId: groupId,
     }).pipe(
       map(toGroupStudent),
-      tap((res) => this._assignments.update((list) => [...list, res])),
+      tap(() => this.loadPage(this._currentPage())),
     );
   }
 
@@ -55,11 +71,7 @@ export class GroupStudentsService {
     if (!record?.id) return of(void 0);
 
     return this.http.delete<void>(`${environment.apiUrl}/alumnos-grupos/${record.id}`).pipe(
-      tap(() =>
-        this._assignments.update((list) =>
-          list.filter((a) => !(a.groupId === groupId && a.studentId === studentId))
-        )
-      ),
+      tap(() => this.loadPage(this._currentPage())),
     );
   }
 }

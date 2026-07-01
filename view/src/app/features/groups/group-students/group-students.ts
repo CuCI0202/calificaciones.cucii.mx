@@ -4,10 +4,11 @@ import { GroupsService } from '../../../core/services/groups.service';
 import { StudentsService } from '../../../core/services/students.service';
 import { GroupStudentsService } from '../../../core/services/group-students.service';
 import { Student, fullName } from '../../../core/models/student.model';
+import { PaginationComponent } from '../../../shared/components/pagination/pagination';
 
 @Component({
   selector: 'app-group-students',
-  imports: [],
+  imports: [PaginationComponent],
   templateUrl: './group-students.html',
 })
 export class GroupStudents {
@@ -25,6 +26,11 @@ export class GroupStudents {
 
   readonly filterDraft = signal('');
   readonly filterQ = signal('');
+
+  readonly totalElements = this.groupStudentsService.totalElements;
+  readonly totalPages = this.groupStudentsService.totalPages;
+  readonly currentPage = this.groupStudentsService.currentPage;
+  readonly pageSize = this.groupStudentsService.pageSize;
 
   readonly assignedStudents = computed((): Student[] => {
     const assignedIds = new Set(
@@ -73,5 +79,13 @@ export class GroupStudents {
 
   goBack(): void {
     this.router.navigate(['/groups']);
+  }
+
+  onPageChange(page: number): void {
+    this.groupStudentsService.loadPage(page);
+  }
+
+  onSizeChange(size: number): void {
+    this.groupStudentsService.loadPage(0, size);
   }
 }

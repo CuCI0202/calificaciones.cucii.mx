@@ -3,12 +3,13 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { StudentsService } from '../../core/services/students.service';
 import { Student, fullName, STATUS_MAP } from '../../core/models/student.model';
+import { PaginationComponent } from '../../shared/components/pagination/pagination';
 
 const CURP_PATTERN = /^[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]\d$/;
 
 @Component({
   selector: 'app-students',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, PaginationComponent],
   templateUrl: './students.html',
 })
 export class Students {
@@ -17,6 +18,10 @@ export class Students {
   private readonly confirm = inject(ConfirmService);
 
   readonly students = this.studentsService.students;
+  readonly totalElements = this.studentsService.totalElements;
+  readonly totalPages = this.studentsService.totalPages;
+  readonly currentPage = this.studentsService.currentPage;
+  readonly pageSize = this.studentsService.pageSize;
   readonly STATUS_MAP = STATUS_MAP;
   readonly filterDraft = signal('');
   readonly filterQ = signal('');
@@ -115,5 +120,13 @@ export class Students {
     this.confirm.confirm('¿Eliminar este alumno?').subscribe((ok) => {
       if (ok) this.studentsService.delete(id).subscribe();
     });
+  }
+
+  onPageChange(page: number): void {
+    this.studentsService.loadPage(page);
+  }
+
+  onSizeChange(size: number): void {
+    this.studentsService.loadPage(0, size);
   }
 }

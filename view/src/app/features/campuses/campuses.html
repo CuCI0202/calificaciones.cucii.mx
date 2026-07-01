@@ -4,7 +4,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
       <div>
         <h1 class="text-2xl font-bold text-brand-dark">Gestión de Planteles</h1>
-        <p class="text-gray-500 text-sm">{{ campuses().length }} plantel(es) registrado(s)</p>
+        <p class="text-gray-500 text-sm">{{ totalElements() }} plantel(es) registrado(s)</p>
       </div>
       <button (click)="toggleForm()"
         class="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm">
@@ -177,6 +177,14 @@
           </tbody>
         </table>
       </div>
+      <app-pagination
+        [totalElements]="totalElements()"
+        [totalPages]="totalPages()"
+        [currentPage]="currentPage()"
+        [pageSize]="pageSize()"
+        (pageChange)="onPageChange($event)"
+        (sizeChange)="onSizeChange($event)"
+      />
     </div>
   </div>
 </div>
