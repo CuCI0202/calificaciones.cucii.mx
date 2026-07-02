@@ -3,12 +3,11 @@ package mx.cucii.school.platform.controller;
 import lombok.RequiredArgsConstructor;
 import mx.cucii.school.platform.dto.AlumnoGrupoRequest;
 import mx.cucii.school.platform.dto.AlumnoGrupoResponse;
+import mx.cucii.school.platform.dto.PageResponse;
 import mx.cucii.school.platform.service.AlumnoGrupoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import mx.cucii.school.platform.dto.PageResponse;
 
 @RestController
 @RequestMapping("/alumnos-grupos")
@@ -20,8 +19,13 @@ public class AlumnoGrupoController {
     @GetMapping
     public ResponseEntity<PageResponse<AlumnoGrupoResponse>> getAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(alumnoGrupoService.findAll(page, size));
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) Integer alumnoId,
+            @RequestParam(required = false) Integer grupoId,
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        return ResponseEntity.ok(alumnoGrupoService.findAll(page, size, alumnoId, grupoId, isActive, sortBy, sortDir));
     }
 
     @GetMapping("/{id}")
@@ -36,7 +40,7 @@ public class AlumnoGrupoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<AlumnoGrupoResponse> update(@PathVariable Integer id,
-                                                       @RequestBody AlumnoGrupoRequest request) {
+                                                      @RequestBody AlumnoGrupoRequest request) {
         return ResponseEntity.ok(alumnoGrupoService.update(id, request));
     }
 

@@ -21,16 +21,18 @@ public class PlantelService {
 
     private final PlantelJdbcRepository repository;
 
-    public PageResponse<PlantelResponse> findAll(int page, int size) {
+    public PageResponse<PlantelResponse> findAll(int page, int size, String search,
+                                                 String estado, String pais, Boolean isActive,
+                                                 String sortBy, String sortDir) {
         if (page < 0) throw new IllegalArgumentException("La página no puede ser negativa");
         if (size < 1) throw new IllegalArgumentException("El tamaño de página debe ser al menos 1");
         if (size > 100) throw new IllegalArgumentException("El tamaño de página no puede ser mayor a 100");
 
-        long totalElements = repository.countAll();
+        long totalElements = repository.countFiltered(search, estado, pais, isActive);
         int totalPages = (int) Math.ceil((double) totalElements / size);
         int offset = page * size;
 
-        List<PlantelResponse> content = repository.findAll(size, offset).stream()
+        List<PlantelResponse> content = repository.findAll(size, offset, search, estado, pais, isActive, sortBy, sortDir).stream()
                 .map(this::toResponse)
                 .toList();
 

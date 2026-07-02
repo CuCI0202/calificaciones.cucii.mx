@@ -7,8 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class PlantelJdbcRepository {
@@ -34,6 +36,11 @@ public class PlantelJdbcRepository {
                 rs.getObject("updated_at", OffsetDateTime.class)
         );
 
+    private static final Set<String> ALLOWED_SORT_COLUMNS = Set.of(
+            "id", "nombre_oficial", "nombre_corto", "ciudad_municipio", "estado",
+            "pais", "is_active", "created_at", "updated_at"
+    );
+
     private final JdbcTemplate jdbcTemplate;
 
     public PlantelJdbcRepository(JdbcTemplate jdbcTemplate) {
@@ -53,6 +60,65 @@ public class PlantelJdbcRepository {
 
     public long countAll() {
         Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM planteles", Long.class);
+        return count != null ? count : 0;
+    }
+
+    public List<Plantel> findAll(int limit, int offset, String search, String estado,
+                                 String pais, Boolean isActive, String sortBy, String sortDir) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM planteles WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (search != null && !search.isBlank()) {
+            sql.append(" AND (nombre_oficial ILIKE ? OR nombre_corto ILIKE ? OR ciudad_municipio ILIKE ? OR estado ILIKE ?)");
+            String pattern = "%" + search + "%";
+            for (int i = 0; i < 4; i++) params.add(pattern);
+        }
+        if (estado != null && !estado.isBlank()) {
+            sql.append(" AND estado = ?");
+            params.add(estado);
+        }
+        if (pais != null && !pais.isBlank()) {
+            sql.append(" AND pais = ?");
+            params.add(pais);
+        }
+        if (isActive != null) {
+            sql.append(" AND is_active = ?");
+            params.add(isActive);
+        }
+
+        String col = ALLOWED_SORT_COLUMNS.contains(sortBy) ? sortBy : "id";
+        String dir = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
+        sql.append(" ORDER BY ").append(col).append(" ").append(dir);
+        sql.append(" LIMIT ? OFFSET ?");
+        params.add(limit);
+        params.add(offset);
+
+        return jdbcTemplate.query(sql.toString(), PLANTEL_MAPPER, params.toArray());
+    }
+
+    public long countFiltered(String search, String estado, String pais, Boolean isActive) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM planteles WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (search != null && !search.isBlank()) {
+            sql.append(" AND (nombre_oficial ILIKE ? OR nombre_corto ILIKE ? OR ciudad_municipio ILIKE ? OR estado ILIKE ?)");
+            String pattern = "%" + search + "%";
+            for (int i = 0; i < 4; i++) params.add(pattern);
+        }
+        if (estado != null && !estado.isBlank()) {
+            sql.append(" AND estado = ?");
+            params.add(estado);
+        }
+        if (pais != null && !pais.isBlank()) {
+            sql.append(" AND pais = ?");
+            params.add(pais);
+        }
+        if (isActive != null) {
+            sql.append(" AND is_active = ?");
+            params.add(isActive);
+        }
+
+        Long count = jdbcTemplate.queryForObject(sql.toString(), Long.class, params.toArray());
         return count != null ? count : 0;
     }
 

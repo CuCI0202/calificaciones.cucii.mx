@@ -22,16 +22,18 @@ public class ProfesorGrupoService {
     private final GrupoJdbcRepository grupoRepository;
     private final MateriaJdbcRepository materiaRepository;
 
-    public PageResponse<ProfesorGrupoResponse> findAll(int page, int size) {
+    public PageResponse<ProfesorGrupoResponse> findAll(int page, int size, Integer usuarioId,
+                                                       Integer grupoId, Integer materiaId,
+                                                       Boolean isActive, String sortBy, String sortDir) {
         if (page < 0) throw new IllegalArgumentException("La página no puede ser negativa");
         if (size < 1) throw new IllegalArgumentException("El tamaño de página debe ser al menos 1");
         if (size > 100) throw new IllegalArgumentException("El tamaño de página no puede ser mayor a 100");
 
-        long totalElements = repository.countAll();
+        long totalElements = repository.countFiltered(usuarioId, grupoId, materiaId, isActive);
         int totalPages = (int) Math.ceil((double) totalElements / size);
         int offset = page * size;
 
-        List<ProfesorGrupoResponse> content = repository.findAll(size, offset).stream()
+        List<ProfesorGrupoResponse> content = repository.findAll(size, offset, usuarioId, grupoId, materiaId, isActive, sortBy, sortDir).stream()
                 .map(this::toResponse)
                 .toList();
 

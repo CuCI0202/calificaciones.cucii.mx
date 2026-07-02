@@ -6,8 +6,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class UsuarioJdbcRepository {
@@ -25,6 +27,11 @@ public class UsuarioJdbcRepository {
                 rs.getObject("created_at", OffsetDateTime.class),
                 rs.getObject("updated_at", OffsetDateTime.class)
         );
+
+    private static final Set<String> ALLOWED_SORT_COLUMNS = Set.of(
+            "id", "nombre", "apellido", "email", "rol_id",
+            "plantel_id", "is_active", "created_at", "updated_at"
+    );
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -45,6 +52,70 @@ public class UsuarioJdbcRepository {
 
     public long countAll() {
         Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM usuarios", Long.class);
+        return count != null ? count : 0;
+    }
+
+    public List<Usuario> findAll(int limit, int offset, String search, Integer rolId,
+                                 Integer plantelId, Boolean isActive,
+                                 String sortBy, String sortDir) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM usuarios WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (search != null && !search.isBlank()) {
+            sql.append(" AND (nombre ILIKE ? OR apellido ILIKE ? OR email ILIKE ?)");
+            String pattern = "%" + search + "%";
+            params.add(pattern);
+            params.add(pattern);
+            params.add(pattern);
+        }
+        if (rolId != null) {
+            sql.append(" AND rol_id = ?");
+            params.add(rolId);
+        }
+        if (plantelId != null) {
+            sql.append(" AND plantel_id = ?");
+            params.add(plantelId);
+        }
+        if (isActive != null) {
+            sql.append(" AND is_active = ?");
+            params.add(isActive);
+        }
+
+        String col = ALLOWED_SORT_COLUMNS.contains(sortBy) ? sortBy : "id";
+        String dir = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
+        sql.append(" ORDER BY ").append(col).append(" ").append(dir);
+        sql.append(" LIMIT ? OFFSET ?");
+        params.add(limit);
+        params.add(offset);
+
+        return jdbcTemplate.query(sql.toString(), USUARIO_MAPPER, params.toArray());
+    }
+
+    public long countFiltered(String search, Integer rolId, Integer plantelId, Boolean isActive) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM usuarios WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (search != null && !search.isBlank()) {
+            sql.append(" AND (nombre ILIKE ? OR apellido ILIKE ? OR email ILIKE ?)");
+            String pattern = "%" + search + "%";
+            params.add(pattern);
+            params.add(pattern);
+            params.add(pattern);
+        }
+        if (rolId != null) {
+            sql.append(" AND rol_id = ?");
+            params.add(rolId);
+        }
+        if (plantelId != null) {
+            sql.append(" AND plantel_id = ?");
+            params.add(plantelId);
+        }
+        if (isActive != null) {
+            sql.append(" AND is_active = ?");
+            params.add(isActive);
+        }
+
+        Long count = jdbcTemplate.queryForObject(sql.toString(), Long.class, params.toArray());
         return count != null ? count : 0;
     }
 

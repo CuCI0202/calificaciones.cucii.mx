@@ -1,14 +1,13 @@
 package mx.cucii.school.platform.controller;
 
 import lombok.RequiredArgsConstructor;
+import mx.cucii.school.platform.dto.PageResponse;
 import mx.cucii.school.platform.dto.PlantelRequest;
 import mx.cucii.school.platform.dto.PlantelResponse;
 import mx.cucii.school.platform.service.PlantelService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import mx.cucii.school.platform.dto.PageResponse;
 
 @RestController
 @RequestMapping("/planteles")
@@ -20,8 +19,14 @@ public class PlantelController {
     @GetMapping
     public ResponseEntity<PageResponse<PlantelResponse>> getAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(plantelService.findAll(page, size));
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) String pais,
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        return ResponseEntity.ok(plantelService.findAll(page, size, search, estado, pais, isActive, sortBy, sortDir));
     }
 
     @GetMapping("/{id}")

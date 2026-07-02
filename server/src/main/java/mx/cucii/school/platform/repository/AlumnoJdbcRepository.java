@@ -6,8 +6,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class AlumnoJdbcRepository {
@@ -25,6 +27,11 @@ public class AlumnoJdbcRepository {
                 rs.getObject("created_at", OffsetDateTime.class),
                 rs.getObject("updated_at", OffsetDateTime.class)
         );
+
+    private static final Set<String> ALLOWED_SORT_COLUMNS = Set.of(
+            "id", "nombres", "primer_apellido", "segundo_apellido", "curp",
+            "correo_institucional", "estatus_id", "is_active", "created_at", "updated_at"
+    );
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -45,6 +52,75 @@ public class AlumnoJdbcRepository {
 
     public long countAll() {
         Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM alumnos", Long.class);
+        return count != null ? count : 0;
+    }
+
+    public List<Alumno> findAll(int limit, int offset, String search, String curp,
+                                String correoInstitucional, Integer estatusId,
+                                Boolean isActive, String sortBy, String sortDir) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM alumnos WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (search != null && !search.isBlank()) {
+            sql.append(" AND (nombres ILIKE ? OR primer_apellido ILIKE ? OR segundo_apellido ILIKE ? OR curp ILIKE ? OR correo_institucional ILIKE ?)");
+            String pattern = "%" + search + "%";
+            for (int i = 0; i < 5; i++) params.add(pattern);
+        }
+        if (curp != null && !curp.isBlank()) {
+            sql.append(" AND curp = ?");
+            params.add(curp);
+        }
+        if (correoInstitucional != null && !correoInstitucional.isBlank()) {
+            sql.append(" AND correo_institucional = ?");
+            params.add(correoInstitucional);
+        }
+        if (estatusId != null) {
+            sql.append(" AND estatus_id = ?");
+            params.add(estatusId);
+        }
+        if (isActive != null) {
+            sql.append(" AND is_active = ?");
+            params.add(isActive);
+        }
+
+        String col = ALLOWED_SORT_COLUMNS.contains(sortBy) ? sortBy : "id";
+        String dir = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
+        sql.append(" ORDER BY ").append(col).append(" ").append(dir);
+        sql.append(" LIMIT ? OFFSET ?");
+        params.add(limit);
+        params.add(offset);
+
+        return jdbcTemplate.query(sql.toString(), ALUMNO_MAPPER, params.toArray());
+    }
+
+    public long countFiltered(String search, String curp, String correoInstitucional,
+                              Integer estatusId, Boolean isActive) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM alumnos WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (search != null && !search.isBlank()) {
+            sql.append(" AND (nombres ILIKE ? OR primer_apellido ILIKE ? OR segundo_apellido ILIKE ? OR curp ILIKE ? OR correo_institucional ILIKE ?)");
+            String pattern = "%" + search + "%";
+            for (int i = 0; i < 5; i++) params.add(pattern);
+        }
+        if (curp != null && !curp.isBlank()) {
+            sql.append(" AND curp = ?");
+            params.add(curp);
+        }
+        if (correoInstitucional != null && !correoInstitucional.isBlank()) {
+            sql.append(" AND correo_institucional = ?");
+            params.add(correoInstitucional);
+        }
+        if (estatusId != null) {
+            sql.append(" AND estatus_id = ?");
+            params.add(estatusId);
+        }
+        if (isActive != null) {
+            sql.append(" AND is_active = ?");
+            params.add(isActive);
+        }
+
+        Long count = jdbcTemplate.queryForObject(sql.toString(), Long.class, params.toArray());
         return count != null ? count : 0;
     }
 

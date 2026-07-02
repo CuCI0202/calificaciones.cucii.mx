@@ -24,29 +24,25 @@ public class CalificacionService {
     private final MateriaJdbcRepository materiaRepository;
     private final UsuarioJdbcRepository usuarioRepository;
 
-    public PageResponse<CalificacionResponse> findAll(int page, int size) {
+    public PageResponse<CalificacionResponse> findAll(int page, int size, Integer alumnoId,
+                                                      Integer grupoId, Integer materiaId,
+                                                      BigDecimal calificacionMin,
+                                                      BigDecimal calificacionMax,
+                                                      Integer registradoPor, Boolean isActive,
+                                                      String sortBy, String sortDir) {
         if (page < 0) throw new IllegalArgumentException("La página no puede ser negativa");
         if (size < 1) throw new IllegalArgumentException("El tamaño de página debe ser al menos 1");
         if (size > 100) throw new IllegalArgumentException("El tamaño de página no puede ser mayor a 100");
 
-        long totalElements = repository.countAll();
+        long totalElements = repository.countFiltered(alumnoId, grupoId, materiaId, calificacionMin, calificacionMax, registradoPor, isActive);
         int totalPages = (int) Math.ceil((double) totalElements / size);
         int offset = page * size;
 
-        List<CalificacionResponse> content = repository.findAll(size, offset).stream()
+        List<CalificacionResponse> content = repository.findAll(size, offset, alumnoId, grupoId, materiaId, calificacionMin, calificacionMax, registradoPor, isActive, sortBy, sortDir).stream()
                 .map(this::toResponse)
                 .toList();
 
         return new PageResponse<>(content, totalElements, totalPages, page, size);
-    }
-
-    public List<CalificacionResponse> findByAlumnoId(Integer alumnoId) {
-        if (alumnoRepository.findById(alumnoId).isEmpty()) {
-            throw new ResourceNotFoundException("Alumno no encontrado: " + alumnoId);
-        }
-        return repository.findByAlumnoId(alumnoId).stream()
-                .map(this::toResponse)
-                .toList();
     }
 
     public CalificacionResponse findById(Integer id) {

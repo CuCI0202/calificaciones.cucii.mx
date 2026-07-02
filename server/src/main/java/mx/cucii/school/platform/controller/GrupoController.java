@@ -5,13 +5,13 @@ import mx.cucii.school.platform.dto.CantidadCuatrimestresResponse;
 import mx.cucii.school.platform.dto.GrupoRequest;
 import mx.cucii.school.platform.dto.GrupoResponse;
 import mx.cucii.school.platform.dto.MateriaResponse;
+import mx.cucii.school.platform.dto.PageResponse;
 import mx.cucii.school.platform.service.GrupoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import mx.cucii.school.platform.dto.PageResponse;
 
 @RestController
 @RequestMapping("/grupos")
@@ -23,8 +23,14 @@ public class GrupoController {
     @GetMapping
     public ResponseEntity<PageResponse<GrupoResponse>> getAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(grupoService.findAll(page, size));
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer planEstudioId,
+            @RequestParam(required = false) Integer plantelId,
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        return ResponseEntity.ok(grupoService.findAll(page, size, search, planEstudioId, plantelId, isActive, sortBy, sortDir));
     }
 
     @GetMapping("/{id}")

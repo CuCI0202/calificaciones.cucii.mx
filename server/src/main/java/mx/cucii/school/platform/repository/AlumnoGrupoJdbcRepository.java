@@ -6,8 +6,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class AlumnoGrupoJdbcRepository {
@@ -20,6 +22,10 @@ public class AlumnoGrupoJdbcRepository {
                 rs.getBoolean("is_active"),
                 rs.getObject("created_at", OffsetDateTime.class)
         );
+
+    private static final Set<String> ALLOWED_SORT_COLUMNS = Set.of(
+            "id", "alumno_id", "grupo_id", "is_active", "created_at"
+    );
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -40,6 +46,55 @@ public class AlumnoGrupoJdbcRepository {
 
     public long countAll() {
         Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM alumnos_grupos", Long.class);
+        return count != null ? count : 0;
+    }
+
+    public List<AlumnoGrupo> findAll(int limit, int offset, Integer alumnoId, Integer grupoId,
+                                     Boolean isActive, String sortBy, String sortDir) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM alumnos_grupos WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (alumnoId != null) {
+            sql.append(" AND alumno_id = ?");
+            params.add(alumnoId);
+        }
+        if (grupoId != null) {
+            sql.append(" AND grupo_id = ?");
+            params.add(grupoId);
+        }
+        if (isActive != null) {
+            sql.append(" AND is_active = ?");
+            params.add(isActive);
+        }
+
+        String col = ALLOWED_SORT_COLUMNS.contains(sortBy) ? sortBy : "id";
+        String dir = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
+        sql.append(" ORDER BY ").append(col).append(" ").append(dir);
+        sql.append(" LIMIT ? OFFSET ?");
+        params.add(limit);
+        params.add(offset);
+
+        return jdbcTemplate.query(sql.toString(), MAPPER, params.toArray());
+    }
+
+    public long countFiltered(Integer alumnoId, Integer grupoId, Boolean isActive) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM alumnos_grupos WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (alumnoId != null) {
+            sql.append(" AND alumno_id = ?");
+            params.add(alumnoId);
+        }
+        if (grupoId != null) {
+            sql.append(" AND grupo_id = ?");
+            params.add(grupoId);
+        }
+        if (isActive != null) {
+            sql.append(" AND is_active = ?");
+            params.add(isActive);
+        }
+
+        Long count = jdbcTemplate.queryForObject(sql.toString(), Long.class, params.toArray());
         return count != null ? count : 0;
     }
 

@@ -24,16 +24,18 @@ public class PlanEstudioService {
 
     private final PlanEstudioJdbcRepository repository;
 
-    public PageResponse<PlanEstudioResponse> findAll(int page, int size) {
+    public PageResponse<PlanEstudioResponse> findAll(int page, int size, String search,
+                                                     String grado, Boolean isActive,
+                                                     String sortBy, String sortDir) {
         if (page < 0) throw new IllegalArgumentException("La página no puede ser negativa");
         if (size < 1) throw new IllegalArgumentException("El tamaño de página debe ser al menos 1");
         if (size > 100) throw new IllegalArgumentException("El tamaño de página no puede ser mayor a 100");
 
-        long totalElements = repository.countAll();
+        long totalElements = repository.countFiltered(search, grado, isActive);
         int totalPages = (int) Math.ceil((double) totalElements / size);
         int offset = page * size;
 
-        List<PlanEstudioResponse> content = repository.findAll(size, offset).stream()
+        List<PlanEstudioResponse> content = repository.findAll(size, offset, search, grado, isActive, sortBy, sortDir).stream()
                 .map(this::toResponse)
                 .toList();
 
@@ -54,16 +56,17 @@ public class PlanEstudioService {
         return result;
     }
 
-    public PageResponse<PlanEstudioConMateriasCountResponse> findAllWithMateriasCount(int page, int size) {
+    public PageResponse<PlanEstudioConMateriasCountResponse> findAllWithMateriasCount(int page, int size,
+            String search, String grado, Boolean isActive, String sortBy, String sortDir) {
         if (page < 0) throw new IllegalArgumentException("La página no puede ser negativa");
         if (size < 1) throw new IllegalArgumentException("El tamaño de página debe ser al menos 1");
         if (size > 100) throw new IllegalArgumentException("El tamaño de página no puede ser mayor a 100");
 
-        long totalElements = repository.countAllWithMateriasCount();
+        long totalElements = repository.countAllWithMateriasCountFiltered(search, grado, isActive);
         int totalPages = (int) Math.ceil((double) totalElements / size);
         int offset = page * size;
 
-        List<PlanEstudioConMateriasCountResponse> content = repository.findAllWithMateriasCount(size, offset);
+        List<PlanEstudioConMateriasCountResponse> content = repository.findAllWithMateriasCount(size, offset, search, grado, isActive, sortBy, sortDir);
 
         return new PageResponse<>(content, totalElements, totalPages, page, size);
     }

@@ -7,8 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class CalificacionJdbcRepository {
@@ -25,6 +27,11 @@ public class CalificacionJdbcRepository {
                 rs.getObject("created_at", OffsetDateTime.class),
                 rs.getObject("updated_at", OffsetDateTime.class)
         );
+
+    private static final Set<String> ALLOWED_SORT_COLUMNS = Set.of(
+            "id", "alumno_id", "grupo_id", "materia_id", "calificacion",
+            "registrado_por", "is_active", "created_at", "updated_at"
+    );
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -45,6 +52,91 @@ public class CalificacionJdbcRepository {
 
     public long countAll() {
         Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM calificaciones", Long.class);
+        return count != null ? count : 0;
+    }
+
+    public List<Calificacion> findAll(int limit, int offset, Integer alumnoId, Integer grupoId,
+                                      Integer materiaId, BigDecimal calificacionMin,
+                                      BigDecimal calificacionMax, Integer registradoPor,
+                                      Boolean isActive, String sortBy, String sortDir) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM calificaciones WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (alumnoId != null) {
+            sql.append(" AND alumno_id = ?");
+            params.add(alumnoId);
+        }
+        if (grupoId != null) {
+            sql.append(" AND grupo_id = ?");
+            params.add(grupoId);
+        }
+        if (materiaId != null) {
+            sql.append(" AND materia_id = ?");
+            params.add(materiaId);
+        }
+        if (calificacionMin != null) {
+            sql.append(" AND calificacion >= ?");
+            params.add(calificacionMin);
+        }
+        if (calificacionMax != null) {
+            sql.append(" AND calificacion <= ?");
+            params.add(calificacionMax);
+        }
+        if (registradoPor != null) {
+            sql.append(" AND registrado_por = ?");
+            params.add(registradoPor);
+        }
+        if (isActive != null) {
+            sql.append(" AND is_active = ?");
+            params.add(isActive);
+        }
+
+        String col = ALLOWED_SORT_COLUMNS.contains(sortBy) ? sortBy : "id";
+        String dir = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
+        sql.append(" ORDER BY ").append(col).append(" ").append(dir);
+        sql.append(" LIMIT ? OFFSET ?");
+        params.add(limit);
+        params.add(offset);
+
+        return jdbcTemplate.query(sql.toString(), MAPPER, params.toArray());
+    }
+
+    public long countFiltered(Integer alumnoId, Integer grupoId, Integer materiaId,
+                              BigDecimal calificacionMin, BigDecimal calificacionMax,
+                              Integer registradoPor, Boolean isActive) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM calificaciones WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (alumnoId != null) {
+            sql.append(" AND alumno_id = ?");
+            params.add(alumnoId);
+        }
+        if (grupoId != null) {
+            sql.append(" AND grupo_id = ?");
+            params.add(grupoId);
+        }
+        if (materiaId != null) {
+            sql.append(" AND materia_id = ?");
+            params.add(materiaId);
+        }
+        if (calificacionMin != null) {
+            sql.append(" AND calificacion >= ?");
+            params.add(calificacionMin);
+        }
+        if (calificacionMax != null) {
+            sql.append(" AND calificacion <= ?");
+            params.add(calificacionMax);
+        }
+        if (registradoPor != null) {
+            sql.append(" AND registrado_por = ?");
+            params.add(registradoPor);
+        }
+        if (isActive != null) {
+            sql.append(" AND is_active = ?");
+            params.add(isActive);
+        }
+
+        Long count = jdbcTemplate.queryForObject(sql.toString(), Long.class, params.toArray());
         return count != null ? count : 0;
     }
 

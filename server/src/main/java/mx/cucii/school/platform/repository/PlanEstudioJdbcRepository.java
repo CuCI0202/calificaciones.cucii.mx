@@ -16,6 +16,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class PlanEstudioJdbcRepository {
@@ -46,6 +47,11 @@ public class PlanEstudioJdbcRepository {
                 rs.getObject("updated_at", OffsetDateTime.class)
         );
 
+    private static final Set<String> ALLOWED_SORT_COLUMNS = Set.of(
+            "id", "nombre", "grado", "numero_rvoe", "fecha_rvoe",
+            "duracion_cuatrimestres", "is_active", "created_at", "updated_at"
+    );
+
     private final JdbcTemplate jdbcTemplate;
 
     public PlanEstudioJdbcRepository(JdbcTemplate jdbcTemplate) {
@@ -65,6 +71,59 @@ public class PlanEstudioJdbcRepository {
 
     public long countAll() {
         Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM planes_estudio", Long.class);
+        return count != null ? count : 0;
+    }
+
+    public List<PlanEstudio> findAll(int limit, int offset, String search, String grado,
+                                     Boolean isActive, String sortBy, String sortDir) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM planes_estudio WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (search != null && !search.isBlank()) {
+            sql.append(" AND (nombre ILIKE ? OR numero_rvoe ILIKE ?)");
+            String pattern = "%" + search + "%";
+            params.add(pattern);
+            params.add(pattern);
+        }
+        if (grado != null && !grado.isBlank()) {
+            sql.append(" AND grado = ?");
+            params.add(grado);
+        }
+        if (isActive != null) {
+            sql.append(" AND is_active = ?");
+            params.add(isActive);
+        }
+
+        String col = ALLOWED_SORT_COLUMNS.contains(sortBy) ? sortBy : "id";
+        String dir = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
+        sql.append(" ORDER BY ").append(col).append(" ").append(dir);
+        sql.append(" LIMIT ? OFFSET ?");
+        params.add(limit);
+        params.add(offset);
+
+        return jdbcTemplate.query(sql.toString(), PLAN_MAPPER, params.toArray());
+    }
+
+    public long countFiltered(String search, String grado, Boolean isActive) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM planes_estudio WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (search != null && !search.isBlank()) {
+            sql.append(" AND (nombre ILIKE ? OR numero_rvoe ILIKE ?)");
+            String pattern = "%" + search + "%";
+            params.add(pattern);
+            params.add(pattern);
+        }
+        if (grado != null && !grado.isBlank()) {
+            sql.append(" AND grado = ?");
+            params.add(grado);
+        }
+        if (isActive != null) {
+            sql.append(" AND is_active = ?");
+            params.add(isActive);
+        }
+
+        Long count = jdbcTemplate.queryForObject(sql.toString(), Long.class, params.toArray());
         return count != null ? count : 0;
     }
 
@@ -225,6 +284,43 @@ public class PlanEstudioJdbcRepository {
         return jdbcTemplate.query(sql, PLAN_CON_MATERIAS_COUNT_MAPPER, limit, offset);
     }
 
+    public List<PlanEstudioConMateriasCountResponse> findAllWithMateriasCount(int limit, int offset,
+            String search, String grado, Boolean isActive, String sortBy, String sortDir) {
+        StringBuilder sql = new StringBuilder("""
+            SELECT pe.*,
+                   COUNT(m.id) AS cantidad_materias
+            FROM planes_estudio pe
+            LEFT JOIN materias m ON m.plan_estudio_id = pe.id AND m.is_active = true
+            WHERE 1=1
+            """);
+        List<Object> params = new ArrayList<>();
+
+        if (search != null && !search.isBlank()) {
+            sql.append(" AND (pe.nombre ILIKE ? OR pe.numero_rvoe ILIKE ?)");
+            String pattern = "%" + search + "%";
+            params.add(pattern);
+            params.add(pattern);
+        }
+        if (grado != null && !grado.isBlank()) {
+            sql.append(" AND pe.grado = ?");
+            params.add(grado);
+        }
+        if (isActive != null) {
+            sql.append(" AND pe.is_active = ?");
+            params.add(isActive);
+        }
+
+        String col = ALLOWED_SORT_COLUMNS.contains(sortBy) ? "pe." + sortBy : "pe.id";
+        String dir = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
+        sql.append(" GROUP BY pe.id");
+        sql.append(" ORDER BY ").append(col).append(" ").append(dir);
+        sql.append(" LIMIT ? OFFSET ?");
+        params.add(limit);
+        params.add(offset);
+
+        return jdbcTemplate.query(sql.toString(), PLAN_CON_MATERIAS_COUNT_MAPPER, params.toArray());
+    }
+
     public long countAllWithMateriasCount() {
         String sql = """
             SELECT COUNT(*) FROM (
@@ -235,6 +331,37 @@ public class PlanEstudioJdbcRepository {
             ) sub
             """;
         Long count = jdbcTemplate.queryForObject(sql, Long.class);
+        return count != null ? count : 0;
+    }
+
+    public long countAllWithMateriasCountFiltered(String search, String grado, Boolean isActive) {
+        StringBuilder sql = new StringBuilder("""
+            SELECT COUNT(*) FROM (
+                SELECT 1
+                FROM planes_estudio pe
+                LEFT JOIN materias m ON m.plan_estudio_id = pe.id AND m.is_active = true
+                WHERE 1=1
+            """);
+        List<Object> params = new ArrayList<>();
+
+        if (search != null && !search.isBlank()) {
+            sql.append(" AND (pe.nombre ILIKE ? OR pe.numero_rvoe ILIKE ?)");
+            String pattern = "%" + search + "%";
+            params.add(pattern);
+            params.add(pattern);
+        }
+        if (grado != null && !grado.isBlank()) {
+            sql.append(" AND pe.grado = ?");
+            params.add(grado);
+        }
+        if (isActive != null) {
+            sql.append(" AND pe.is_active = ?");
+            params.add(isActive);
+        }
+
+        sql.append(" GROUP BY pe.id) sub");
+
+        Long count = jdbcTemplate.queryForObject(sql.toString(), Long.class, params.toArray());
         return count != null ? count : 0;
     }
 

@@ -3,12 +3,11 @@ package mx.cucii.school.platform.controller;
 import lombok.RequiredArgsConstructor;
 import mx.cucii.school.platform.dto.AlumnoRequest;
 import mx.cucii.school.platform.dto.AlumnoResponse;
+import mx.cucii.school.platform.dto.PageResponse;
 import mx.cucii.school.platform.service.AlumnoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import mx.cucii.school.platform.dto.PageResponse;
 
 @RestController
 @RequestMapping("/alumnos")
@@ -20,8 +19,15 @@ public class AlumnoController {
     @GetMapping
     public ResponseEntity<PageResponse<AlumnoResponse>> getAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(alumnoService.findAll(page, size));
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String curp,
+            @RequestParam(required = false) String correoInstitucional,
+            @RequestParam(required = false) Integer estatusId,
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        return ResponseEntity.ok(alumnoService.findAll(page, size, search, curp, correoInstitucional, estatusId, isActive, sortBy, sortDir));
     }
 
     @GetMapping("/{id}")

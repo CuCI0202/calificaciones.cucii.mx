@@ -7,8 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class MateriaJdbcRepository {
@@ -25,6 +27,11 @@ public class MateriaJdbcRepository {
                 rs.getObject("created_at", OffsetDateTime.class),
                 rs.getObject("updated_at", OffsetDateTime.class)
         );
+
+    private static final Set<String> ALLOWED_SORT_COLUMNS = Set.of(
+            "id", "nombre", "clave", "creditos", "cuatrimestre",
+            "plan_estudio_id", "is_active", "created_at", "updated_at"
+    );
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -45,6 +52,68 @@ public class MateriaJdbcRepository {
 
     public long countAll() {
         Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM materias", Long.class);
+        return count != null ? count : 0;
+    }
+
+    public List<Materia> findAll(int limit, int offset, String search, Integer planEstudioId,
+                                 Integer cuatrimestre, Boolean isActive,
+                                 String sortBy, String sortDir) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM materias WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (search != null && !search.isBlank()) {
+            sql.append(" AND (nombre ILIKE ? OR clave ILIKE ?)");
+            String pattern = "%" + search + "%";
+            params.add(pattern);
+            params.add(pattern);
+        }
+        if (planEstudioId != null) {
+            sql.append(" AND plan_estudio_id = ?");
+            params.add(planEstudioId);
+        }
+        if (cuatrimestre != null) {
+            sql.append(" AND cuatrimestre = ?");
+            params.add(cuatrimestre);
+        }
+        if (isActive != null) {
+            sql.append(" AND is_active = ?");
+            params.add(isActive);
+        }
+
+        String col = ALLOWED_SORT_COLUMNS.contains(sortBy) ? sortBy : "id";
+        String dir = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
+        sql.append(" ORDER BY ").append(col).append(" ").append(dir);
+        sql.append(" LIMIT ? OFFSET ?");
+        params.add(limit);
+        params.add(offset);
+
+        return jdbcTemplate.query(sql.toString(), MATERIA_MAPPER, params.toArray());
+    }
+
+    public long countFiltered(String search, Integer planEstudioId, Integer cuatrimestre, Boolean isActive) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM materias WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (search != null && !search.isBlank()) {
+            sql.append(" AND (nombre ILIKE ? OR clave ILIKE ?)");
+            String pattern = "%" + search + "%";
+            params.add(pattern);
+            params.add(pattern);
+        }
+        if (planEstudioId != null) {
+            sql.append(" AND plan_estudio_id = ?");
+            params.add(planEstudioId);
+        }
+        if (cuatrimestre != null) {
+            sql.append(" AND cuatrimestre = ?");
+            params.add(cuatrimestre);
+        }
+        if (isActive != null) {
+            sql.append(" AND is_active = ?");
+            params.add(isActive);
+        }
+
+        Long count = jdbcTemplate.queryForObject(sql.toString(), Long.class, params.toArray());
         return count != null ? count : 0;
     }
 

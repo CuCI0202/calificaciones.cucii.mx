@@ -1,6 +1,7 @@
 package mx.cucii.school.platform.controller;
 
 import lombok.RequiredArgsConstructor;
+import mx.cucii.school.platform.dto.PageResponse;
 import mx.cucii.school.platform.dto.UsuarioRequest;
 import mx.cucii.school.platform.dto.UsuarioResponse;
 import mx.cucii.school.platform.service.UsuarioService;
@@ -9,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import mx.cucii.school.platform.dto.PageResponse;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -21,8 +21,14 @@ public class UsuarioController {
     @GetMapping
     public ResponseEntity<PageResponse<UsuarioResponse>> getAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(usuarioService.findAll(page, size));
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer rolId,
+            @RequestParam(required = false) Integer plantelId,
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        return ResponseEntity.ok(usuarioService.findAll(page, size, search, rolId, plantelId, isActive, sortBy, sortDir));
     }
 
     @GetMapping("/{id}")
